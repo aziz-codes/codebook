@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,12 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}  `}>
-        <nav className="fixed bottom-[calc(100vh-theme(spacing.16))] left-0 right-0 top-0 bg-blue-200 ">
-          Nav
+        <nav className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 ">
+          <Navbar />
         </nav>
 
         <div className="flex min-h-screen">
-          <aside className="sticky top-16 h-[calc(100vh-theme(spacing.16))] w-40 overflow-y-auto bg-green-200 hidden md:flex">
+          <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-40 overflow-y-auto bg-green-200 hidden md:flex">
             <ul>
               <li>A</li>
               <li>B</li>
@@ -29,7 +30,7 @@ export default function RootLayout({
             </ul>
           </aside>
 
-          <main className="mt-16 flex flex-1 bg-yellow-200">
+          <main className="mt-12 flex flex-1 bg-yellow-200">
             <div className="flex-1">Content area</div>
             <div className="w-44 border border-red-500 hidden md:flex">
               <div className="fixed right-0">right bar</div>
