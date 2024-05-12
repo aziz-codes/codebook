@@ -1,8 +1,19 @@
+"use client";
+import React, { useState } from "react";
 import { Bell, Mail, Search } from "lucide-react";
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
+  const [position, setPosition] = useState("bottom");
   return (
     <div className="h-full bg-white dark:bg-slate-900 shadow flex items-center px-2 justify-between">
       <div className="brand font-semibold">CodeBook</div>
