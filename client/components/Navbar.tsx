@@ -1,19 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Bell, Mail, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
-  const [position, setPosition] = useState("bottom");
+  // const list = ["User"]
+
   return (
     <div className="h-full bg-white dark:bg-slate-900 shadow flex items-center px-2 justify-between">
       <div className="brand font-semibold">CodeBook</div>
@@ -30,10 +30,22 @@ const Navbar = () => {
       <div className="actionIcons flex items-center space-x-3">
         <Mail className="text-gray-400 h-6 w-6 cursor-pointer hover:scale-105 transition-transform ease-in" />
         <Bell className="text-gray-400 h-6 w-6 cursor-pointer hover:scale-105 transition-transform ease-in" />
-        <Avatar className="h-6 w-6">
-          <AvatarFallback>Az</AvatarFallback>
-          <AvatarImage src="https://github.com/shadcn.png" />
-        </Avatar>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar className="h-6 w-6 cursor-pointer">
+              <AvatarFallback>Az</AvatarFallback>
+              <AvatarImage src="https://github.com/shadcn.png" />
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
