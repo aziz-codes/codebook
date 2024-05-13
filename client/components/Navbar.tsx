@@ -22,14 +22,14 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search"
-            className="outline-none border-0 px-1"
+            className="outline-none border-0 px-1 w-full"
           />
           <Search className="text-gray-400 h-5 w-5" />
         </div>
       </div>
-      <div className="actionIcons flex items-center space-x-3">
-        <Mail className="text-gray-400 h-6 w-6 cursor-pointer hover:scale-105 transition-transform ease-in" />
-        <Bell className="text-gray-400 h-6 w-6 cursor-pointer hover:scale-105 transition-transform ease-in" />
+      <div className="actionIcons flex items-center space-x-5">
+        <Mail className="text-gray-400 h-5 w-5 cursor-pointer hover:scale-105 transition-transform ease-in" />
+        <Bell className="text-gray-400 h-5 w-5 cursor-pointer hover:scale-105 transition-transform ease-in" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-6 w-6 cursor-pointer">
