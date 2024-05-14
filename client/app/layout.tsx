@@ -41,3 +41,4 @@ export default function RootLayout({
     </html>
   );
 }
+// navbar done here.
