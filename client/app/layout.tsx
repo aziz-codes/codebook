@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,12 +23,8 @@ export default function RootLayout({
         </nav>
 
         <div className="flex min-h-screen">
-          <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-40 overflow-y-auto bg-green-200 hidden md:flex">
-            <ul>
-              <li>A</li>
-              <li>B</li>
-              <li>C</li>
-            </ul>
+          <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-56 overflow-y-auto   hidden md:flex">
+            <Sidebar />
           </aside>
 
           <main className="mt-12 flex flex-1 bg-yellow-200">
