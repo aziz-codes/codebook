@@ -22,16 +22,16 @@ export default function RootLayout({
           <Navbar />
         </nav>
 
-        <div className="flex min-h-screen">
-          <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-56 overflow-y-auto   hidden md:flex">
+        <div className="flex min-h-screen gap-20">
+          <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-56 overflow-y-auto border-r  hidden md:flex">
             <Sidebar />
           </aside>
 
-          <main className="mt-12 flex flex-1 bg-yellow-200">
-            <div className="flex-1">Content area</div>
-            <div className="w-44 border border-red-500 hidden md:flex">
+          <main className="mt-12 flex flex-1 ">
+            <div className="flex-1 w-full max-w-lg py-4 px-4">{children}</div>
+            {/* <div className="w-44 border border-red-500 hidden md:flex">
               <div className="fixed right-0">right bar</div>
-            </div>
+            </div> */}
           </main>
         </div>
       </body>
