@@ -4,7 +4,6 @@ import { Label } from "./ui/label";
 import { users } from "@/constants/users";
 import { CalendarDays, Ellipsis } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "./ui/button";
 
 const DiscussionCard = () => {
   return (
@@ -17,9 +16,9 @@ const DiscussionCard = () => {
           </Avatar>
           <Label>azizcodes</Label>
         </div>
-        <Button variant="outline" size="icon" className="border-none p-0">
+        <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
           <Ellipsis />
-        </Button>
+        </button>
       </div>
       <p className="text-sm line-clamp-2 overflow-hidden text-ellipsis">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil atque
