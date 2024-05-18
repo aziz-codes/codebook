@@ -37,8 +37,8 @@ const Navbar = () => {
               <AvatarImage src="https://github.com/shadcn.png" />
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+          <DropdownMenuContent className="w-40">
+            <DropdownMenuLabel>Account Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
 
             <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>

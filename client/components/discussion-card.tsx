@@ -50,7 +50,7 @@ const DiscussionCard = () => {
               <AvatarImage src={user.avatar} />
             </Avatar>
           ))}
-          <div className="relative z-50 h-8 w-8 -space-x-4 border-2 border-white text-xs font-semibold rounded-full flex justify-center items-center bg-gray-400">
+          <div className="relative z-10 h-8 w-8 -space-x-4 border-2 border-white text-xs font-semibold rounded-full flex justify-center items-center bg-gray-400">
             99+
           </div>
         </div>
