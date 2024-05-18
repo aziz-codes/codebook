@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { HomeIcon, CodeIcon, User, TrendingUp } from "lucide-react";
+import { HomeIcon, User, TrendingUp, CodeXml } from "lucide-react";
 import { Poppins } from "next/font/google";
 const poppins = Poppins({ subsets: ["latin"], weight: "500" });
 const navlinks = () => {
@@ -12,7 +12,7 @@ const navlinks = () => {
     },
     {
       label: "Snippets",
-      icon: CodeIcon,
+      icon: CodeXml,
       path: "/",
     },
     {

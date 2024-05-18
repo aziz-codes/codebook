@@ -20,7 +20,7 @@ const DiscussionCard = () => {
           <Ellipsis />
         </button>
       </div>
-      <p className="text-sm line-clamp-2 overflow-hidden text-ellipsis">
+      <p className="text-sm line-clamp-2 overflow-hidden font-[500] text-ellipsis">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil atque
         nesciunt quasi autem culpa, blanditiis enim consequuntur possimus
         repellendus eius nobis commodi amet, repudiandae et optio delectus animi
