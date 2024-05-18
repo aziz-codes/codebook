@@ -18,7 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}  `}>
-        <nav className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 ">
+        <nav
+          className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 "
+          style={{ zIndex: "99999" }}
+        >
           <Navbar />
         </nav>
 

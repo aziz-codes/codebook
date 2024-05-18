@@ -9,6 +9,18 @@ const Discussions = () => {
         <DiscussionCard />
         <DiscussionCard />
         <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
+        <DiscussionCard />
       </div>
     </div>
   );

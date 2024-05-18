@@ -10,7 +10,7 @@ const DiscussionCard = () => {
     <div className="w-full max-w-sm border rounded-md shadow-md p-4 select-none flex flex-col gap-3">
       <div className="flex justify-between items-center">
         <div className="flex space-x-1 items-center">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-8 w-8 z-10">
             <AvatarFallback>NA</AvatarFallback>
             <AvatarImage src="https://github.com/shadcn.png" />
           </Avatar>
