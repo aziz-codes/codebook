@@ -15,7 +15,7 @@ const Navbar = () => {
   // const list = ["User"]
 
   return (
-    <div className="relative h-full bg-white dark:bg-slate-900 shadow flex items-center px-2 justify-between ">
+    <div className="relative h-full bg-white dark:bg-slate-900 shadow flex items-center px-6 justify-between ">
       <div className="brand font-semibold">CodeBook</div>
       <div className="w-[50%]">
         <div className="flex gap-1 rounded-md border items-center justify-between py-1">
