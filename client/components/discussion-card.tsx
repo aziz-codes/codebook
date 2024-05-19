@@ -34,8 +34,8 @@ const DiscussionCard = () => {
         </div>
         <div className="flex   gap-2">
           <Badge variant="outline">Javascript</Badge>
-          <Badge variant="outline">HTML</Badge>
-          <Badge variant="outline">CSS</Badge>
+
+          <Badge variant="outline">CSS +2</Badge>
         </div>
       </div>
       <div className="flex items-center py-1 gap-3 flex-wrap space-y-1">
