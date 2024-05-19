@@ -3,7 +3,7 @@ import User from "@/components/user";
 import Navlinks from "./navlinks";
 const Sidebar = () => {
   return (
-    <div className="w-full flex flex-col py-4 px-2 space-y-4">
+    <div className="w-full flex flex-col py-4 px-2 ">
       <User />
       <Navlinks />
     </div>
