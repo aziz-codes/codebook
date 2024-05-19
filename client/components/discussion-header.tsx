@@ -2,9 +2,10 @@
 import React from "react";
 import { Label } from "./ui/label";
 import DropDown from "./drop-down";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Plus, Search } from "lucide-react";
 import { Input } from "./ui/input";
+import Link from "next/link";
 const DiscussionHeader = () => {
   const options = ["Javascript", "Python", "PHP", "CSS"];
   const handleSelect = (language: string) => {
@@ -20,10 +21,17 @@ const DiscussionHeader = () => {
           </p>
         </div>
         <div className="flex items-center">
-          <Button className="px-2 border" size="sm" variant="ghost">
+          <Link
+            href="/create-discussion"
+            className={buttonVariants({
+              variant: "ghost",
+              className: "px-2 border",
+              size: "sm",
+            })}
+          >
             <Plus />
             Create
-          </Button>
+          </Link>
         </div>
       </div>
       <div className="w-full flex flex-col md:flex-row gap-2 justify-between">
