@@ -33,7 +33,7 @@ export default function RootLayout({
           </nav>
 
           <div className="flex min-h-screen gap-10">
-            <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] w-56 overflow-y-auto border-r  hidden md:flex">
+            <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] md:w-16 lg:w-56 overflow-y-auto border-r  hidden md:flex">
               <Sidebar />
             </aside>
 
