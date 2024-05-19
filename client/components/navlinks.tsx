@@ -2,7 +2,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { HomeIcon, Users, TrendingUp, CodeXml } from "lucide-react";
+import { HomeIcon, Users, TrendingUp, CodeXml, Gem } from "lucide-react";
 import { Poppins } from "next/font/google";
 const poppins = Poppins({ subsets: ["latin"], weight: "500" });
 const navlinks = () => {
@@ -22,6 +22,11 @@ const navlinks = () => {
       label: "Discussion",
       icon: TrendingUp,
       path: "/discussions",
+    },
+    {
+      label: "Bounties",
+      icon: Gem,
+      path: "/bounties",
     },
     {
       label: "Peoples",
