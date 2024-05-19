@@ -2,35 +2,41 @@
 import React from "react";
 import { Label } from "./ui/label";
 import DropDown from "./drop-down";
+import { Button } from "./ui/button";
+import { Plus, Search } from "lucide-react";
 const DiscussionHeader = () => {
   const options = ["Javascript", "Python", "PHP", "CSS"];
   const handleSelect = (language: string) => {
     console.log(language);
   };
   return (
-    <div className="flex justify-between items-center p-4 border-b bg-gray-100 w-full">
-      <div>
-        <Label className="text-xl font-bold">Discussions</Label>
-        <p className="text-gray-600 text-sm">
-          Join the conversation and share your thoughts.
-        </p>
+    <div className="flex flex-col gap-3 p-4  py-2 w-full">
+      <div className="flex justify-between items-center w-full">
+        <div>
+          <Label className="text-xl font-bold">Discussions</Label>
+          <p className="text-gray-600 text-sm">
+            Join the conversation and share your thoughts.
+          </p>
+        </div>
+        <div className="flex items-center">
+          <Button className="px-2 border" size="sm" variant="ghost">
+            <Plus />
+            Create
+          </Button>
+        </div>
       </div>
-      <div className="flex items-center">
-        <input
-          type="text"
-          placeholder="Search discussions..."
-          className="px-4 py-2 border rounded-lg mr-4"
-        />
-        <div className="mr-4">
+      <div className="w-full flex flex-col md:flex-row gap-2 justify-between">
+        <div className="flex gap-1 flex-1 py-1 px-2 rounded-md border items-center justify-between ">
+          <input
+            type="text"
+            placeholder="Search"
+            className="outline-none border-0 px-1 w-full"
+          />
+          <Search className="text-gray-400 h-5 w-5" />
+        </div>
+        <div className="">
           <DropDown options={options} onSelect={handleSelect} />
         </div>
-        <button className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg relative hover:bg-blue-600">
-          <span className="mr-2">✚</span>
-          Create
-          <span className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-sm hidden group-hover:block">
-            Start a new discussion
-          </span>
-        </button>
       </div>
     </div>
   );
