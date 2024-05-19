@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className}  `}>
+    <html lang="en" className=" scrollbar-thin">
+      <body className={`${inter.className}`}>
         <nav
           className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 z-50"
           // style={{ zIndex: "99999" }}
