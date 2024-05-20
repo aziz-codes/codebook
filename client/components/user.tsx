@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 const user = () => {
   return (
-    <div className="w-full flex justify-center lg:justify-start lg:border shadow-md rounded-md px-1 py-3">
+    <div className="w-full flex justify-center lg:justify-start lg:border shadow-md rounded-md px-1 py-3 hover:scale-105 transition-transform duration-150 ease-linear cursor-pointer">
       <div className="flex gap-2 items-center">
         <Avatar className="h-8 w-8">
           <AvatarFallback>AZ</AvatarFallback>
