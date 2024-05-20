@@ -30,14 +30,7 @@ const TextToChip = () => {
           <Badge key={index}>{chip}</Badge>
         ))}
       </div>
-      {/* <input
-        type="text"
-        className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyPress}
-        placeholder="Type something and press space..."
-          /> */}
+
       <Input
         value={inputValue}
         onChange={handleInputChange}
