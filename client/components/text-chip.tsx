@@ -42,7 +42,7 @@ const TextToChip = () => {
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          placeholder="Add upto 5 tags"
+          placeholder={chips.length > 0 ? "" : "Add upto 5 tags"}
           className="flex-grow focus:ring-0 outline-none focus:ring-offset-0 !ring-0 border-none p-0"
         />
       </div>
