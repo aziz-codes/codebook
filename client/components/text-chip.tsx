@@ -26,10 +26,6 @@ const TextToChip = () => {
     }
   };
 
-  // const handleRemoveChip = (index) => {
-  //   setChips(chips.filter((_, i) => i !== index));
-  // };
-
   return (
     <div className="mt-4">
       <div className="flex items-center  gap-2 border border-gray-200 dark:border-gray-800 px-2 rounded-md">
