@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "./ui/input";
+
 const TextToChip = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [chips, setChips] = useState<string[]>([]);
@@ -17,27 +18,34 @@ const TextToChip = () => {
         setChips([...chips, inputValue.trim()]);
         setInputValue("");
       }
+    } else if (e.key === "Backspace" && inputValue === "") {
+      e.preventDefault();
+      if (chips.length > 0) {
+        setChips(chips.slice(0, -1));
+      }
     }
   };
 
   // const handleRemoveChip = (index) => {
   //   setChips(chips.filter((_, i) => i !== index));
   // };
-  return (
-    <div className="p-4">
-      <div className="flex flex-wrap gap-2 mb-4">
-        {chips.map((chip, index) => (
-          <Badge key={index}>{chip}</Badge>
-        ))}
-      </div>
 
-      <Input
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyPress}
-        placeholder="type and hit space"
-        className="focus:ring-0 outline-none focus:ring-offset-0 !ring-0"
-      />
+  return (
+    <div className="mt-4">
+      <div className="flex items-center  gap-2 border border-gray-200 dark:border-gray-800 px-2 rounded-md">
+        {chips.map((chip, index) => (
+          <Badge key={index} className="mr-2">
+            {chip}
+          </Badge>
+        ))}
+        <Input
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
+          placeholder="Add upto 5 tags"
+          className="flex-grow focus:ring-0 outline-none focus:ring-offset-0 !ring-0 border-none p-0"
+        />
+      </div>
     </div>
   );
 };
