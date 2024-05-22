@@ -4,6 +4,7 @@ import { Info } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import TextToChip from "@/components/text-chip";
 import ImageHanlder from "@/components/image-hanlder";
+import { Button } from "@/components/ui/button";
 const CreateDiscussion = () => {
   return (
     <div className="flex flex-col gap-4">
@@ -46,6 +47,9 @@ const CreateDiscussion = () => {
       </div>
 
       <ImageHanlder />
+      <div>
+        <Button size="sm">Create Discussion</Button>
+      </div>
     </div>
   );
 };
