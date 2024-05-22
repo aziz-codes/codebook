@@ -1,13 +1,23 @@
+"use client";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Label } from "./ui/label";
 import { users } from "@/constants/users";
 import { CalendarDays, Ellipsis } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 const DiscussionCard = () => {
+  const router = useRouter();
+  const handleNavigate = () => {
+    let id = 4;
+    router.push(`/discussion/${id}`);
+  };
   return (
-    <div className="w-full max-w-sm border rounded-md shadow-md p-4 select-none flex flex-col gap-3">
+    <div
+      className="w-full max-w-sm border rounded-md shadow-md p-4 select-none flex flex-col gap-3 cursor-pointer hover:scale-105 transition-transform ease-linear duration-75"
+      onClick={handleNavigate}
+    >
       <div className="flex justify-between items-center">
         <div className="flex space-x-1 items-center">
           <Avatar className="h-8 w-8 z-10">
