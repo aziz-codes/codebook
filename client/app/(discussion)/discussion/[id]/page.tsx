@@ -2,6 +2,7 @@ import React from "react";
 import User from "@/components/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import Slider from "@/components/slider";
 const Discussion = () => {
   return (
     <div className="flex flex-col gap-4">
@@ -16,6 +17,9 @@ const Discussion = () => {
         </div>
       </div>
       <Label>Discusion title goes here.</Label>
+      <div className="flex justify-center">
+        <Slider />
+      </div>
     </div>
   );
 };
