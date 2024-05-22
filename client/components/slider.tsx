@@ -45,7 +45,7 @@ const Slider = () => {
         <CarouselNext />
       </Carousel>
       <div className="py-2 text-center text-sm text-muted-foreground">
-        Slide {current} of {count}
+        Image {current} of {count}
       </div>
     </div>
   );
