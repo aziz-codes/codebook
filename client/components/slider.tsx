@@ -29,7 +29,7 @@ const Slider = () => {
 
   return (
     <div>
-      <Carousel setApi={setApi} className="w-full max-w-xs">
+      <Carousel setApi={setApi} className="w-full max-w-sm">
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
             <CarouselItem key={index}>
