@@ -35,7 +35,7 @@ const UserAvatar = () => {
           className="cursor-pointer"
           onClick={() =>
             signOut({
-              callbackUrl: "http://localhost:3000/auth",
+              callbackUrl: "http://localhost:3000/login",
             })
           }
         >
