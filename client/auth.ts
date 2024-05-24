@@ -21,7 +21,7 @@ export const config = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/auth",
+    signIn: "/login",
   },
 
   //   callbacks starts
