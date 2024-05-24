@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { auth } from "@/auth";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -12,11 +13,13 @@ export const metadata: Metadata = {
   description: "Developers Only Platfrom",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" className=" scrollbar-thin">
       <body className={`${inter.className}`}>
@@ -27,17 +30,18 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <nav
-              className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 z-50"
-              // style={{ zIndex: "99999" }}
-            >
-              <Navbar />
-            </nav>
+            {session && (
+              <nav className="fixed bottom-[calc(100vh-theme(spacing.12))] left-0 right-0 top-0 z-50">
+                <Navbar />
+              </nav>
+            )}
 
             <div className="flex min-h-screen gap-10">
-              <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] md:w-16 lg:w-56 overflow-y-auto border-r  hidden md:flex">
-                <Sidebar />
-              </aside>
+              {session && (
+                <aside className="sticky top-12 h-[calc(100vh-theme(spacing.12))] md:w-16 lg:w-56 overflow-y-auto border-r  hidden md:flex">
+                  <Sidebar />
+                </aside>
+              )}
 
               <main className="mt-12 flex flex-1 ">
                 <div className="flex-1 w-full py-4 px-4">{children}</div>
