@@ -18,5 +18,12 @@ export default async function middlware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/dashboard"],
+  matcher: [
+    "/",
+    "/login",
+    "/discussions",
+    "/bounties",
+    "/snippets",
+    "/peoples",
+  ],
 };
