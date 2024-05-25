@@ -21,8 +21,8 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className=" scrollbar-thin">
-      <body className={`${inter.className}`}>
+    <html lang="en">
+      <body className={`${inter.className} `}>
         <Provider>
           <ThemeProvider
             attribute="class"
