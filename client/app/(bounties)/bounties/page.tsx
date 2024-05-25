@@ -29,7 +29,7 @@ const Bounties: React.FC = () => {
       postedBy: "JohnDoe",
       postedDate: "May 20, 2024",
       deadline: "June 1, 2024",
-      status: "Open",
+      status: "Claimed",
       resources: [
         {
           title: "GitHub Issue",

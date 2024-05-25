@@ -37,7 +37,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
             {category}
           </span>
         </div>
-        <p className="text-gray-600 mt-2">{description}</p>
+        <p className="text-gray-600 mt-2 line-clamp-3">{description}</p>
         <div className="mt-4 flex items-center gap-2">
           <Label className="text-black text-lg font-bold">Bounty</Label>
           <span className="text-lg font-semibold text-green-600">
