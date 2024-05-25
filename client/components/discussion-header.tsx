@@ -2,7 +2,7 @@
 import React from "react";
 import { Label } from "./ui/label";
 import DropDown from "./drop-down";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { Plus, Search } from "lucide-react";
 import { Input } from "./ui/input";
 import Link from "next/link";
