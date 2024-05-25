@@ -1,20 +1,8 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
-import React from "react";
-
+import LoginForm from "@/components/login-form";
 const page = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Button
-        onClick={() =>
-          signIn("github", {
-            callbackUrl: "http://localhost:3000",
-          })
-        }
-      >
-        Login here
-      </Button>
+      <LoginForm />
     </div>
   );
 };
