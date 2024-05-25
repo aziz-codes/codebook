@@ -12,7 +12,7 @@ const DiscussionHeader = () => {
     console.log(language);
   };
   return (
-    <div className="flex flex-col gap-3 p-4  py-2 w-full">
+    <div className="flex flex-col gap-3   py-2 w-full">
       <div className="flex justify-between items-center w-full">
         <div>
           <Label className="text-xl font-bold">Discussions</Label>
