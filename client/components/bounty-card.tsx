@@ -1,5 +1,6 @@
 import React from "react";
-
+import { Gem } from "lucide-react";
+import { Label } from "./ui/label";
 interface Resource {
   title: string;
   url: string;
@@ -26,10 +27,9 @@ const BountyCard: React.FC<BountyCardProps> = ({
   postedDate,
   deadline,
   status,
-  resources,
 }) => {
   return (
-    <div className="max-w-sm mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="max-w-sm  bg-white shadow-md rounded-lg overflow-hidden">
       <div className="px-6 py-4">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">{title}</h2>
@@ -38,9 +38,10 @@ const BountyCard: React.FC<BountyCardProps> = ({
           </span>
         </div>
         <p className="text-gray-600 mt-2">{description}</p>
-        <div className="mt-4">
+        <div className="mt-4 flex items-center gap-2">
+          <Label className="text-black text-lg font-bold">Bounty</Label>
           <span className="text-lg font-semibold text-green-600">
-            ${reward}
+            {reward}$
           </span>
         </div>
         <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
@@ -51,25 +52,6 @@ const BountyCard: React.FC<BountyCardProps> = ({
             <span>Posted on: {postedDate}</span>
           </div>
         </div>
-        {resources && resources.length > 0 && (
-          <div className="mt-4">
-            <h3 className="text-md font-semibold text-gray-800">Resources</h3>
-            <ul className="list-disc list-inside">
-              {resources.map((resource, index) => (
-                <li key={index}>
-                  <a
-                    href={resource.url}
-                    className="text-blue-500"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {resource.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
       <div className="px-6 py-4 border-t border-gray-200 bg-gray-100 flex justify-between items-center">
         <span className="text-sm text-gray-600">Deadline: {deadline}</span>
