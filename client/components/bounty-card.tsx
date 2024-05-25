@@ -39,13 +39,13 @@ const BountyCard: React.FC<BountyCardProps> = ({
   return (
     <Card className="max-w-sm ">
       <CardHeader>
-        <CardTitle className="line-clamp-2">{title}</CardTitle>
+        <CardTitle className="">{title}</CardTitle>
         <CardDescription className="line-clamp-3">
           {description}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center text-sm text-gray-600 py-2">
+        <div className="flex justify-between items-center text-sm text-gray-600 py-3">
           <div className="flex items-center">
             <span>Posted by: {postedBy}</span>
           </div>
