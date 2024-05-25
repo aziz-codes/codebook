@@ -42,7 +42,7 @@ const Bounties: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 grid grid-cols-2">
+    <div className="p-6 grid grid-cols-1 md:grid-cols-2 place-items-center md:place-items-start">
       {bounties.map((bounty, index) => (
         <BountyCard key={index} {...bounty} />
       ))}
