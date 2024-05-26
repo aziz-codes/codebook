@@ -37,7 +37,7 @@ const Snippet = () => {
       </CardContent>
     </Card>`;
   return (
-    <Card className="w-full overflow-hidden pt-2 mb-4">
+    <Card className="w-full overflow-hidden pt-2 mb-8">
       <CardHeader className="p-0 px-2">
         <div className="flex justify-between ">
           <User hasBorder={false} hoverEffect={false} date="06 March" />
