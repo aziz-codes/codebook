@@ -11,7 +11,7 @@ const CodeHighlighter = ({ language, code }: CodeProps) => {
   return (
     <SyntaxHighlighter
       customStyle={{
-        padding: "20px 5px",
+        padding: "10px 5px",
 
         height: "350px",
         maxHeight: "350px",
