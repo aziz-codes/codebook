@@ -1,6 +1,7 @@
+"use client";
 import React from "react";
-import { auth } from "@/auth";
-
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface Props {
@@ -8,12 +9,9 @@ interface Props {
   hoverEffect?: boolean;
   date?: string;
 }
-const user = async ({
-  hasBorder = true,
-  hoverEffect = true,
-  date = "",
-}: Props) => {
-  const session = await auth();
+const user = ({ hasBorder = true, hoverEffect = true, date = "" }: Props) => {
+  const router = useRouter();
+  const { data: session } = useSession();
 
   const user = session?.user;
   return (
@@ -24,6 +22,7 @@ const user = async ({
         hoverEffect &&
         "hover:scale-105 transition-transform duration-150 ease-linear"
       } cursor-pointer ${hasBorder && "lg:border py-3"}`}
+      onClick={() => router.push("/user/12")}
     >
       <div className="flex gap-2 items-center">
         <Avatar className="h-8 w-8">
