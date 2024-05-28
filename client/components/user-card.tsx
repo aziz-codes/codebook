@@ -48,6 +48,10 @@ const UserCard = async () => {
               <Label>25</Label>
               <p className="text-muted text-sm">Following</p>
             </div>
+            <div className="flex flex-col space-y-1 ">
+              <Label>25</Label>
+              <p className="text-muted text-sm">Bounties</p>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <Button
