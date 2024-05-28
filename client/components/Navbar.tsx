@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <div className="relative h-full bg-background border-b shadow flex items-center px-4 justify-between ">
-      <div className="brand font-semibold">CodeBook</div>
+      <div className="brand font-semibold">Test</div>
       <div className="w-[50%]">
         <div className="flex gap-1 rounded-md border items-center justify-between py-1 px-2 bg-white dark:bg-background">
           {/* <input
