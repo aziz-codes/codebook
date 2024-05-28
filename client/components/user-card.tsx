@@ -26,15 +26,15 @@ const UserCard = async () => {
         <div className="flex items-center px-2 mt-6 max-w-sm  gap-8">
           <div className="flex flex-col space-y-1 ">
             <Label>25</Label>
-            <p className="text-muted text-sm">Discussion</p>
+            <p className="text-gray-400 dark:text-muted text-sm">Discussion</p>
           </div>
           <div className="flex flex-col space-y-1 ">
             <Label>25</Label>
-            <p className="text-muted text-sm">Snippets</p>
+            <p className="text-gray-400 dark:text-muted text-sm">Snippets</p>
           </div>
           <div className="flex flex-col space-y-1 ">
             <Label>25</Label>
-            <p className="text-muted text-sm">Bounties</p>
+            <p className="text-gray-400 dark:text-muted text-sm">Bounties</p>
           </div>
         </div>
         <Separator className="my-2 max-w-xs" />
@@ -42,15 +42,15 @@ const UserCard = async () => {
           <div className="flex items-center gap-8">
             <div className="flex flex-col space-y-1 ">
               <Label>300</Label>
-              <p className="text-muted text-sm">Followers</p>
+              <p className="text-gray-400 dark:text-muted text-sm">Followers</p>
             </div>
             <div className="flex flex-col space-y-1 ">
               <Label>25</Label>
-              <p className="text-muted text-sm">Following</p>
+              <p className="text-gray-400 dark:text-muted text-sm">Following</p>
             </div>
             <div className="flex flex-col space-y-1 ">
               <Label>25</Label>
-              <p className="text-muted text-sm">Posts</p>
+              <p className="text-gray-400 dark:text-muted text-sm">Posts</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
