@@ -4,7 +4,7 @@ import UserProfileTabs from "@/components/layouts/tabs";
 
 const UserProfile = () => {
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col gap-6">
       <div className="w-full flex justify-center">
         <UserCard />
       </div>
