@@ -34,7 +34,7 @@ const UserCard = async () => {
           </div>
           <div className="flex flex-col space-y-1 ">
             <Label>25</Label>
-            <p className="text-muted text-sm">Posts</p>
+            <p className="text-muted text-sm">Bounties</p>
           </div>
         </div>
         <Separator className="my-2 max-w-xs" />
@@ -50,7 +50,7 @@ const UserCard = async () => {
             </div>
             <div className="flex flex-col space-y-1 ">
               <Label>25</Label>
-              <p className="text-muted text-sm">Bounties</p>
+              <p className="text-muted text-sm">Posts</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
