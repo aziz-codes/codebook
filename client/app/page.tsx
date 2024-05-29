@@ -1,9 +1,12 @@
 import React from "react";
 import Post from "@/components/Post";
-const HomePage = () => {
+import { auth } from "@/auth";
+const HomePage = async () => {
+  const session = await auth();
+
   return (
     <div className="w-full max-w-lg">
-      <Post />
+      {!session?.user ? "No session" : <Post />}
     </div>
   );
 };
