@@ -11,12 +11,32 @@ const UserCard = async () => {
   const session = await auth();
   const user = session?.user;
   return (
-    <section className="w-full max-w-5xl flex row mt-6 gap-8  ">
-      <div>
+    <section className="w-full max-w-5xl flex row mt-6  ">
+      <div className="flex flex-col justify-start gap-2 ">
         <Avatar className="h-32 w-32  border-2 mx-auto">
           <AvatarFallback>{user?.name?.slice(0, 2)}</AvatarFallback>
           <AvatarImage src={user?.image as string} />
         </Avatar>
+
+        <div className="flex items-center gap-8 mx-auto">
+          <div className="flex flex-col space-y-1 ">
+            <Label>300</Label>
+            <p className="text-gray-400 dark:text-muted text-sm">Followers</p>
+          </div>
+          <div className="flex flex-col space-y-1 ">
+            <Label>25</Label>
+            <p className="text-gray-400 dark:text-muted text-sm">Following</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-2 my-2 mx-auto">
+          <Globe className="w-4" />
+          <Link
+            href="#"
+            className="text-xs text-sky-500 whitespace-nowrap text-ellipsis overflow-hidden"
+          >
+            https://www.aziz-codes.com
+          </Link>
+        </div>
       </div>
       <div className="flex flex-col flex-1">
         <h4 className="font-semibold">{user?.username}</h4>
@@ -37,21 +57,21 @@ const UserCard = async () => {
             <p className="text-gray-400 dark:text-muted text-sm">Bounties</p>
           </div>
         </div>
-        <Separator className="my-2 max-w-xs" />
+        {/* <Separator className="my-2 max-w-xs" /> */}
         <div className="flex flex-row gap-2 flex-wrap mt-2 justify-between space-y-2">
           <div className="flex items-center gap-8">
-            <div className="flex flex-col space-y-1 ">
+            {/* <div className="flex flex-col space-y-1 ">
               <Label>300</Label>
               <p className="text-gray-400 dark:text-muted text-sm">Followers</p>
             </div>
             <div className="flex flex-col space-y-1 ">
               <Label>25</Label>
               <p className="text-gray-400 dark:text-muted text-sm">Following</p>
-            </div>
-            <div className="flex flex-col space-y-1 ">
+            </div> */}
+            {/* <div className="flex flex-col space-y-1 ">
               <Label>25</Label>
               <p className="text-gray-400 dark:text-muted text-sm">Posts</p>
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center space-x-4">
             <Button
@@ -100,15 +120,15 @@ const UserCard = async () => {
     //       molestiae dolorum cupiditate, libero deserunt, quidem magni esse quod
     //       temporibus consequuntur illum aperiam natus qui aut vitae neque
     //     </p>
-    //     <div className="flex items-center justify-center gap-2 my-2">
-    //       <Globe className="w-4" />
-    //       <Link
-    //         href="#"
-    //         className="text-xs text-sky-500 whitespace-nowrap text-ellipsis overflow-hidden"
-    //       >
-    //         https://www.aziz-codes.com
-    //       </Link>
-    //     </div>
+    // <div className="flex items-center justify-center gap-2 my-2">
+    //   <Globe className="w-4" />
+    //   <Link
+    //     href="#"
+    //     className="text-xs text-sky-500 whitespace-nowrap text-ellipsis overflow-hidden"
+    //   >
+    //     https://www.aziz-codes.com
+    //   </Link>
+    // </div>
     //   </div>
     // </div>
   );
