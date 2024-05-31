@@ -34,6 +34,7 @@ import {
   MenubarShortcut,
 } from "@/components/ui/menubar";
 import { Textarea } from "@/components/ui/textarea";
+// import UserDateProfile from "@/components/layouts/user-date-profile";
 
 const Discussion = () => {
   const menuOptions = [
@@ -61,7 +62,7 @@ const Discussion = () => {
         <Dialog>
           <DialogTrigger asChild>
             <Button size="sm" variant="outline">
-              <MessageCircle className="w-4 h-4" /> &nbsp; Add a comment
+              <MessageCircle className="w-4 h-4" /> Add a comment
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] md:max-w-96 lg:max-w-[600px]">
@@ -133,9 +134,7 @@ const Discussion = () => {
             <Menubar>
               <MenubarMenu>
                 <MenubarTrigger role="div">
-                  <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
-                    <Ellipsis />
-                  </button>
+                  <Ellipsis className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100 cursor-pointer" />
                 </MenubarTrigger>
                 <MenubarContent>
                   {menuOptions.map((option, index) => {
