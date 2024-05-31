@@ -34,7 +34,7 @@ import {
   MenubarShortcut,
 } from "@/components/ui/menubar";
 import { Textarea } from "@/components/ui/textarea";
-// import UserDateProfile from "@/components/layouts/user-date-profile";
+import UserDateProfile from "@/components/layouts/user-date-profile";
 
 const Discussion = () => {
   const menuOptions = [
@@ -48,17 +48,11 @@ const Discussion = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <div className="flex gap-1">
-          <Avatar>
-            <AvatarFallback>AZ</AvatarFallback>
-            <AvatarImage src="https://github.com/shadcn.png" />
-          </Avatar>
-          <div className="flex-col -space-y-1 hidden lg:flex">
-            <h4 className="text-sm font-semibold">Aziz Khan</h4>
-            <p className="text-xs text-gray-400">4 hrs ago</p>
-          </div>
-        </div>
-
+        <UserDateProfile
+          date="5 Jun"
+          username="azizcodes"
+          image="https://github.com/shadcn.png"
+        />
         <Dialog>
           <DialogTrigger asChild>
             <Button size="sm" variant="outline">
