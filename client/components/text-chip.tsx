@@ -15,7 +15,10 @@ const TextToChip = () => {
     if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
       if (inputValue.trim() !== "") {
-        setChips([...chips, inputValue.trim()]);
+        if (chips.length < 5) {
+          setChips([...chips, inputValue.trim()]);
+        }
+
         setInputValue("");
       }
     } else if (e.key === "Backspace" && inputValue === "") {
