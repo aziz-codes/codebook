@@ -1,14 +1,8 @@
 import React from "react";
 import CodeHighlighter from "./syntax-highlighter";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "./ui/card";
-import User from "./user";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import UserDateProfile from "./layouts/user-date-profile";
 import {
   Bookmark,
   Ellipsis,
@@ -40,7 +34,7 @@ const Snippet = () => {
     <Card className="w-full overflow-hidden pt-2 mb-8">
       <CardHeader className="p-0 px-2">
         <div className="flex justify-between ">
-          <User hasBorder={false} hoverEffect={false} date="06 March" />
+          <UserDateProfile date="25 Mar" username="azizcodes" />
           <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
             <Ellipsis />
           </button>
