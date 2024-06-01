@@ -44,7 +44,7 @@ const Snippet = () => {
           </button>
         </div>
         <div>
-          <Label className="line-clamp-3">
+          <Label className="line-clamp-3 leading-5">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis
             maxime accusantium numquam. Non est, aspernatur atque asperiores
             officiis inventore, laborum nihil tempora quod explicabo mollitia
