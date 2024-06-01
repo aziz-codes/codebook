@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Provider from "@/providers/SessionProvider";
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], weight: ["300"] });
 
 export const metadata: Metadata = {
   title: "CodeBook",
