@@ -2,7 +2,8 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { HomeIcon, Users, TrendingUp, CodeXml, Gem } from "lucide-react";
+import { HomeIcon, Users, TrendingUp, CodeXml, BadgeCent } from "lucide-react";
+
 import { Poppins } from "next/font/google";
 import { buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ const navlinks = () => {
     },
     {
       label: "Bounties",
-      icon: Gem,
+      icon: BadgeCent,
       path: "/bounties",
     },
     {
