@@ -49,7 +49,12 @@ const navlinks = () => {
             href={link.path}
             className={buttonVariants({
               variant: isActive ? "secondary" : "ghost",
-              className: cn("navLink", { "hidden md:flex": null }),
+              className: cn(
+                "navLink dark:hover:bg-semiDark hover:bg-gray-200",
+                {
+                  "hidden md:flex": null,
+                }
+              ),
               size: "sm",
             })}
           >
