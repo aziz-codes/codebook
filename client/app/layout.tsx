@@ -37,15 +37,15 @@ export default async function RootLayout({
                 </nav>
               )}
 
-              <div className="flex flex-1 gap-10">
+              <div className="flex flex-1">
                 {session && (
                   <aside className="sticky top-16 h-[calc(100vh-theme(spacing.16))] md:w-16 lg:w-56 overflow-y-auto border-r hidden md:flex">
                     <Sidebar />
                   </aside>
                 )}
 
-                <main className="mt-16 flex flex-1">
-                  <div className="flex-1 w-full py-4 px-4">{children}</div>
+                <main className="mt-16 flex flex-1 dark:bg-[#121212]">
+                  <div className="flex-1 w-full px-4 py-4">{children}</div>
                   {/* <div className="w-44 border border-red-500 hidden md:flex">
                     <div className="fixed right-0">right bar</div>
                   </div> */}
