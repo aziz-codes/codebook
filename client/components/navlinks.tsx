@@ -54,11 +54,7 @@ const navlinks = () => {
             })}
           >
             <LinkIcon className="w-5" />
-            <p
-              className={`${cn("hidden lg:block", {
-                "font-semibold": isActive,
-              })}`}
-            >
+            <p className={`${cn("hidden lg:block font-semibold")}`}>
               {link.label}
             </p>
           </Link>
