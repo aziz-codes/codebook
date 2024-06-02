@@ -1,18 +1,20 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis } from "lucide-react";
 import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { FeedImage } from "@/constants/images";
+import { Ellipsis } from "lucide-react";
 
 const SinglePost = () => {
   const post = {
     userName: "John Doe",
     createdAt: "2 days ago",
-    content: "This is an example post content.",
-    image: "https://via.placeholder.com/600x400",
+    content:
+      "I have fallen in love with this design, how people are so damn creative these days.",
+    image: FeedImage.src,
   };
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-4 border">
       {/* User Info and Action Button */}
-      <div className="flex justify-between items-center mb-4 px-4  py-2">
+      <div className="flex justify-between items-center px-4  py-2">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarFallback>AZ</AvatarFallback>
@@ -32,7 +34,9 @@ const SinglePost = () => {
 
       {/* Post Content */}
       <div className="mb-4 px-4">
-        <p className="text-gray-700 dark:text-gray-300">{post.content}</p>
+        <p className="text-gray-700 dark:text-gray-300 font-[500]">
+          {post.content}
+        </p>
       </div>
 
       {/* Post Image */}
