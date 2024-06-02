@@ -67,7 +67,7 @@ const MetroProfile = () => {
               <div className="flex flex-col space-y-1 " title="Following">
                 <Label className="font-bold">25</Label>
                 <p className="text-gray-400  text-sm hidden md:block">
-                  Follwing
+                  Following
                 </p>
                 <UserCheck className="block md:hidden" />
               </div>

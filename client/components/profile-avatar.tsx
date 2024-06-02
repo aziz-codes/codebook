@@ -7,7 +7,7 @@ interface IAvatarProps {
 const ProfileAvatar = ({ image, username }: IAvatarProps) => {
   return (
     <Avatar className=" h-28 w-28 rounded-md">
-      <AvatarFallback>{username.slice(0, 2)}</AvatarFallback>
+      <AvatarFallback>{username.slice(0, 2).toLowerCase()}</AvatarFallback>
       <AvatarImage src={image} />
     </Avatar>
   );
