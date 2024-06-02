@@ -1,6 +1,6 @@
 import React from "react";
-import BountyCard from "@/components/bounty-card";
-
+// import BountyCard from "@/components/bounty-card";
+import BountyCard from "@/components/test/bounty";
 interface Resource {
   title: string;
   url: string;
@@ -43,9 +43,10 @@ const Bounties: React.FC = () => {
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 place-items-center md:place-items-start">
-      {bounties.map((bounty, index) => (
+      {/* {bounties.map((bounty, index) => (
         <BountyCard key={index} {...bounty} />
-      ))}
+      ))} */}
+      <BountyCard />
     </div>
   );
 };
