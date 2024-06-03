@@ -6,6 +6,7 @@ import { Bookmark, Ellipsis, Heart, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 const SinglePost = () => {
   const [liked, setLiked] = useState(false);
@@ -114,11 +115,17 @@ const SinglePost = () => {
         </div>
       </CardContent>
       <CardFooter className="p-0">
-        <div className="w-full">
+        <div className="w-full flex items-center border">
           <Input
             placeholder="add a comment"
-            className="!ring-0 rounded-none bg-transparent border-b"
+            className="!ring-0 rounded-none bg-transparent border-none"
           />
+          <Button
+            variant="secondary"
+            className="bg-transparen text-sky-500 hover:bg-transparent hover:font-semibold p-0 px-1"
+          >
+            Post
+          </Button>
         </div>
       </CardFooter>
     </Card>
