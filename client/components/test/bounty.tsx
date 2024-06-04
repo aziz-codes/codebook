@@ -1,5 +1,5 @@
 import React from "react";
-import { DollarSign, User, Calendar, Clock, Info } from "lucide-react";
+import { DollarSign, User, Calendar, Clock } from "lucide-react";
 
 const BountyCard: React.FC = () => {
   return (
