@@ -7,8 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-
+import { useTheme } from "next-themes";
 const SinglePost = () => {
+  const { theme } = useTheme();
   const [liked, setLiked] = useState(false);
   let [likes, setLikes] = useState(24);
   const [animationType, setAnimationType] = useState<
@@ -75,7 +76,7 @@ const SinglePost = () => {
           <div className="flex items-center space-x-2 text-sm relative">
             <Heart
               className="cursor-pointer w-7 h-7 transition-colors duration-100 ease-in-out"
-              stroke={liked ? "red" : "black"}
+              stroke={liked ? "red" : theme === "dark" ? "white" : "black"}
               fill={liked ? "red" : "none"}
               onClick={handleLike}
             />
