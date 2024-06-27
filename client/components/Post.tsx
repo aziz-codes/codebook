@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedImage } from "@/constants/images";
 import { Bookmark, Ellipsis, Heart, MessageCircle } from "lucide-react";
@@ -11,6 +11,12 @@ import { useTheme } from "next-themes";
 const SinglePost = () => {
   const { theme } = useTheme();
   const [liked, setLiked] = useState(false);
+  const [stroke, setStroke] = useState("white");
+  useEffect(() => {
+    if (theme === "dark") {
+      setStroke("white");
+    } else setStroke("black");
+  }, [theme]);
   let [likes, setLikes] = useState(24);
   const [animationType, setAnimationType] = useState<
     "increment" | "decrement" | null
@@ -57,9 +63,7 @@ const SinglePost = () => {
       <CardContent className="p-0">
         {/* Post Content */}
         <div className="mb-4 px-4">
-          <p className="text-gray-700 dark:text-gray-300 font-[500]">
-            {post.content}
-          </p>
+          <p className="text-gray-700 dark:text-gray-300 ">{post.content}</p>
         </div>
 
         {/* Post Image */}
@@ -76,11 +80,11 @@ const SinglePost = () => {
           <div className="flex items-center space-x-2 text-sm relative">
             <Heart
               className="cursor-pointer w-7 h-7 transition-colors duration-100 ease-in-out"
-              stroke={liked ? "red" : theme === "dark" ? "white" : "black"}
+              stroke={liked ? "red" : stroke}
               fill={liked ? "red" : "none"}
               onClick={handleLike}
             />
-            <span>{likes} likes</span>
+            <span className="font-semibold">{likes} likes</span>
             <AnimatePresence>
               {animationType && (
                 <motion.div
@@ -108,7 +112,7 @@ const SinglePost = () => {
           </div>
           <div className="flex items-center space-x-2 cursor-pointer text-sm">
             <MessageCircle className="cursor-pointer w-7 h-7" />
-            <span>34 comments</span>
+            <span className="font-semibold">34 comments</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
             <Bookmark className="cursor-pointer w-7 h-7" />

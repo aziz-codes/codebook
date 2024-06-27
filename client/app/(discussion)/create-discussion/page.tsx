@@ -22,7 +22,7 @@ const CreateDiscussion = () => {
         />
         <div className="flex items-center gap-2">
           <Info className="w-3 text-gray-400" />
-          <p className="text-muted text-xs">
+          <p className="text-gray-400 text-xs">
             make your title short and meaningfull
           </p>
         </div>
@@ -31,19 +31,19 @@ const CreateDiscussion = () => {
         <TextToChip />
         <div className="flex items-center gap-2">
           <Info className="w-3 text-gray-400" />
-          <p className="text-muted text-xs">type and hit space or enter</p>
+          <p className="text-gray-400 text-xs">type and hit space or enter</p>
         </div>
       </div>
       {/* textarea */}
 
       <div className="grid w-full mt-3">
         <Textarea
-          placeholder="Describe your problem"
+          placeholder="Add a decription"
           id="message-2"
           className="!ring-0 !outline-none "
           rows={6}
         />
-        <p className="text-xs text-muted">Describe your issue properly</p>
+        <p className="text-xs text-gray-400">Add a detailed description</p>
       </div>
 
       <ImageHanlder />

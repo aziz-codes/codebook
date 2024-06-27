@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { auth } from "@/auth";
-import { Inter } from "next/font/google";
+
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Provider from "@/providers/SessionProvider";
-const inter = Inter({ subsets: ["latin"], weight: ["300"] });
-
+import { cn } from "@/lib/utils";
+import { Inter as FontSans } from "next/font/google";
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 export const metadata: Metadata = {
   title: "CodeBook",
   description: "Developers Only Platform",
@@ -22,7 +26,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
         <Provider>
           <ThemeProvider
             attribute="class"
