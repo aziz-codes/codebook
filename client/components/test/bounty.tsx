@@ -3,7 +3,7 @@ import { DollarSign, User, Calendar, Clock } from "lucide-react";
 
 const BountyCard: React.FC = () => {
   return (
-    <div className="max-w-md mx-auto bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden p-6">
+    <div className="max-w-md   bg-gray-900 text-white rounded-lg shadow-lg overflow-hidden p-6">
       <div className="flex justify-between items-center mb-4">
         <span className="text-sm text-gray-400">Featured</span>
         <span className="text-sm bg-blue-600 text-white py-1 px-3 rounded-full">

@@ -49,7 +49,7 @@ export default async function RootLayout({
                 <nav className="sticky h-14 left-0 right-0 top-0 z-50">
                   <Navbar />
                 </nav>
-                <main className="mt-16 flex flex-1 dark:bg-[#121212]">
+                <main className="mt-4 flex flex-1 dark:bg-[#121212]">
                   <div className="flex-1 w-full px-4 py-4">{children}</div>
                   {/* <div className="w-44 border border-red-500 hidden md:flex"></div> */}
                 </main>
