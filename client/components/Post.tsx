@@ -41,7 +41,7 @@ const SinglePost = () => {
     });
   };
   return (
-    <Card className=" rounded-md shadow-md mb-4 border">
+    <Card className="rounded-md shadow-md mb-4 border ">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-2">
         <div className="flex items-center gap-3">

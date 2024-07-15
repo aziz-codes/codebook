@@ -6,7 +6,15 @@ const HomePage = async () => {
 
   return (
     <div className="w-full max-w-lg">
-      {!session?.user ? "No session" : <Post />}
+      {!session?.user ? (
+        "No session"
+      ) : (
+        <>
+          <Post />
+          <Post />
+          <Post />
+        </>
+      )}
     </div>
   );
 };

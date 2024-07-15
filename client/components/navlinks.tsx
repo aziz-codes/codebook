@@ -38,7 +38,7 @@ const navlinks = () => {
     },
   ];
   return (
-    <div className="mt-5">
+    <div className="mt-5 flex flex-col gap-4">
       {links.map((link) => {
         const LinkIcon = link.icon;
         const isActive = pathName === link.path;
@@ -47,21 +47,13 @@ const navlinks = () => {
           <Link
             key={link.label}
             href={link.path}
-            className={buttonVariants({
-              variant: isActive ? "secondary" : "ghost",
-              className: cn(
-                "navLink dark:hover:bg-semiDark hover:bg-gray-200",
-                {
-                  "hidden md:flex": null,
-                }
-              ),
-              size: "sm",
-            })}
+            className={`
+              flex w-full py-1.5 px-3 rounded-md gap-4    hover:bg-[#232323] ${
+                isActive ? "bg-[#232323]" : ""
+              }`}
           >
             <LinkIcon className="w-5" />
-            <p className={`${cn("hidden lg:block font-semibold")}`}>
-              {link.label}
-            </p>
+            <p className={`${cn("hidden lg:block  ")}`}>{link.label}</p>
           </Link>
         );
       })}
