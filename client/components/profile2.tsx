@@ -24,24 +24,26 @@ import { Separator } from "./ui/separator";
 
 const Profile2 = () => {
   return (
-    <Card className="w-full max-w-xs bg-[--background] dark:bg-semiDark border-0">
-      <CardHeader className="p-0 px-3 py-3">
-        <div className="flex space-x-4 items-center   justify-center">
-          <Avatar className=" w-24 h-24">
+    <Card className="w-full max-w-md border-0 bg-[--background] dark:bg-semiDark ">
+      <CardHeader className="p-0 px-3 ">
+        <div className="flex space-x-4 items-center  ">
+          <Avatar className="w-36 h-36">
             <AvatarImage src="https://github.com/aziz-codes.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <h4 className="font-semibold">John Doe</h4>
-            <p className="text-gray-400 text-xs">johndoe</p>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col">
+              <h4 className="font-semibold">John Doe</h4>
+              <p className="text-gray-400 text-xs">johndoe</p>
+            </div>
+            {/* <p>
+              Frotend web developer, who talk about javascript, react and node
+              js
+            </p> */}
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 p-0 px-3 py-3 items-center  ">
-        {/* <div className="line-clamp-6 mb-3 bg-red-500">
-          Frontend Web Developer, can read something really nakaf
-          knfwennkfnkknewk
-        </div> */}
+      <CardContent className="flex flex-col gap-2 p-0 px-3 py-3  ">
         <div className="flex items-center space-x-4 py-2">
           <div className="flex-col">
             <label>Followers</label>

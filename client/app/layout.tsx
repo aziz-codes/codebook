@@ -28,7 +28,7 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased p-6",
           fontSans.variable
         )}
       >
@@ -48,7 +48,7 @@ export default async function RootLayout({
 
               <div className="flex flex-1">
                 {session && (
-                  <aside className="sticky top-16 h-[calc(100vh-theme(spacing.16))] md:w-16 lg:w-56 overflow-y-auto border-r hidden md:flex">
+                  <aside className="sticky top-16 h-[calc(100vh-theme(spacing.16))] md:w-16 lg:w-56 overflow-y-auto hidden md:flex border">
                     <Sidebar />
                   </aside>
                 )}

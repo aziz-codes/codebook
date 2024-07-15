@@ -16,7 +16,7 @@ import ThemeToggle from "./theme-toggle";
 
 const Navbar = () => {
   return (
-    <div className="relative h-full bg-[--background] dark:bg-[#121212] border-b  flex items-center px-4 justify-between ">
+    <div className="relative h-full bg-[--background] dark:bg-[#121212]   flex items-center px-4 justify-between ">
       <div className="brand font-semibold">Test</div>
       {/* <div className="w-[50%]"></div> */}
       <div className="actionIcons flex items-center space-x-5">
