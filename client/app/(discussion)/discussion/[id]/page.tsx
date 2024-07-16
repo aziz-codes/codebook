@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/menubar";
 import { Textarea } from "@/components/ui/textarea";
 import UserDateProfile from "@/components/layouts/user-date-profile";
+import MainWrapper from "@/layouts/main-wrapper";
 
 const Discussion = () => {
   const menuOptions = [
@@ -44,9 +45,8 @@ const Discussion = () => {
     { label: "Delete", icon: Trash },
   ];
 
-  const comments = [1, 2];
   return (
-    <div className="flex flex-col gap-4">
+    <MainWrapper classes="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <UserDateProfile
           date="5 Jun"
@@ -55,8 +55,8 @@ const Discussion = () => {
         />
         <Dialog>
           <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
-              <MessageCircle className="w-4 h-4" /> Add a comment
+            <Button size="sm" variant="outline" className="hover:bg-bgCard">
+              <MessageCircle className="w-4 h-4" /> &nbsp; Add a comment
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] md:max-w-96 lg:max-w-[600px]">
@@ -105,7 +105,7 @@ const Discussion = () => {
       </div>
 
       {/* second comment */}
-      {comments.map((_, index) => (
+      {Array.from({ length: 2 }).map((_, index) => (
         <div className="p-4 rounded-lg border" key={index}>
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-1">
@@ -170,7 +170,7 @@ const Discussion = () => {
           </div>
         </div>
       ))}
-    </div>
+    </MainWrapper>
   );
 };
 

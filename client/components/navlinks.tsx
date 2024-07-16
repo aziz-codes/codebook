@@ -48,8 +48,8 @@ const navlinks = () => {
             key={link.label}
             href={link.path}
             className={`
-              flex w-full py-1.5 px-3 rounded-md gap-4    hover:bg-[#232323] ${
-                isActive ? "bg-[#232323]" : ""
+              flex w-full py-1.5 px-3 rounded-md gap-4    hover:bg-bgHover ${
+                isActive ? "bg-bgHover" : ""
               }`}
           >
             <LinkIcon className="w-5" />

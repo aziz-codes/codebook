@@ -15,7 +15,7 @@ const DiscussionCard = () => {
   };
   return (
     <div
-      className="w-full max-w-sm border rounded-md shadow-md p-4 select-none flex flex-col gap-3 cursor-pointer hover:scale-105 transition-transform ease-linear duration-75"
+      className="w-full max-w-sm border bg-bgCard rounded-md shadow-md p-4 select-none flex flex-col gap-3 cursor-pointer hover:scale-105 transition-transform ease-linear duration-75"
       onClick={handleNavigate}
     >
       <div className="flex justify-between items-center">
@@ -26,7 +26,7 @@ const DiscussionCard = () => {
           </Avatar>
           <Label>azizcodes</Label>
         </div>
-        <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
+        <button className=" text-gray-300 hover:text-gray-700 ">
           <Ellipsis />
         </button>
       </div>

@@ -17,7 +17,7 @@ const UserAvatar = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className=" cursor-pointer">
+        <Avatar className=" cursor-pointer ring-1 ring-bgCard hover:ring-slate-700">
           <AvatarFallback>
             {user?.user.name?.charAt(0)}
             {user?.user.name?.charAt(1)}
@@ -43,18 +43,21 @@ const UserAvatar = () => {
 
         <DropdownMenuRadioItem
           value="right"
-          className="cursor-pointer px-2"
+          className="  cursor-pointer px-2 hover:!bg-bgCard rounded-md "
           onClick={() => router.push("/user/21")}
         >
           My Profile
         </DropdownMenuRadioItem>
-        <DropdownMenuRadioItem value="right" className="cursor-pointer px-2">
+        <DropdownMenuRadioItem
+          value="right"
+          className="cursor-pointer px-2 hover:!bg-bgCard rounded-md "
+        >
           Account Settings
         </DropdownMenuRadioItem>
 
         <DropdownMenuRadioItem
           value="right"
-          className="cursor-pointer px-2"
+          className="cursor-pointer px-2 hover:!bg-bgCard rounded-md "
           onClick={() =>
             signOut({
               callbackUrl: "http://localhost:3000/login",

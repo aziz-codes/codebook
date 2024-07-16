@@ -40,16 +40,20 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <div className="flex min-h-screen flex-row gap-4 px-4 py-2">
-              <div className="relative flex  md:w-16 lg:w-64">
-                <aside className="fixed top-2 h-[98vh] rounded-md md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-[#191919]">
-                  <Sidebar />
-                </aside>
-              </div>
+              {session && (
+                <div className="relative flex  md:w-16 lg:w-64">
+                  <aside className="fixed top-2 h-[98vh] rounded-md md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
+                    <Sidebar />
+                  </aside>
+                </div>
+              )}
               <div className="w-full  min-h-screen flex flex-col">
-                <nav className="sticky h-14 left-0 right-0 top-0 z-50">
-                  <Navbar />
-                </nav>
-                <main className="mt-4 flex flex-1 dark:bg-[#121212]">
+                {session && (
+                  <nav className="sticky h-14 left-0 right-0 top-0 z-50">
+                    <Navbar />
+                  </nav>
+                )}
+                <main className="mt-4 flex flex-1  bg-[#121212]">
                   <div className="flex-1 w-full px-4 py-4">{children}</div>
                   {/* <div className="w-44 border border-red-500 hidden md:flex"></div> */}
                 </main>

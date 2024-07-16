@@ -37,7 +37,7 @@ const BountyCard: React.FC<BountyCardProps> = ({
   status,
 }) => {
   return (
-    <Card className="max-w-sm ">
+    <Card className="max-w-sm">
       <CardHeader>
         <CardTitle className="">{title}</CardTitle>
         <CardDescription className="line-clamp-3">

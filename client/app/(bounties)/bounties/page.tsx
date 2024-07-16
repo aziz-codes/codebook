@@ -45,10 +45,12 @@ const Bounties: React.FC = () => {
 
   return (
     <MainWrapper classes={childRoutesClass}>
-      <div className="grid grid-cols-1 md:grid-cols-2 place-items-center md:place-items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 place-items-center md:place-items-start gap-3">
         {bounties.map((bounty, index) => (
           <BountyCard key={index} {...bounty} />
         ))}
+        <BountyCard />
+        <BountyCard />
         <BountyCard />
       </div>
     </MainWrapper>

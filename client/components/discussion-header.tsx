@@ -25,12 +25,12 @@ const DiscussionHeader = () => {
             href="/create-discussion"
             className={buttonVariants({
               variant: "ghost",
-              className: "px-2 border",
+              className: "px-2 border hover:!bg-bgHover",
               size: "sm",
             })}
           >
             <Plus />
-            Create
+            Create Discussion
           </Link>
         </div>
       </div>

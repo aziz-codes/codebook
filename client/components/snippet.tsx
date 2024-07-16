@@ -88,7 +88,7 @@ const Snippet = () => {
           <div className="flex w-full items-center border  rounded-md px-2">
             <Input
               placeholder="add a comment"
-              className="border-none !outline-none border-0 px-1 w-full  !ring-0 h-full  focus:ring-0 focus:ring-offset-0 focus:bg-transparent"
+              className="border-none !outline-none border-0 px-1 w-full  !ring-0 h-full  focus:ring-0 focus:ring-offset-0 bg-transparent"
             />
             <Smile className="cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400" />
           </div>
