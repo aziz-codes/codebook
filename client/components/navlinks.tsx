@@ -2,12 +2,19 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { HomeIcon, Users, TrendingUp, CodeXml, BadgeCent } from "lucide-react";
+import {
+  HomeIcon,
+  Users,
+  TrendingUp,
+  CodeXml,
+  BadgeCent,
+  Mail,
+} from "lucide-react";
 
 import { Poppins } from "next/font/google";
-import { buttonVariants } from "./ui/button";
+
 import { cn } from "@/lib/utils";
-const poppins = Poppins({ subsets: ["latin"], weight: "500" });
+
 const navlinks = () => {
   const pathName = usePathname();
   const links = [
@@ -26,6 +33,12 @@ const navlinks = () => {
       icon: TrendingUp,
       path: "/discussions",
     },
+    {
+      label: "Messages",
+      icon: Mail,
+      path: "/discussions",
+    },
+
     {
       label: "Bounties",
       icon: BadgeCent,

@@ -1,6 +1,6 @@
-import Devs from "@/components/devs";
+import MainWrapper from "@/layouts/main-wrapper";
 const page = () => {
-  return <Devs />;
+  return <MainWrapper classes="flex flex-col">dev cards</MainWrapper>;
 };
 
 export default page;

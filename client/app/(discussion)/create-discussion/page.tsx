@@ -13,7 +13,7 @@ const CreateDiscussion = () => {
         <h2 className="font-medium text-2xl">Start a new discussion</h2>
         <p className="text-sm   max-w-md">
           Share your thoughts and ideas with the community. Engage in meaningful
-          conversations and collaborate with peoples.
+          conversations and collaborate with programmers.
         </p>
       </div>
       <div className="flex flex-col">

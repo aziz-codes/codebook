@@ -31,7 +31,7 @@ const SinglePost = () => {
     });
   };
   return (
-    <Card className="rounded-md shadow-md mb-4 border ">
+    <Card className="rounded-md !border-none mb-4">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-2">
         <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ const SinglePost = () => {
         </div>
       </CardContent>
       <CardFooter className="p-0">
-        <div className="w-full flex items-center border">
+        <div className="w-full flex items-center border rounded-bl-md rounded-br-md border-l-0 border-r-0">
           <Input
             placeholder="Add a comment"
             className="!ring-0 rounded-none bg-transparent border-none"

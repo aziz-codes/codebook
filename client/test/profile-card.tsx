@@ -35,11 +35,12 @@ const ProfileCard = () => {
           </AvatarFallback>
           <AvatarImage src={session?.user.image as string} />
         </Avatar>
-        <div className="py-3">
+        <div className="py-3 text-center">
           <Label className="text-center text-lg capitalize">
             {session?.user.name}
           </Label>
           <p className="text-sm">{session?.user.username}</p>
+          <Label className="font-[400]">Frontend Web Developer</Label>
         </div>
       </div>
       <div className="col-span-12  md:col-span-7  overflow-hidden  p-4 flex flex-col gap-5 items-center md:items-start">
