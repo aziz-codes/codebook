@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const connectDB = async () => {
-  const url = `mongodb+srv://azizcodes:${process.env.MONGODB_PASSWORD}@cluster0.ch5ydcm.mongodb.net/codebook`;
+  const url = process.env.MONGO_URI as string;
   try {
     mongoose.connect(url);
     mongoose.connection.on("connected", () => {
