@@ -1,15 +1,16 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
  
 import SearchInput from '@/components/custom/search-input'
 import DiscussionCard from '@/components/disucssion/discussion-card'
 import Lanuages from '@/components/disucssion/languages'
 
 const Discussion = () => {
+  const [search,setSearch] = useState("");
   return (
     <>
     <div className='flex items-center gap-3 pb-3'>
-       <SearchInput value='' onChange={()=>{}}/>
+       <SearchInput value={search} onChange={(e)=>{setSearch(e.target.value)}}/>
     </div>
     <div className='grid grid-cols-1 md:grid-cols-12 gap-4'>
     
