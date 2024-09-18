@@ -7,7 +7,7 @@ import { CircleCheck, MessageCircle } from "lucide-react";
 import Chip from "../custom/chip";
 const DiscussionCard = () => {
   return (
-    <div className="flex flex-col gap-3 px-2 pt-2 border-b  cursor-pointer shadow-md">
+    <div className="flex flex-col gap-3 px-2 pt-2 border-b  cursor-pointer shadow-2xl border rounded-md">
       <div className="w-full flex flex-col gap-2">
         {/* first row */}
         <div className="flex items-start gap-2">
