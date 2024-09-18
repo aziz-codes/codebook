@@ -1,36 +1,28 @@
-import DiscussionCard from "@/components/discussion-card";
-import DiscussionHeader from "@/components/discussion-header";
-import MainWrapper from "@/layouts/main-wrapper";
-import { childRoutesClass } from "@/utilities";
+ 
+import DiscussionCard from '@/components/disucssion/discussion-card'
+import Lanuages from '@/components/disucssion/languages'
+import React from 'react'
 
-const Discussions = () => {
+const Discussion = () => {
   return (
-    <MainWrapper classes={childRoutesClass}>
-      <div className="flex  flex-col xl:items-start items-center gap-3">
-        <DiscussionHeader />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
-        </div>
+    <div className='grid grid-cols-1 md:grid-cols-12 gap-4'>
+    
+      <div className='hidden md:flex md:col-span-3 border flex-col gap-3'>
+        <h4>Categories</h4>
+        <Lanuages />
       </div>
-    </MainWrapper>
-  );
-};
 
-export default Discussions;
+    
+      <div className='col-span-12 md:col-span-6 border flex flex-col gap-3'>
+       <DiscussionCard />
+      </div>
+
+     
+      <div className='hidden md:flex md:col-span-3 border flex-col gap-3'>
+        Top Contributors
+      </div>
+    </div>
+  )
+}
+
+export default Discussion
