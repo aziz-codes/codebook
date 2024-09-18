@@ -1,10 +1,16 @@
+"use client"
+import React from 'react'
  
+import SearchInput from '@/components/custom/search-input'
 import DiscussionCard from '@/components/disucssion/discussion-card'
 import Lanuages from '@/components/disucssion/languages'
-import React from 'react'
 
 const Discussion = () => {
   return (
+    <>
+    <div className='flex items-center gap-3 pb-3'>
+       <SearchInput value='' onChange={()=>{}}/>
+    </div>
     <div className='grid grid-cols-1 md:grid-cols-12 gap-4'>
     
       <div className='hidden md:flex md:col-span-3 border flex-col gap-3'>
@@ -13,7 +19,9 @@ const Discussion = () => {
       </div>
 
     
-      <div className='col-span-12 md:col-span-6 border flex flex-col gap-3'>
+      <div className='col-span-12 md:col-span-6  flex flex-col gap-3'>
+       <DiscussionCard />
+       <DiscussionCard />
        <DiscussionCard />
       </div>
 
@@ -22,6 +30,7 @@ const Discussion = () => {
         Top Contributors
       </div>
     </div>
+    </>
   )
 }
 
