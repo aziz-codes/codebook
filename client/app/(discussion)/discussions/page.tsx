@@ -5,6 +5,7 @@ import SearchInput from "@/components/custom/search-input";
 import DiscussionCard from "@/components/disucssion/discussion-card";
 import Lanuages from "@/components/disucssion/languages";
 import { discussionFilter } from "@/constants/filter-list";
+import { discussions } from "@/constants/discussion/discussion-items";
 import {
   Select,
   SelectContent,
@@ -73,9 +74,11 @@ const Discussion = () => {
 
         <div className="col-span-12 md:col-span-6  flex flex-col gap-3">
           <h4 className="font-semibold text-sm">Discussions</h4>
-          <DiscussionCard />
-          <DiscussionCard />
-          <DiscussionCard />
+          {discussions.map((item,index)=>(
+
+          <DiscussionCard key={index} item={item}/>
+          ))}
+          
         </div>
 
         <div className="hidden md:flex md:col-span-3 flex-col gap-3">
