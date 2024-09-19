@@ -6,6 +6,7 @@ import DiscussionCard from "@/components/disucssion/discussion-card";
 import Lanuages from "@/components/disucssion/languages";
 import { discussionFilter } from "@/constants/filter-list";
 import { discussions } from "@/constants/discussion/discussion-items";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -24,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { CircleCheck } from "lucide-react";
 const Discussion = () => {
   const [search, setSearch] = useState("");
+  const router = useRouter();
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 pb-6">
@@ -56,10 +58,10 @@ const Discussion = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-
           <Button
             variant="outline"
-            className="w-full bg-bgCard hover:bg-bgHover border-none"
+            className="w-full bg-bgCard hover:bg-bgHover border-none focus:outline-none !ring-0"
+            onClick={()=>router.push('/create-discussion')}
           >
             Create
           </Button>
