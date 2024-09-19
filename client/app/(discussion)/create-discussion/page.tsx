@@ -10,7 +10,18 @@ const CreateDiscussion = () => {
   return (
     <MainWrapper classes="flex flex-col gap-4 bg-bgCard p-4 rounded-md">
       <div className="flex flex-col space-y-4">
+        <div className="flex items-center justify-between">
         <h2 className="font-medium text-2xl">Start a new discussion</h2>
+        <div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="!ring-0 !outline-none !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
+        >
+          Start Discussion
+        </Button>
+      </div>
+        </div>
         <p className="text-sm   max-w-md">
           Share your thoughts and ideas with the community. Engage in meaningful
           conversations and collaborate with programmers.
@@ -49,15 +60,7 @@ const CreateDiscussion = () => {
       </div>
 
       <ImageHanlder />
-      <div>
-        <Button
-          size="sm"
-          variant="outline"
-          className="hover:!bg-bgHover hover:text-white  "
-        >
-          Create Discussion
-        </Button>
-      </div>
+     
     </MainWrapper>
   );
 };

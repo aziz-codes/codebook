@@ -58,13 +58,15 @@ const Discussion = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
+          
           <Button
-            variant="outline"
-            className="w-full bg-bgCard hover:bg-bgHover border-none focus:outline-none !ring-0"
-            onClick={()=>router.push('/create-discussion')}
-          >
-            Create
-          </Button>
+          size="sm"
+          variant="outline"
+          className="!ring-0 !outline-none !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
+          onClick={()=>router.push('/create-discussion')}
+        >
+          Start Discussion
+        </Button>
         </div>
       </div>
 
