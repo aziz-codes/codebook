@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedImage } from "@/constants/images";
-import { Bookmark, Ellipsis, Heart, MessageCircle } from "lucide-react";
+import { Ellipsis}  from "lucide-react";
  
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Input } from "./ui/input";
@@ -36,7 +36,7 @@ const SinglePost = () => {
   return (
     <Card className="rounded-md !border-none mb-4">
       {/* User Info and Action Button */}
-      <div className="flex justify-between items-center px-4  py-2">
+      <div className="flex justify-between items-center px-4  py-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
             <AvatarFallback>AZ</AvatarFallback>
@@ -70,19 +70,14 @@ const SinglePost = () => {
           </div>
         )}
         <div className="px-4 py-4 flex items-center justify-between select-none  ">
-          <div className="flex items-center space-x-2 text-sm relative">
-            {/* <Heart
-              className="cursor-pointer w-7 h-7 transition-colors duration-300 ease-in-out"
-              stroke={liked ? "red" : "white"}
-              fill={liked ? "red" : "none"}
-              onClick={handleLike}
-            /> */}
+          <div className="flex items-center space-x-1 text-sm relative">
+            
             <HeartSvg stroke={liked ? "red": "white"} fill={liked ? "red": "none"} onClick={handleLike} />
            
 
             <span className="font-semibold">{likes} Likes</span>
           </div>
-          <div className="flex items-center space-x-2 cursor-pointer text-sm">
+          <div className="flex items-center space-x-1 cursor-pointer text-sm">
             <CommentSvg  />
             <span className="font-semibold">34 Comments</span>
           </div>
