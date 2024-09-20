@@ -3,10 +3,13 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedImage } from "@/constants/images";
 import { Bookmark, Ellipsis, Heart, MessageCircle } from "lucide-react";
-
+ 
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import HeartSvg from "@/helpers/heart-svg";
+import CommentSvg from "@/helpers/comment-svg";
+import BookmarkSvg from "@/helpers/bookmark-svg";
 
 const SinglePost = () => {
   const [liked, setLiked] = useState(false);
@@ -68,20 +71,23 @@ const SinglePost = () => {
         )}
         <div className="px-4 py-4 flex items-center justify-between select-none  ">
           <div className="flex items-center space-x-2 text-sm relative">
-            <Heart
+            {/* <Heart
               className="cursor-pointer w-7 h-7 transition-colors duration-300 ease-in-out"
               stroke={liked ? "red" : "white"}
               fill={liked ? "red" : "none"}
               onClick={handleLike}
-            />
+            /> */}
+            <HeartSvg stroke={liked ? "red": "white"} fill={liked ? "red": "none"} onClick={handleLike} />
+           
+
             <span className="font-semibold">{likes} Likes</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer text-sm">
-            <MessageCircle className="cursor-pointer w-7 h-7" />
+            <CommentSvg  />
             <span className="font-semibold">34 Comments</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
-            <Bookmark className="cursor-pointer w-7 h-7" />
+            <BookmarkSvg />
           </div>
         </div>
       </CardContent>
