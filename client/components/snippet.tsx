@@ -15,9 +15,15 @@ import { Button } from "./ui/button";
 import SingleAvatar from "./single-avatar";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
+import TextBox from "./text-box";
 const Snippet = () => {
   const language = "jsx";
-  const code = `const name = "Aziz";`;
+  const code = `const adjustHeight = () => {
+      if (inputRef.current) {
+        inputRef.current.style.height = "34px";  
+        inputRef.current.style.height = {inputRef.current.scrollHeight}px  
+      }
+    };`;
   return (
     <Card className="w-full overflow-hidden pt-2 mb-8   shadow-lg border dark:border-[#181a20] border-gray-300">
       <CardHeader className="p-0 px-2">
@@ -75,11 +81,9 @@ const Snippet = () => {
         <div className="flex justify-start items-center gap-1 px-2 mt-6  w-full">
           <SingleAvatar />
           <div className="flex w-full items-center border  rounded-md px-2">
-            <Input
-              placeholder="add a comment"
-              className="border-none !outline-none border-0 px-1 w-full  !ring-0 h-full  focus:ring-0 focus:ring-offset-0 bg-transparent"
-            />
-            <Smile className="cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400" />
+           
+            <TextBox />
+           
           </div>
         </div>
       </CardFooter>
