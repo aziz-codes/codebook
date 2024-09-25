@@ -17,19 +17,7 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 const Snippet = () => {
   const language = "jsx";
-  const code = ` <Card className="w-full py-2">
-      <CardHeader className="p-0 px-2">
-        <div className="flex justify-between ">
-          <User hasBorder={false} hoverEffect={false} />
-          <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
-            <Ellipsis />
-          </button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <CodeHighlighter language={language} code={code} />
-      </CardContent>
-    </Card>`;
+  const code = `const name = "Aziz";`;
   return (
     <Card className="w-full overflow-hidden pt-2 mb-8   shadow-lg border dark:border-[#181a20] border-gray-300">
       <CardHeader className="p-0 px-2">
@@ -57,7 +45,8 @@ const Snippet = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="my-0 p-0 mt-2 mb-1 px-0 bg-red-500">
+      <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative">
+       
         <CodeHighlighter language={language} code={code} />
       </CardContent>
       <CardFooter className="mt-2 px-0 py-4 flex flex-col items-start">
