@@ -27,7 +27,7 @@ const CodeHighlighter = ({ language, code }: CodeProps) => {
         msOverflowY: "auto",
         borderRadius: "0px",
         width: "100%",
-        overflow: "hidden",
+        overflowX: "auto",
         overflowY: "auto",
       }}
       language={language}
@@ -35,7 +35,7 @@ const CodeHighlighter = ({ language, code }: CodeProps) => {
       lineNumberStyle={dracula}
       wrapLongLines={true}
       showLineNumbers={true}
-      wrapLines={false}
+      wrapLines={true}
     >
       {code}
     </SyntaxHighlighter>
@@ -44,3 +44,5 @@ const CodeHighlighter = ({ language, code }: CodeProps) => {
 };
 
 export default CodeHighlighter;
+
+// test commit
