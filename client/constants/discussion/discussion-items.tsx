@@ -7,7 +7,7 @@ interface Language {
 export const languages: Language[] = [
   {
     name: "JavaScript",
-    count: 14, // Example count for JavaScript
+    count: 14,  
   },
   {
     name: "Python",
