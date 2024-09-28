@@ -57,6 +57,8 @@ const config = {
         },
 
         semiDark: "#15171C",
+        neon: "#00FF66",
+        electric: "#007BFF"
       },
 
       keyframes: {
