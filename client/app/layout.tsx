@@ -39,10 +39,10 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex min-h-screen flex-row gap-4 px-4 py-2">
+            <div className="flex min-h-screen flex-row gap-4">
               {session && (
                 <div className="relative flex  md:w-16 lg:w-64">
-                  <aside className="fixed top-2 h-[98vh] rounded-md md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
+                  <aside className="fixed  h-[100vh] rounded-md md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
                     <Sidebar />
                   </aside>
                 </div>
@@ -54,7 +54,7 @@ export default async function RootLayout({
                   </nav>
                 )}
                 <main className="mt-4 flex flex-1  bg-[#121212]">
-                  <div className="flex-1 w-full px-4 py-4">{children}</div>
+                  <div className="flex-1 w-full  py-4">{children}</div>
                   {/* <div className="w-44 border border-red-500 hidden md:flex"></div> */}
                 </main>
               </div>
