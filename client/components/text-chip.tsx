@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "./ui/input";
 
-const TextToChip = () => {
+const TextToChip = ({placeholder="Add upto 5 tags"}) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [chips, setChips] = useState<string[]>([]);
 
@@ -31,21 +31,22 @@ const TextToChip = () => {
 
   return (
     <div className="mt-4">
-      <div className="flex items-center  gap-2 border border-gray-800 px-2 rounded-md">
-        {chips.map((chip, index) => (
-          <Badge key={index} className="mr-2">
-            {chip}
-          </Badge>
-        ))}
-        <Input
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyPress}
-          placeholder={chips.length > 0 ? "" : "Add upto 5 tags"}
-          className="flex-grow focus:ring-0 outline-none focus:ring-offset-0 !ring-0 border-none p-0 bg-transparent"
-        />
-      </div>
-    </div>
+  <div className="flex items-center gap-2 border border-gray-800 px-2 rounded-md focus-within:ring-1 focus-within:ring-neon ">
+    {chips.map((chip, index) => (
+      <Badge key={index} className="mr-2">
+        {chip}
+      </Badge>
+    ))}
+    <Input
+      value={inputValue}
+      onChange={handleInputChange}
+      onKeyDown={handleKeyPress}
+      placeholder={chips.length > 0 ? "" : placeholder}
+      className="flex-grow focus:ring-0 outline-none focus:ring-offset-0 !ring-0 border-none p-0 bg-transparent"
+    />
+  </div>
+</div>
+
   );
 };
 
