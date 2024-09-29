@@ -13,40 +13,45 @@ import {
 } from "../ui/select";
 import Editor from "@monaco-editor/react";
 import { languages } from "@/constants/discussion/discussion-items";
+import TextToChip from "../text-chip";
+import { Button } from "../ui/button"; // Assuming a Button component is available in your UI library
+import { Checkbox } from "../ui/checkbox"; // Assuming a Checkbox component
+
 const CreateSnippet = () => {
   const [search, setSearch] = useState("");
   const [code, setCode] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [termsAccepted, setTermsAccepted] = useState(false); // Checkbox state
+
   const filteredList = useMemo(() => {
-    return languages.filter((item) => item.name.toLowerCase().includes(search));
+    return languages.filter((item) =>
+      item.name.toLowerCase().includes(search)
+    );
   }, [search]);
 
   return (
-    <div className="flex flex-col gap-3 w-full mb-5">
-      <h4 className="text-center text-lg font-semibold">
-        Create a code snippet
-      </h4>
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+    <div className="flex flex-col gap-6 w-full mb-5">
+      <h4 className="text-center text-lg font-semibold">Create a Code Snippet</h4>
+
+      {/* Title and Language */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="flex flex-col space-y-1 col-span-8">
-          <label htmlFor="description" className="text-white text-sm">
-            Title
-          </label>
-          <Input placeholder="title" />
+          <label htmlFor="title" className="text-white text-sm">Title</label>
+          <Input placeholder="e.g. Understanding Hoisting in JavaScript" />
         </div>
         <div className="flex flex-col space-y-1 col-span-4">
-          <label htmlFor="description" className="text-white text-sm">
-            Language
-          </label>
+          <label htmlFor="language" className="text-white text-sm">Language</label>
           <Select onValueChange={(e) => setSelectedLanguage(e.toLowerCase())}>
             <SelectTrigger className="w-full py-4">
               <SelectValue placeholder="Select programming language" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
+                {/* Search for language */}
                 <div className="flex w-full items-center border-b gap-1 my-1">
                   <Search className="text-muted h-5 w-5" />
                   <Input
-                    placeholder="search"
+                    placeholder="Search language"
                     className="p-0 h-8 border-none outline-none focus-visible:ring-0"
                     onChange={(e) => setSearch(e.target.value)}
                     value={search}
@@ -66,18 +71,30 @@ const CreateSnippet = () => {
           </Select>
         </div>
       </div>
+
+      {/* Description */}
       <div className="flex flex-col space-y-1">
         <label htmlFor="description" className="text-white text-sm">
           Description
         </label>
-
-        <Textarea placeholder="explain, what your code does?" rows={4} />
+        <Textarea placeholder="Explain, what your code does?" rows={4} />
       </div>
 
+      {/* Tags and Resource */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="flex flex-col space-y-1 col-span-6">
+          <label htmlFor="tags" className="text-white text-sm">Tags</label>
+          <TextToChip placeholder="Type and hit enter or space, backspace to remove" />
+        </div>
+        <div className="flex flex-col space-y-1 col-span-6">
+          <label htmlFor="resource" className="text-white text-sm">Resource</label>
+          <Input placeholder="GitHub repo or Blog post URL (optional)" />
+        </div>
+      </div>
+
+      {/* Code Editor */}
       <div className="h-[60vh] flex flex-col">
-        <label htmlFor="description" className="text-white text-sm">
-          Add your code
-        </label>
+        <label htmlFor="code" className="text-white text-sm">Add your code</label>
         <Editor
           height="100%"
           language={selectedLanguage}
@@ -87,6 +104,34 @@ const CreateSnippet = () => {
           onChange={(value) => setCode(value || "")}
         />
       </div>
+
+      {/* Terms and Conditions Checkbox */}
+      <div className="items-top flex space-x-2">
+      <Checkbox id="terms1" onCheckedChange={(checked)=>setTermsAccepted(!!checked)}/>
+      <div className="grid gap-1 leading-none">
+        <label
+          htmlFor="terms1"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Accept terms and conditions
+        </label>
+        <p className="text-xs text-muted-foreground">
+          You agree to our Terms of Service and Privacy Policy.
+        </p>
+      </div>
+    </div>
+
+      {/* Create Snippet Button */}
+     
+      <Button
+          size="sm"
+          variant="outline"
+          className="!ring-0 !outline-none max-w-xs !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
+          disabled={!termsAccepted}
+        >
+          Start Discussion
+        </Button>
+ 
     </div>
   );
 };
