@@ -17,6 +17,7 @@ const Monaco = ({ code, language }: { code: string; language: string }) => {
     editor.onDidChangeModelContent(() => {
       adjustHeight();
     });
+  
   };
 
   return (
@@ -28,8 +29,12 @@ const Monaco = ({ code, language }: { code: string; language: string }) => {
       options={{
         minimap: { enabled: false }, // Disable the minimap if not needed
         scrollBeyondLastLine: false,
+        readOnly: true,
+      
       }}
       onMount={handleEditorDidMount}
+      
+      
     />
   );
 };
