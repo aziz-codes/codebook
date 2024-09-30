@@ -1,23 +1,17 @@
+"use client";
 import React from "react";
-import CodeHighlighter from "./syntax-highlighter";
 
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import UserDateProfile from "./layouts/user-date-profile";
-import {
-  Bookmark,
-  Ellipsis,
-  MessageSquare,
-  Smile,
-  ThumbsUp,
-} from "lucide-react";
+import { Bookmark, Ellipsis, MessageSquare, ThumbsUp } from "lucide-react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import SingleAvatar from "./single-avatar";
-import { Input } from "./ui/input";
+
 import { Badge } from "./ui/badge";
 import TextBox from "./text-box";
+import Monaco from "./editor/monaco";
 const Snippet = () => {
-  const language = "jsx";
+  const language = "javascript";
   const code = `const adjustHeight = () => {
       if (inputRef.current) {
         inputRef.current.style.height = "34px";  
@@ -52,8 +46,8 @@ const Snippet = () => {
         </div>
       </CardHeader>
       <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative">
-       
-        <CodeHighlighter language={language} code={code} />
+        {/* <CodeHighlighter language={language} code={code} /> */}
+        <Monaco code={code} language={language} />
       </CardContent>
       <CardFooter className="mt-2 px-0 py-4 flex flex-col items-start">
         <div className="flex items-center gap-3 px-2">
@@ -79,11 +73,8 @@ const Snippet = () => {
           </Button>
         </div>
         <div className="flex justify-start items-center gap-1 px-2 mt-6  w-full">
-          <SingleAvatar />
           <div className="flex w-full items-center border  rounded-md px-2">
-           
             <TextBox />
-           
           </div>
         </div>
       </CardFooter>

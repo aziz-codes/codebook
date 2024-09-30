@@ -1,4 +1,3 @@
-import React from "react";
 interface PorpsType {
   children: React.ReactNode;
   classes: string;
