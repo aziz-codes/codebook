@@ -3,7 +3,7 @@ import React from "react";
 
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import UserDateProfile from "./layouts/user-date-profile";
-import { Bookmark, Ellipsis, MessageSquare, ThumbsUp } from "lucide-react";
+import { Bookmark, Copy, Ellipsis, MessageSquare, ThumbsUp } from "lucide-react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 
@@ -45,8 +45,11 @@ const Snippet = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative">
-        {/* <CodeHighlighter language={language} code={code} /> */}
+      <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative border rounded-md border-codeHeader">
+        <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 cursor-pointer">
+          <p className="text-xs">jsx</p>
+          <div className="text-xs flex items-center gap-1"><Copy className="h-4 w-4" />copycode</div>
+        </div>
         <Monaco code={code} language={language} />
       </CardContent>
       <CardFooter className="mt-2 px-0 py-4 flex flex-col items-start">
