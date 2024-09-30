@@ -19,9 +19,9 @@ const TextBox = () => {
       adjustHeight();  
     }, [input]);
   return (
-    <div className="flex justify-between  px-2 items-center w-full ">
+    <div className="flex justify-between  px-1 items-center w-full ">
       <textarea
-        placeholder="Enter a comment"
+        placeholder="Add a comment"
         ref={inputRef}
         className="resize-none overflow-hidden w-full p-2 outline-none bg-transparent"
         value={input}
