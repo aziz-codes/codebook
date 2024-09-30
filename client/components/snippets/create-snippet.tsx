@@ -129,7 +129,7 @@ const CreateSnippet = () => {
           className="!ring-0 !outline-none max-w-xs !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
           disabled={!termsAccepted}
         >
-          Start Discussion
+          Create Snippet
         </Button>
  
     </div>
