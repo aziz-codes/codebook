@@ -17,7 +17,14 @@ const Snippet = () => {
         inputRef.current.style.height = "34px";  
         inputRef.current.style.height = {inputRef.current.scrollHeight}px  
       }
-    };`;
+    };
+    const adjustHeight = () => {
+      if (inputRef.current) {
+        inputRef.current.style.height = "34px";  
+        inputRef.current.style.height = {inputRef.current.scrollHeight}px  
+      }
+    };
+    `;
   return (
     <Card className="w-full overflow-hidden pt-2 mb-8   shadow-lg border dark:border-[#181a20] border-gray-300">
       <CardHeader className="p-0 px-2">
@@ -48,7 +55,7 @@ const Snippet = () => {
       <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative border rounded-md border-codeHeader">
         <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 cursor-pointer">
           <p className="text-xs">jsx</p>
-          <div className="text-xs flex items-center gap-1"><Copy className="h-4 w-4" />copycode</div>
+          <div className="text-xs flex items-center gap-1"><Copy className="h-4 w-4" />copy code</div>
         </div>
         <Monaco code={code} language={language} />
       </CardContent>
