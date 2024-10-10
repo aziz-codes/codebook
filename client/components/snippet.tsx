@@ -52,7 +52,7 @@ const Snippet = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="my-0 p-0 mt-2 mb-1 px-0 relative border rounded-md border-codeHeader">
+      <CardContent className="my-0 p-0 mt-2 mb-1 px-2 relative  rounded-md border-codeHeader">
         <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 cursor-pointer">
           <p className="text-xs">jsx</p>
           <div className="text-xs flex items-center gap-1"><Copy className="h-4 w-4" />copy code</div>
