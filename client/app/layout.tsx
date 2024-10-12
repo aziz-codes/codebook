@@ -53,8 +53,8 @@ export default async function RootLayout({
                     <Navbar />
                   </nav>
                 )}
-                <main className="mt-4 flex flex-1  bg-[#121212]">
-                  <div className="flex-1 w-full px-4 py-4">{children}</div>
+                <main className="flex flex-1  bg-[#121212]">
+                  <div className="flex-1 w-full px-4">{children}</div>
                   {/* <div className="w-44 border border-red-500 hidden md:flex"></div> */}
                 </main>
               </div>
