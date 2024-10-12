@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Search } from "lucide-react";
+import { topMargin } from "@/utilities";
 import {
   Select,
   SelectContent,
@@ -30,7 +31,7 @@ const CreateSnippet = () => {
   }, [search]);
 
   return (
-    <div className="flex flex-col gap-6 w-full mb-5">
+    <div className={`flex flex-col gap-6 w-full mb-5 mt-${topMargin}`}>
       <h4 className="text-center text-lg font-semibold">Create a Code Snippet</h4>
 
       {/* Title and Language */}
