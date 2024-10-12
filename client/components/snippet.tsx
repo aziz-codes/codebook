@@ -1,9 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import UserDateProfile from "./layouts/user-date-profile";
-import { Bookmark, Copy, Ellipsis, MessageSquare, ThumbsUp } from "lucide-react";
+import {
+  Bookmark,
+  Check,
+  Copy,
+  Ellipsis,
+  MessageSquare,
+  ThumbsUp,
+} from "lucide-react";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 
@@ -11,6 +18,7 @@ import { Badge } from "./ui/badge";
 import TextBox from "./text-box";
 import Monaco from "./editor/monaco";
 const Snippet = () => {
+  const [copied, setCopied] = useState(false);
   const language = "javascript";
   const code = `const adjustHeight = () => {
       if (inputRef.current) {
@@ -25,6 +33,20 @@ const Snippet = () => {
       }
     };
     `;
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(code)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
   return (
     <Card className="w-full overflow-hidden pt-2 mb-8   shadow-lg border dark:border-[#181a20] border-gray-300">
       <CardHeader className="p-0 px-2">
@@ -53,9 +75,19 @@ const Snippet = () => {
         </div>
       </CardHeader>
       <CardContent className="my-0 p-0 mt-2 mb-1 px-2 relative  rounded-md border-codeHeader">
-        <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 cursor-pointer">
+        <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 ">
           <p className="text-xs">jsx</p>
-          <div className="text-xs flex items-center gap-1"><Copy className="h-4 w-4" />copy code</div>
+          <div
+            className="text-xs flex items-center gap-1 cursor-pointer"
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+            {copied ? "copied!" : "copy code"}
+          </div>
         </div>
         <Monaco code={code} language={language} />
       </CardContent>
