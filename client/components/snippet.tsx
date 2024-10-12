@@ -68,9 +68,9 @@ const Snippet = () => {
             sapiente sunt dolore doloribus iure!
           </Label>
           <div className="flex flex-wrap gap-2 py-2">
-            <Badge className="dark:bg-gray-400">Javascript</Badge>
-            <Badge className="dark:bg-gray-400">React JS</Badge>
-            <Badge className="dark:bg-gray-400">Node JS</Badge>
+            <Badge className="dark:bg-codeHeader text-gray-200">Javascript</Badge>
+            <Badge className="dark:bg-codeHeader text-gray-200">React JS</Badge>
+            <Badge className="dark:bg-codeHeader text-gray-200">Node JS</Badge>
           </div>
         </div>
       </CardHeader>
