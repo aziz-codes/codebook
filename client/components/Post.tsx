@@ -5,11 +5,19 @@ import { FeedImage } from "@/constants/images";
 import { Ellipsis}  from "lucide-react";
  
 import { Card, CardContent, CardFooter } from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+ 
 import HeartSvg from "@/helpers/heart-svg";
 import CommentSvg from "@/helpers/comment-svg";
 import BookmarkSvg from "@/helpers/bookmark-svg";
+import TextBox from "./text-box";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 const SinglePost = () => {
   const [liked, setLiked] = useState(false);
@@ -33,6 +41,14 @@ const SinglePost = () => {
       return !prevLiked;
     });
   };
+  const options = [
+    "Report Post",
+    "Edit Post",
+    "Delete Post",
+    "Save Post",
+    "Share Post",
+  
+  ];
   return (
     <Card className="rounded-md !border-none mb-4">
       {/* User Info and Action Button */}
@@ -49,9 +65,25 @@ const SinglePost = () => {
             <p className="text-xs text-gray-500">{post.createdAt}</p>
           </div>
         </div>
-        <button className="text-gray-300    hover:text-gray-100">
-          <Ellipsis />
-        </button>
+        <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    
+      <Ellipsis className="cursor-pointer hover:text-gray-400"/>
+     
+  </DropdownMenuTrigger>
+  <DropdownMenuContent className="w-36">
+    {options.map((option) => (
+      <DropdownMenuRadioItem
+        key={option}
+        value={option}
+        className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
+      >
+        {option}
+      </DropdownMenuRadioItem>
+    ))}
+  </DropdownMenuContent>
+</DropdownMenu>
+       
       </div>
       <CardContent className="p-0">
         {/* Post Content */}
@@ -87,7 +119,7 @@ const SinglePost = () => {
         </div>
       </CardContent>
       <CardFooter className="p-0">
-        <div className="w-full flex items-center border rounded-bl-md rounded-br-md border-l-0 border-r-0">
+        {/* <div className="w-full flex items-center border rounded-bl-md rounded-br-md border-l-0 border-r-0">
           <Input
             placeholder="Add a comment"
             className="!ring-0 rounded-none bg-transparent border-none"
@@ -98,7 +130,10 @@ const SinglePost = () => {
           >
             Post
           </Button>
-        </div>
+        </div> */}
+       <div className="flex w-full items-center border  rounded-md px-2">
+            <TextBox />
+          </div>
       </CardFooter>
     </Card>
   );
