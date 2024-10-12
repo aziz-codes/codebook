@@ -54,8 +54,8 @@ export default async function RootLayout({
                   </nav>
                 )}
                 <main className="flex flex-1  bg-[#121212]">
-                  <div className="flex-1 w-full px-4">{children}</div>
-                  {/* <div className="w-44 border border-red-500 hidden md:flex"></div> */}
+                  <div className="w-full px-4">{children}</div>
+                  
                 </main>
               </div>
             </div>
