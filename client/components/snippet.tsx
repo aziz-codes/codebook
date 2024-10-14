@@ -48,7 +48,7 @@ const Snippet = () => {
       });
   };
   return (
-    <Card className="w-full overflow-hidden pt-2 mb-8   shadow-lg border dark:border-[#181a20] border-gray-300">
+    <Card className="w-full overflow-hidden pt-2  shadow-lg border dark:border-[#181a20] border-gray-300">
       <CardHeader className="p-0 px-2">
         <div className="flex justify-between ">
           <UserDateProfile
