@@ -42,7 +42,7 @@ export default async function RootLayout({
             <div className="flex min-h-screen flex-row gap-4">
               {session && (
                 <div className="relative flex  md:w-16 lg:w-64">
-                  <aside className="fixed  h-[100vh] rounded-md md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
+                  <aside className="fixed  h-[100vh]  md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
                     <Sidebar />
                   </aside>
                 </div>
@@ -53,8 +53,8 @@ export default async function RootLayout({
                     <Navbar />
                   </nav>
                 )}
-                <main className="flex flex-1  bg-[#121212]">
-                  <div className="w-full px-4">{children}</div>
+                <main className="flex flex-1 w-full px-4 bg-[#121212]">
+                  {children}
                   
                 </main>
               </div>
