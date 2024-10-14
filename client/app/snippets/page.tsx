@@ -11,7 +11,7 @@ const Snippets = () => {
   return (
     <MainWrapper classes={`${childRoutesClass} grid grid-cols-12 gap-3`}>
       {/* Snippets Section */}
-      <div className={`w-full mx-auto md:mx-0 max-w-md sm:max-w-lg md:max-w-full col-span-12 md:col-span-9 mt-${topMargin}`}>
+      <div className={`w-full mx-auto md:mx-0 max-w-md sm:max-w-lg md:max-w-full col-span-12 md:col-span-9 gap-4 flex flex-col mt-${topMargin}`}>
         <Snippet />
         <Snippet /> 
         <Snippet />
@@ -24,7 +24,7 @@ const Snippets = () => {
 
       {/* Fixed Sidebar Section */}
       <div className="hidden md:block md:col-span-3 ">
-        <div className="sticky top-14 px-2 py-3  border-l h-screen">
+        <div className="sticky top-14 px-2 py-3  border-l " style={{ height: 'calc(100vh - 3.5rem)' }}>
         <Button
           size="sm"
           variant="outline"
