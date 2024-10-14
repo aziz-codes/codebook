@@ -1,7 +1,7 @@
 import LoginForm from "@/components/login-form";
 const page = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen  w-full">
       <LoginForm />
     </div>
   );
