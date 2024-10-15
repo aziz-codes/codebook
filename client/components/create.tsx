@@ -4,6 +4,7 @@ import { Edit3, Code, MessageSquare, DollarSign, SquarePen, CodeXml, TrendingUp,
 import { useSession } from 'next-auth/react';
 import { Avatar } from './ui/avatar';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import CreatePost from '@/modals/create-post';
 const Create = () => {
   const {data:session} = useSession();
  
@@ -18,11 +19,14 @@ const Create = () => {
             <AvatarImage src={session?.user.image as string} alt="user"/>
           </Avatar>
         </div>
+        <CreatePost>
+
         <input
           type="text"
           placeholder={`What's on your mind, ${session?.user.name}?`}
           className="w-full bg-bgCard hover:bg-bgHover cursor-pointer text-gray-300 rounded-full px-4 py-2 focus:outline-none"
         />
+        </CreatePost>
       </div>
 
       {/* Divider */}
