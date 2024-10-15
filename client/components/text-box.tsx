@@ -3,7 +3,7 @@ import { Smile } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button';
 
-const TextBox = () => {
+const TextBox = ({placeholder="Add a comment"}) => {
     const [input, setInput] = useState("");  
     const inputRef = useRef<HTMLTextAreaElement>(null);  
   
@@ -22,7 +22,7 @@ const TextBox = () => {
   return (
     <div className="flex justify-between px-1 items-center w-full ">
       <textarea
-        placeholder="Add a comment"
+        placeholder={placeholder}
         ref={inputRef}
         className="resize-none overflow-hidden w-full p-2 outline-none bg-transparent"
         value={input}
