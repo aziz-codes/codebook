@@ -24,8 +24,8 @@ const CreatePost = ({children}:{children:React.ReactNode}) => {
     <AlertDialogTrigger asChild>
       {children}
     </AlertDialogTrigger>
-    <AlertDialogContent >
-      <div className='flex flex-col'>
+    <AlertDialogContent className='!ring-0 !outline-none'>
+      <div className='flex flex-col max-h-96 overflow-y-auto'>
         <div className='flex gap-2 items-center'>
         <Avatar className='h-11 w-11'>
             <AvatarFallback>{session?.user.name?.slice(0,2)}</AvatarFallback>
