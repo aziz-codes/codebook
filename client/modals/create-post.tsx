@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React,{useState,useRef} from 'react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,8 +17,29 @@ import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { useSession } from 'next-auth/react'
 import { Label } from '@/components/ui/label'
 import TextBox from '@/components/text-box'
+import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 const CreatePost = ({children}:{children:React.ReactNode}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [image,setImage] = useState<null | string>(null)
     const {data:session} = useSession();
+    const handleBtnClick = ()=>{
+      if(fileRef.current){
+        fileRef.current.click();
+      }
+    }
+    const handleFileChange =(event:React.ChangeEvent<HTMLInputElement>)=>{
+      const file = event.target.files?.[0];
+      if(file){
+        const fileReader = new FileReader();
+        fileReader.onload = (e)=>{
+          if(e.target?.result){
+            setImage(e.target.result as string);
+          }
+        }
+        fileReader.readAsDataURL(file);
+      }
+    }
   return (
     <AlertDialog>
     <AlertDialogTrigger asChild>
@@ -37,6 +58,11 @@ const CreatePost = ({children}:{children:React.ReactNode}) => {
          </div>
         </div>
         <TextBox placeholder='What’s on your mind today?'/>
+        <div className='w-full border flex flex-col'>
+           <Button onClick={handleBtnClick}>Add images</Button>
+           <input type='file' hidden   accept="image/png, image/jpeg, image/jpg" ref={fileRef} onChange={handleFileChange}/>
+          {image &&  <Image height={200} width={300} src={image} alt="attached photo"/>}
+        </div>
       </div>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
