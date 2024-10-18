@@ -8,6 +8,7 @@ const config = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "./test/**/*.{js,jsx,ts,tsx}",
+    "./**/*.{ts,tsx}"
   ],
   prefix: "",
   theme: {
@@ -59,7 +60,8 @@ const config = {
         semiDark: "#15171C",
         neon: "#00FF66",
         electric: "#007BFF",
-        codeHeader: "#2F2F2F"
+        codeHeader: "#2F2F2F",
+        neonHover: "#00CC52"
       },
 
       keyframes: {
