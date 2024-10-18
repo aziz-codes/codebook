@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Provider from "@/providers/SessionProvider";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
+import { TooltipProvider } from "@/components/ui/tooltip";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -39,6 +40,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <TooltipProvider>
             <div className="flex min-h-screen flex-row gap-4">
               {session && (
                 <div className="relative flex  md:w-16 lg:w-64">
@@ -59,6 +61,7 @@ export default async function RootLayout({
                 </main>
               </div>
             </div>
+            </TooltipProvider>
           </ThemeProvider>
         </Provider>
       </body>
