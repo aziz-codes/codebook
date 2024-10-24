@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import ImageSlider from "@/components/image-slider";
 import { X, Smile, MapPin, ImagePlus } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -89,7 +90,6 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
     if (files) {
       const fileArray = Array.from(files);
       const newImages: string[] = [];
-
       fileArray.forEach((file) => {
         const fileReader = new FileReader();
         fileReader.onload = (e) => {
@@ -127,7 +127,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className="!ring-0 !outline-none h-auto px-0 pt-0 py-0">
+      <AlertDialogContent className="!ring-0 !outline-none h-auto px-0 pt-0 py-0 gap-3">
         <AlertDialogTitle className="flex justify-between items-center border-b px-4 py-2">
           <h4 className="flex-grow text-center">Create a post</h4>
           <AlertDialogCancel
@@ -157,7 +157,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
             <textarea
               placeholder="What's on your mind today?"
               ref={inputRef}
-              className="resize-none overflow-hidden  max-h-96 w-full p-2 outline-none bg-transparent"
+              className="resize-none overflow-auto  max-h-96 w-full min-h-10 p-2 outline-none bg-transparent"
               value={input}
               onChange={handleInputChange}
               onInput={adjustHeight}  
@@ -175,28 +175,12 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
                 <ImageSlider images={images} removeImage={removeImage} />
               )}
             </div>
-            <div className="h-auto flex w-full bg-red-500 border">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia
-              dolorem itaque repellendus rerum iusto tempore corporis illo
-              delectus alias, laboriosam, fugit neque consequatur magnam
-              doloribus inventore ex veniam recusandae esse?  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia
-              dolorem itaque repellendus rerum iusto tempore corporis illo
-              delectus alias, laboriosam, fugit neque consequatur magnam
-              doloribus inventore ex veniam recusandae esse?  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia
-              dolorem itaque repellendus rerum iusto tempore corporis illo
-              delectus alias, laboriosam, fugit neque consequatur magnam
-              doloribus inventore ex veniam recusandae esse?  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia
-              dolorem itaque repellendus rerum iusto tempore corporis illo
-              delectus alias, laboriosam, fugit neque consequatur magnam
-              doloribus inventore ex veniam recusandae esse?  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia
-              dolorem itaque repellendus rerum iusto tempore corporis illo
-              delectus alias, laboriosam, fugit neque consequatur magnam
-              doloribus inventore ex veniam recusandae esse?
-            </div>
+         
           </div>
         </div>
-        <AlertDialogFooter className="">
-          <div className="w-full border-t h-10 py-3 flex justify-between items-center px-4">
+         <Separator />
+        <AlertDialogFooter className="!px-4 py-1 -mt-3">
+          <div className="w-full  h-10  flex justify-between items-center ">
             <div className="flex items-center gap-4 ">
               {postUtils.map((item, index) => (
                 <Tooltip key={index}>
