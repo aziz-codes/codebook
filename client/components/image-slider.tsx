@@ -48,8 +48,13 @@ const ImageSlider: React.FC<ImageProp> = ({ images, removeImage }) => {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      {images.length > 1 && (
+        <>
+         
+          <CarouselPrevious />
+          <CarouselNext />
+        </>
+      )}
     </Carousel>
   );
 };
