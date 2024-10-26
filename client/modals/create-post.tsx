@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import ImageSlider from "@/components/image-slider";
 import { X, Smile, MapPin, ImagePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import EditableContainer from "@/components/test/input-div";
 
 const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -154,14 +155,15 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
           <div className=" flex flex-col w-full gap-3  h-auto max-h-96 overflow-y-auto">
-            <textarea
+            {/* <textarea
               placeholder="What's on your mind today?"
               ref={inputRef}
               className="resize-none overflow-auto  max-h-96 w-full min-h-10 p-2 outline-none bg-transparent"
               value={input}
               onChange={handleInputChange}
               onInput={adjustHeight}  
-            />
+            /> */}
+            <EditableContainer />
             <div className="w-full flex flex-col items-center relative">
               <input
                 type="file"
