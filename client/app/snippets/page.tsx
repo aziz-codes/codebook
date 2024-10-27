@@ -5,13 +5,16 @@ import MainWrapper from "@/layouts/main-wrapper";
 import { childRoutesClass, topMargin } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import SnippetTab from "@/components/snippets/tabs";
 
 const Snippets = () => {
   const router = useRouter()
   return (
     <MainWrapper classes={`${childRoutesClass} grid grid-cols-12 gap-3`}>
       {/* Snippets Section */}
+      
       <div className={`w-full mx-auto md:mx-0 max-w-md sm:max-w-lg md:max-w-full col-span-12 md:col-span-9 gap-4 flex flex-col mt-${topMargin}`}>
+      <SnippetTab />
         <Snippet />
         <Snippet /> 
         <Snippet />
@@ -23,8 +26,8 @@ const Snippets = () => {
       </div>
 
       {/* Fixed Sidebar Section */}
-      <div className="hidden md:block md:col-span-3 ">
-        <div className="sticky top-14 px-2 py-3  border-l " style={{ height: 'calc(100vh - 3.5rem)' }}>
+      <div className="hidden md:flex md:col-span-3 flex-col">
+        <div className="sticky top-14 px-2 py-3 flex flex-col gap-3  border-l " style={{ height: 'calc(100vh - 3.5rem)' }}>
         <Button
           size="sm"
           variant="outline"
