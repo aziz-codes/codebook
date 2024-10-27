@@ -6,9 +6,10 @@ import TextToChip from "@/components/text-chip";
 import ImageHanlder from "@/components/image-hanlder";
 import { Button } from "@/components/ui/button";
 import MainWrapper from "@/layouts/main-wrapper";
+import { childRoutesClass, topMargin } from "@/utilities";
 const CreateDiscussion = () => {
   return (
-    <MainWrapper classes="flex flex-col gap-4 bg-bgCard p-4 rounded-md">
+    <MainWrapper classes={`flex flex-col gap-4 bg-bgCard p-4 rounded-md ${childRoutesClass} mt-${topMargin}`}>
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
         <h2 className="font-medium text-2xl">Start a new discussion</h2>
@@ -30,7 +31,7 @@ const CreateDiscussion = () => {
       <div className="flex flex-col">
         <Input
           placeholder="Add a meaningful title"
-          className="focus:ring-0 outline-none !ring-0 bg-transparent"
+          className="focus:ring-0 outline-none  bg-transparent"
         />
         <div className="flex items-center gap-2">
           <Info className="w-3 text-gray-400" />
@@ -54,7 +55,7 @@ const CreateDiscussion = () => {
         <Textarea
           placeholder="Add a decription"
           id="message-2"
-          className="!ring-0 !outline-none bg-transparent"
+          className="!outline-none bg-transparent"
           rows={6}
         />
       </div>

@@ -21,13 +21,16 @@ import { users } from "@/constants/users";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "@/components/ui/separator";
+import { childRoutesClass, topMargin } from "@/utilities";
 import { Label } from "@/components/ui/label";
 import { CircleCheck } from "lucide-react";
+import MainWrapper from "@/layouts/main-wrapper";
 const Discussion = () => {
   const [search, setSearch] = useState("");
   const router = useRouter();
   return (
-    <>
+  <MainWrapper classes={`${childRoutesClass} mt-${topMargin}`}>
+    
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 pb-6">
         {/* Search Input: Takes full width on small screens and 60% on large screens */}
         <div className="col-span-1 lg:col-span-7">
@@ -113,7 +116,8 @@ const Discussion = () => {
           </div>
         </div>
       </div>
-    </>
+    
+  </MainWrapper>
   );
 };
 
