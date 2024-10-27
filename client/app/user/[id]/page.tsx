@@ -6,10 +6,11 @@ import Profile2 from "@/components/profile2";
 import UserStats from "@/charts/user-stats";
 import MainWrapper from "@/layouts/main-wrapper";
 import ProfileCard from "@/test/profile-card";
+import { childRoutesClass, topMargin } from "@/utilities";
 
 const UserProfile = () => {
   return (
-    <MainWrapper classes="flex flex-col gap-6">
+    <MainWrapper classes={`${childRoutesClass} flex flex-col gap-6 mt-${topMargin}`}>
       <ProfileCard />
       <div className="w-full flex justify-center">
         <UserProfileTabs />
