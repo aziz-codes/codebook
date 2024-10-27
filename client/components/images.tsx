@@ -8,8 +8,8 @@ type ImagesProps = {
 };
 const Images = ({ image, handleRemoveImage }: ImagesProps) => {
   return (
-    <div className="relative h-28 w-24 rounded-md border ">
-      <Image src={image} alt="cover" fill className="object-contain" />
+    <div className="relative h-28 w-24 rounded-lg ">
+      <Image src={image} alt="cover" fill className="object-contain rounded-lg" />
       <Badge
         className="absolute -right-2 -top-2 cursor-pointer rounded-full p-0 h-4 w-4 flex justify-center items-center"
         title="remove image"
