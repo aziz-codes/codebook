@@ -6,7 +6,7 @@ interface Props{
 }
 const SearchInput:React.FC<Props> = ({value,onChange}) => {
   return (
-    <div className='flex border rounded-md px-2 py-1.5 items-center gap-2 col-span-12 sm:col-span-6'>
+    <div className='flex border rounded-md px-2 py-2 items-center gap-2 col-span-12 sm:col-span-6'>
         <Search className='text-muted'/>
         <input type='text' placeholder='search' className='h-full flex-1 outline-none bg-transparent'
         value={value}
