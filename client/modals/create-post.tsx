@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -27,27 +27,9 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const { data: session } = useSession();
-  const [input, setInput] = useState("");
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  
 
-  // Adjust textarea height
-  const adjustHeight = () => {
-    if (inputRef.current) {
-      inputRef.current.style.height = "auto"; // Reset height to auto
-      inputRef.current.style.height = `${Math.min(
-        inputRef.current.scrollHeight,
-        384
-      )}px`; // Set max height to 384px (h-96)
-    }
-  };
-
-  useEffect(() => {
-    adjustHeight(); // Adjust height on input change
-  }, [input]);
-
-  useEffect(() => {
-    adjustHeight(); // Adjust height when images change
-  }, [images]);
+ 
 
   const handleBtnClick = () => {
     if (fileRef.current) {
@@ -114,16 +96,9 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-  };
+  
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.height = "auto"; // Reset height on mount
-      adjustHeight(); // Adjust height initially
-    }
-  }, []);
+   
 
   return (
     <AlertDialog>
