@@ -1,12 +1,14 @@
 "use client"
 import React from 'react';
-import { Edit3, Code, MessageSquare, DollarSign, SquarePen, CodeXml, TrendingUp, BadgeCent } from 'lucide-react'; // Icons for Post, Snippet, Discussion, Bounty
+import {  CodeXml, TrendingUp, BadgeCent } from 'lucide-react';  
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { Avatar } from './ui/avatar';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import CreatePost from '@/modals/create-post';
 const Create = () => {
   const {data:session} = useSession();
+  const router = useRouter();
  
   return (
     <div className="max-w-full bg-semiDark p-4 rounded-lg shadow-md">
@@ -35,15 +37,15 @@ const Create = () => {
       {/* Bottom: Options (Post, Snippet, Discussion, Bounty) */}
       <div className="flex justify-between text-sm">
           
-        <button className="flex items-center gap-2 text-green-500 hover:text-green-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1">
+        <button className="flex items-center gap-2 text-green-500 hover:text-green-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-snippet')}>
           <CodeXml className="h-6 w-6" />
           <span className='font-semibold'>Snippet</span>
         </button>
-        <button className="flex items-center gap-2 text-purple-500 hover:text-purple-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1">
+        <button className="flex items-center gap-2 text-purple-500 hover:text-purple-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-discussion')}>
           <TrendingUp className="h-6 w-6" />
           <span className='font-semibold'>Discussion</span>
         </button>
-        <button className="flex items-center gap-2  text-yellow-500 hover:text-yellow-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1">
+        <button className="flex items-center gap-2  text-yellow-500 hover:text-yellow-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/bounties')}>
           <BadgeCent className="h-6 w-6" />
           <span className='font-semibold'>Bounty</span>
         </button>
