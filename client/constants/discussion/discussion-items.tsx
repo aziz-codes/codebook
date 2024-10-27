@@ -5,51 +5,38 @@ interface Language {
 }
 
 export const languages: Language[] = [
-  {
-    name: "JavaScript",
-    count: 14,  
-  },
-  {
-    name: "Python",
-    count: 22,
-  },
-  {
-    name: "Java",
-    count: 18,
-  },
-  {
-    name: "TypeScript",
-    count: 9,
-  },
-  {
-    name: "C++",
-    count: 11,
-  },
-  {
-    name: "C#",
-    count: 16,
-  },
-  {
-    name: "Go",
-    count: 7,
-  },
-  {
-    name: "Ruby",
-    count: 5,
-  },
-  {
-    name: "PHP",
-    count: 12,
-  },
-  {
-    name: "Swift",
-    count: 6,
-  },
-  {
-    name: "Kotlin",
-    count: 4,
-  },
+  { name: "JavaScript", count: 14 },
+  { name: "Python", count: 22 },
+  { name: "Java", count: 18 },
+  { name: "TypeScript", count: 9 },
+  { name: "C++", count: 11 },
+  { name: "C#", count: 16 },
+  { name: "Go", count: 7 },
+  { name: "Ruby", count: 5 },
+  { name: "PHP", count: 12 },
+  { name: "Swift", count: 6 },
+  { name: "Kotlin", count: 4 },
+  { name: "R", count: 3 },
+  { name: "Rust", count: 8 },
+  { name: "Objective-C", count: 5 },
+  { name: "Scala", count: 2 },
+  { name: "Shell", count: 6 },
+  { name: "Dart", count: 3 },
+  { name: "Perl", count: 4 },
+  { name: "Lua", count: 2 },
+  { name: "Haskell", count: 1 },
+  { name: "Elixir", count: 1 },
+  { name: "Clojure", count: 2 },
+  { name: "MATLAB", count: 5 },
+  { name: "VBA", count: 2 },
+  { name: "Groovy", count: 3 },
+  { name: "Fortran", count: 1 },
+  { name: "Ada", count: 1 },
+  { name: "Erlang", count: 1 },
+  { name: "COBOL", count: 1 },
+  { name: "VBScript", count: 1 },
 ];
+
 
 export const discussions = [
   {

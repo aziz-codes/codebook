@@ -43,7 +43,7 @@ const Discussion = () => {
         {/* Select and Button: Split equally (20% each) on large screens */}
         <div className="grid grid-cols-2 col-span-1 lg:col-span-5 gap-3">
           <Select>
-            <SelectTrigger className="w-full py-4">
+            <SelectTrigger className="w-full py-5">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
             <SelectContent>
@@ -65,7 +65,7 @@ const Discussion = () => {
           <Button
           size="sm"
           variant="outline"
-          className="!ring-0 !outline-none !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
+          className="!ring-0 !outline-none   focus:!outline-none bg-green-800 hover:bg-green-800 py-[20px]"
           onClick={()=>router.push('/create-discussion')}
         >
           Start Discussion
