@@ -31,7 +31,7 @@ const TextToChip = ({placeholder="Add upto 5 tags"}) => {
 
   return (
     <div className="mt-4">
-  <div className="flex items-center gap-2 border border-gray-800 px-2 rounded-md focus-within:ring-1 focus-within:ring-neon ">
+  <div className="flex items-center gap-2 border border-gray-800 px-2 rounded-md focus-within:ring-[0.5px] focus-within:ring-neon ">
     {chips.map((chip, index) => (
       <Badge key={index} className="mr-2">
         {chip}
