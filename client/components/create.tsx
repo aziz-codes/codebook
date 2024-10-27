@@ -2,7 +2,7 @@
 import React from 'react';
 import {  CodeXml, TrendingUp, BadgeCent } from 'lucide-react';  
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Avatar } from './ui/avatar';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import CreatePost from '@/modals/create-post';
