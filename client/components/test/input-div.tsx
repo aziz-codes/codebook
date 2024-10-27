@@ -11,14 +11,14 @@ const EditableContainer: React.FC = () => {
 
   useEffect(() => {
     if (divRef.current) {
-      // Update the div's height based on scroll height, pushing down the slider
-      divRef.current.style.height = 'auto'; // Reset height for recalculation
+       
+      divRef.current.style.height = 'auto'; 
       divRef.current.style.height = `${divRef.current.scrollHeight}px`;
     }
   }, [content]);
 
   return (
-    <div className="flex flex-col gap-4 w-full overflow-y-auto scrollbar-none transition-all">
+    <div className="flex flex-col gap-4 w-full h-auto  scrollbar-none transition-all">
       <div
         ref={divRef}
         contentEditable
