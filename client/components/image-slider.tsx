@@ -22,9 +22,7 @@ const ImageSlider: React.FC<ImageProp> = ({ images, removeImage }) => {
         {images.map((image, index) => (
           <CarouselItem
             key={index}
-            className={`${
-              images.length === 1 ? "basis-full" : "md:basis-1/2 lg:basis-1/3"
-            }`}
+            className={`basis-1/2 ${images.length > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}
           >
             <div className="p-1">
               <Card>
@@ -35,7 +33,6 @@ const ImageSlider: React.FC<ImageProp> = ({ images, removeImage }) => {
                     alt="attachment"
                     className="rounded-lg object-cover object-center h-full w-full"
                   />
-
                   <div
                     className="absolute top-1 right-1 bg-slate-800 rounded-full h-6 w-6 flex items-center justify-center hover:bg-slate-700 cursor-pointer"
                     onClick={() => removeImage(index)}
@@ -50,7 +47,6 @@ const ImageSlider: React.FC<ImageProp> = ({ images, removeImage }) => {
       </CarouselContent>
       {images.length > 1 && (
         <>
-         
           <CarouselPrevious />
           <CarouselNext />
         </>

@@ -154,31 +154,23 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
               <span className="text-xs italic">{session?.user.username}</span>
             </div>
           </div>
-          <div className=" flex flex-col w-full gap-3  h-auto max-h-96 overflow-y-auto">
-            {/* <textarea
-              placeholder="What's on your mind today?"
-              ref={inputRef}
-              className="resize-none overflow-auto  max-h-96 w-full min-h-10 p-2 outline-none bg-transparent"
-              value={input}
-              onChange={handleInputChange}
-              onInput={adjustHeight}  
-            /> */}
-            <EditableContainer />
-            <div className="w-full flex flex-col items-center relative">
-              <input
-                type="file"
-                hidden
-                accept="image/png, image/jpeg, image/jpg"
-                multiple
-                ref={fileRef}
-                onChange={handleFileChange}
-              />
-              {images.length > 0 && (
-                <ImageSlider images={images} removeImage={removeImage} />
-              )}
-            </div>
-         
-          </div>
+          <div className="flex flex-col w-full gap-3 h-auto max-h-96 overflow-y-auto">
+  <EditableContainer />
+  <div className="w-full flex flex-col items-center relative">
+    <input
+      type="file"
+      hidden
+      accept="image/png, image/jpeg, image/jpg"
+      multiple
+      ref={fileRef}
+      onChange={handleFileChange}
+    />
+    {images.length > 0 && (
+      <ImageSlider images={images} removeImage={removeImage} />
+    )}
+  </div>
+</div>
+
         </div>
          <Separator />
         <AlertDialogFooter className="!px-4 py-1 -mt-3">
