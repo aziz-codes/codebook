@@ -19,7 +19,7 @@ const HomePage = async () => {
   </div>
 
  
-  <div className="w-4/12 hidden  lg:flex justify-end">right side</div>
+  <div className="w-4/12 hidden  lg:flex justify-center rounded-md border">right side</div>
 </div>
 
     </MainWrapper>
