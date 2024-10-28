@@ -37,17 +37,17 @@ const Create = () => {
       {/* Bottom: Options (Post, Snippet, Discussion, Bounty) */}
       <div className="flex justify-between text-sm">
           
-        <button className="flex items-center gap-2 text-green-500 hover:text-green-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-snippet')}>
+        <button className="flex items-center justify-center sm:justify-start gap-2 text-green-500 hover:text-green-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-snippet')}>
           <CodeXml className="h-6 w-6" />
-          <span className='font-semibold'>Snippet</span>
+          <span className='font-semibold hidden sm:block'>Snippet</span>
         </button>
-        <button className="flex items-center gap-2 text-purple-500 hover:text-purple-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-discussion')}>
+        <button className="flex items-center justify-center sm:justify-start  gap-2 text-purple-500 hover:text-purple-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/create-discussion')}>
           <TrendingUp className="h-6 w-6" />
-          <span className='font-semibold'>Discussion</span>
+          <span className='font-semibold hidden sm:block'>Discussion</span>
         </button>
-        <button className="flex items-center gap-2  text-yellow-500 hover:text-yellow-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/bounties')}>
+        <button className="flex items-center justify-center sm:justify-start  gap-2  text-yellow-500 hover:text-yellow-400 hover:bg-bgHover px-3 py-1.5 rounded-md flex-1" onClick={()=>router.push('/bounties')}>
           <BadgeCent className="h-6 w-6" />
-          <span className='font-semibold'>Bounty</span>
+          <span className='font-semibold hidden sm:block'>Bounty</span>
         </button>
       </div>
     </div>

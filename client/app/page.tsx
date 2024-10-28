@@ -11,7 +11,7 @@ const HomePage = async () => {
     <MainWrapper classes="w-full">
  <div className={`w-full flex justify-center gap-12   mt-${topMargin}`}>
  
-  <div className="flex flex-col gap-4 w-1/2 max-w-lg">
+  <div className="flex flex-col gap-4 lg:w-1/2 lg:max-w-lg w-full">
     <Create />
     <Post />
     <Post />
@@ -19,7 +19,7 @@ const HomePage = async () => {
   </div>
 
  
-  <div className="w-4/12 flex justify-end">right side</div>
+  <div className="w-4/12 hidden  lg:flex justify-end">right side</div>
 </div>
 
     </MainWrapper>
