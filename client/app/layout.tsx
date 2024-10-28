@@ -49,7 +49,7 @@ export default async function RootLayout({
                   </aside>
                 </div>
               )}
-              <div className="w-full  min-h-screen flex flex-col border ">
+              <div className="w-full  min-h-screen flex flex-col  ">
                 {session && (
                   <nav className="sticky h-14 left-0 right-0 top-0 z-50">
                     <Navbar />
