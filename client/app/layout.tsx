@@ -41,21 +41,21 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <TooltipProvider>
-            <div className="flex min-h-screen flex-row gap-4">
+            <div className="flex min-h-screen flex-row gap-4  ">
               {session && (
-                <div className="relative flex  md:w-16 lg:w-64">
+                <div className="relative  hidden md:flex  md:w-16 lg:w-64">
                   <aside className="fixed  h-[100vh]  md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
                     <Sidebar />
                   </aside>
                 </div>
               )}
-              <div className="w-full  min-h-screen flex flex-col">
+              <div className="w-full  min-h-screen flex flex-col border ">
                 {session && (
                   <nav className="sticky h-14 left-0 right-0 top-0 z-50">
                     <Navbar />
                   </nav>
                 )}
-                <main className="flex flex-1 w-full px-4 bg-[#121212]">
+                <main className="flex flex-1 w-full px-4 bg-[#121212] ">
                   {children}
                   
                 </main>
