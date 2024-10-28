@@ -27,44 +27,47 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )}
-      >
-        <Provider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <TooltipProvider>
-            <div className="flex min-h-screen flex-row gap-4  ">
-              {session && (
-                <div className="relative  hidden md:flex  md:w-16 lg:w-64">
-                  <aside className="fixed  h-[100vh]  md:w-16 lg:w-56 overflow-y-auto hidden md:flex   bg-bgCard">
-                    <Sidebar />
-                  </aside>
-                </div>
-              )}
-              <div className="w-full  min-h-screen flex flex-col  ">
+    <body
+      className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        fontSans.variable
+      )}
+    >
+      <Provider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            <div className="flex min-h-screen flex-row bg-[#121212] w-full">
+              <div className="2xl:max-w-6xl 2xl:mx-auto w-full flex min-h-screen gap-4">
                 {session && (
-                  <nav className="sticky h-14 left-0 right-0 top-0 z-50">
-                    <Navbar />
-                  </nav>
+                  <div className="relative hidden md:flex md:w-16 lg:w-64">
+                    <aside className="fixed h-[100vh] md:w-16 lg:w-56 overflow-y-auto bg-bgCard">
+                      <Sidebar />
+                    </aside>
+                  </div>
                 )}
-                <main className="flex flex-1 w-full px-4 bg-[#121212] ">
-                  {children}
-                  
-                </main>
+                <div className="w-full min-h-screen flex flex-col">
+                  {session && (
+                    <nav className="sticky h-14 left-0 right-0 top-0 z-50">
+                      <Navbar />
+                    </nav>
+                  )}
+                  <main className="flex flex-1 w-full px-4">
+                    {children}
+                  </main>
+                </div>
               </div>
             </div>
-            </TooltipProvider>
-          </ThemeProvider>
-        </Provider>
-      </body>
-    </html>
+          </TooltipProvider>
+        </ThemeProvider>
+      </Provider>
+    </body>
+  </html>
+  
+  
   );
 }
