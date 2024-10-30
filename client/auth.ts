@@ -1,7 +1,4 @@
-import { connectDB } from "./utils/config";
-
 import GithubProvider from "next-auth/providers/github";
-import User from "./models/User";
 import NextAuth, { getServerSession, type NextAuthOptions } from "next-auth";
 
 import {
@@ -37,37 +34,41 @@ export const config = {
       }
       return session;
     },
-    async jwt({ token, user }) {
-      await connectDB();
-      const mongoUser = await User.findOne({ email: token.email });
-      if (!mongoUser) {
-        // token.id = user.id;
+    async jwt({ token }) {
+      const { email, name, picture: avatar } = token;
 
-        const newUser = new User({
-          id: token.id,
-          name: token.name,
-          email: token.email,
-          avatar: token.picture,
-          username:
-            token.username || token.name?.split(" ").join("").toLowerCase(),
-        });
-        await newUser.save();
-        return {
-          id: token.id,
-          name: token.name,
-          email: token.email,
-          avatar: token.picture,
-          username:
-            token.username || token.name?.split(" ").join("").toLowerCase(),
-        };
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/user`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              id: token.id,
+              name,
+              avatar,
+              username: name?.split(" ").join("").toLowerCase(),
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch user data: ${response.statusText}`);
+        }
+
+        const userData = await response.json();
+
+        token.id = userData.id;
+        token.name = userData.name;
+        token.email = userData.email;
+        token.picture = userData.avatar;
+        token.username = userData.username;
+      } catch (error) {
+        console.error("Error in jwt callback:", error);
       }
-      return {
-        id: mongoUser.id,
-        email: mongoUser.email,
-        name: mongoUser.name,
-        picture: mongoUser.avatar,
-        username: mongoUser.username,
-      };
+
+      return token;
     },
   },
 
