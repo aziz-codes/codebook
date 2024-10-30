@@ -25,5 +25,6 @@ export const config = {
     "/bounties",
     "/snippets",
     "/peoples",
+    "/create-snippet"
   ],
 };
