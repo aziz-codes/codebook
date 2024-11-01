@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import UserDateProfile from "./layouts/user-date-profile";
@@ -17,7 +17,27 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import TextBox from "./text-box";
 import Monaco from "./editor/monaco";
-const Snippet = () => {
+interface SnippetProps {
+  _id: string;
+  title: string;
+  programmingLanguage: string;
+  description: string;
+  tags: string[];
+  resource: string;
+  code: string;
+  user: {
+    _id: string;
+    name: string;
+    avatar: string;
+    username: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+interface SnippetComponentProps {
+  snippet: SnippetProps; 
+}
+const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
   const [copied, setCopied] = useState(false);
   const language = "javascript";
   const code = `const adjustHeight = () => {
@@ -52,9 +72,9 @@ const Snippet = () => {
       <CardHeader className="p-0 px-2">
         <div className="flex justify-between ">
           <UserDateProfile
-            date="25 Mar"
-            username="azizcodes"
-            image="https://github.com/shadcn.png"
+            date={snippet.createdAt}
+            username={snippet.user.username}
+            image={snippet.user.avatar}
           />
           <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
             <Ellipsis />
@@ -62,10 +82,7 @@ const Snippet = () => {
         </div>
         <div>
           <Label className="line-clamp-3 leading-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis
-            maxime accusantium numquam. Non est, aspernatur atque asperiores
-            officiis inventore, laborum nihil tempora quod explicabo mollitia
-            sapiente sunt dolore doloribus iure!
+             {snippet.description}
           </Label>
           <div className="flex flex-wrap gap-2 py-2">
             <Badge className="dark:bg-codeHeader text-gray-200">Javascript</Badge>
@@ -76,7 +93,7 @@ const Snippet = () => {
       </CardHeader>
       <CardContent className="my-0 p-0 mt-2 mb-1 px-2 relative  rounded-md border-codeHeader">
         <div className="flex items-center justify-between py-2 bg-codeHeader px-2 rounded-tl-md rounded-tr-md text-gray-300 ">
-          <p className="text-xs">jsx</p>
+          <p className="text-xs">{snippet.programmingLanguage.toLowerCase()}</p>
           <div
             className="text-xs flex items-center gap-1 cursor-pointer"
             onClick={handleCopy}
@@ -89,7 +106,7 @@ const Snippet = () => {
             {copied ? "copied!" : "copy code"}
           </div>
         </div>
-        <Monaco code={code} language={language} />
+        <Monaco code={snippet.code} language={snippet.programmingLanguage.toLowerCase()} />
       </CardContent>
       <CardFooter className="mt-2 px-0 py-4 flex flex-col items-start">
         <div className="flex items-center gap-3 px-2">

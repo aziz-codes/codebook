@@ -1,14 +1,34 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Snippet from "@/components/snippet";
 import MainWrapper from "@/layouts/main-wrapper";
 import { childRoutesClass, topMargin } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
+import { SnippetProps } from "@/types/api-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  
 const Snippets = () => {
   const router = useRouter();
+  const [snippets,setSnippets] = useState([]);
+  const [loading,setLoading]  = useState(false);
+  useEffect(()=>{
+      const getData = async()=>{
+        try{
+          setLoading(true);
+          const response = await fetch('http://localhost:8000/snippets');
+          const data = await response.json();
+           setSnippets(data.result);
+           setLoading(false);
+           console.log('data is ',snippets)
+        }
+        catch(err){
+          console.log('something went wrong',err);
+          setLoading(false);
+        }
+      }
+      getData();
+  },[])
   return (
     <MainWrapper classes={`${childRoutesClass} grid grid-cols-12 gap-3`}>
       {/* Snippets Section */}
@@ -35,14 +55,13 @@ const Snippets = () => {
     </TabsTrigger>
   </TabsList>
   <TabsContent value="for-you" className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6">
-    <Snippet />
-    <Snippet />
-    <Snippet />
+    {loading ? "Loading data":snippets?.map((snippet,index)=>(
+      <Snippet key={index} snippet={snippet}/>
+       
+    ))}
   </TabsContent>
   <TabsContent value="following" className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6">
-    <Snippet />
-    <Snippet />
-    <Snippet />
+     <div>following snippets</div>
   </TabsContent>
 </Tabs>
 
