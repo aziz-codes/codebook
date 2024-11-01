@@ -34,10 +34,10 @@ const snippetSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to User model
+        ref: 'user', 
         required: true,
     },
-}, { timestamps: true }); // Add createdAt and updatedAt timestamps
+}, { timestamps: true }); 
 const Snippet = mongoose.models.Snippet || mongoose.model('Snippet', snippetSchema);
 export default Snippet;
 
