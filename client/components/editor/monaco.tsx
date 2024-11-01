@@ -3,12 +3,13 @@ import { useState } from "react";
 import Editor from "@monaco-editor/react";
 
 const Monaco = ({ code, language }: { code: string; language: string }) => {
-  const [height, setHeight] = useState(150); // Initial height set to 150px
+  const [height, setHeight] = useState(150);  
 
   const handleEditorDidMount = (editor:any, monaco:any) => {
     const adjustHeight = () => {
-      const contentHeight = Math.min(editor.getContentHeight(), 350); // Limit the height to a max of 350px
+      const contentHeight = Math.min(editor.getContentHeight(), 350);  
       setHeight(contentHeight);
+      editor.getAction('editor.action.formatDocument').run();
     };
 
     adjustHeight(); // Set height based on content at mount
@@ -28,8 +29,9 @@ const Monaco = ({ code, language }: { code: string; language: string }) => {
       height={`${height}px`} // Dynamic height
       options={{
         minimap: { enabled: false }, // Disable the minimap if not needed
-        scrollBeyondLastLine: false,
+        scrollBeyondLastLine: true,
         readOnly: true,
+         
       
       }}
       onMount={handleEditorDidMount}
