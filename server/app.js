@@ -3,11 +3,20 @@ import express from 'express'
 import snippetRoutes from './routes/snippets-routes.js';
 import userRoute from './routes/user-routes.js';
 import mongoose from 'mongoose';
-
+import cors from 'cors';
 dotenv.config();
-const url = process.env.MONGO_URI;
-
 const app = express();
+const corsOptions = {
+    origin: 'http://localhost:3000', // Replace with your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  };
+  
+  // Use the CORS options
+  app.use(cors(corsOptions));
+
+
 app.use(express.json())
 app.use("/snippets",snippetRoutes)
 app.use("/user",userRoute);
