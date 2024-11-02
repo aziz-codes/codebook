@@ -39,24 +39,11 @@ interface SnippetComponentProps {
 }
 const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
   const [copied, setCopied] = useState(false);
-  const language = "javascript";
-  const code = `const adjustHeight = () => {
-      if (inputRef.current) {
-        inputRef.current.style.height = "34px";  
-        inputRef.current.style.height = {inputRef.current.scrollHeight}px  
-      }
-    };
-    const adjustHeight = () => {
-      if (inputRef.current) {
-        inputRef.current.style.height = "34px";  
-        inputRef.current.style.height = {inputRef.current.scrollHeight}px  
-      }
-    };
-    `;
+ 
 
   const handleCopy = () => {
     navigator.clipboard
-      .writeText(code)
+      .writeText(snippet.code)
       .then(() => {
         setCopied(true);
         setTimeout(() => {
@@ -85,9 +72,9 @@ const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
              {snippet.description}
           </Label>
           <div className="flex flex-wrap gap-2 py-2">
-            <Badge className="dark:bg-codeHeader text-gray-200">Javascript</Badge>
-            <Badge className="dark:bg-codeHeader text-gray-200">React JS</Badge>
-            <Badge className="dark:bg-codeHeader text-gray-200">Node JS</Badge>
+           {snippet.tags.slice(0,4).map((tag,index)=>(
+              <Badge className="dark:bg-codeHeader text-gray-200" key={index}>{index === 3 ? tag.concat(" + "+snippet.tags.length.toString()):tag}</Badge>
+           ))}
           </div>
         </div>
       </CardHeader>
