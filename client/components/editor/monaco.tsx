@@ -1,43 +1,42 @@
-"use client"
+"use client";
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
-
+ 
+ 
 const Monaco = ({ code, language }: { code: string; language: string }) => {
-  const [height, setHeight] = useState(150);  
+ 
+  const [height, setHeight] = useState(300);
+ 
 
-  const handleEditorDidMount = (editor:any, monaco:any) => {
+  const handleEditorDidMount = (editor: any, monaco: any) => {
     const adjustHeight = () => {
-      const contentHeight = Math.min(editor.getContentHeight(), 350);  
+      const contentHeight = Math.min(editor.getContentHeight(), 350);
       setHeight(contentHeight);
-      editor.getAction('editor.action.formatDocument').run();
     };
 
-    adjustHeight(); // Set height based on content at mount
+    adjustHeight();
 
-    // Adjust the height whenever the content changes
     editor.onDidChangeModelContent(() => {
       adjustHeight();
     });
-  
   };
-
+  
   return (
-    <Editor
+ 
+      <Editor
       language={language}
       value={code}
       theme="vs-dark"
-      height={`${height}px`} // Dynamic height
+      height={`${height}px`}  
       options={{
-        minimap: { enabled: false }, // Disable the minimap if not needed
-        scrollBeyondLastLine: true,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
         readOnly: true,
-         
-      
+       
       }}
       onMount={handleEditorDidMount}
-      
-      
     />
+
   );
 };
 
