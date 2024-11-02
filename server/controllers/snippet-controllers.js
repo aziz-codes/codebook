@@ -3,8 +3,8 @@ import User from "../schemas/User.js";
 export const allSnippets = async (req, res) => {
   try {
     const snippets = await Snippet.find()
-      .populate("user", "username avatar name")
-      .exec();
+  .populate("user", "username avatar name")
+  .sort({ createdAt: -1 }) 
 
     res
       .status(200)
