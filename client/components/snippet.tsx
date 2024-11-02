@@ -39,7 +39,7 @@ interface SnippetComponentProps {
 }
 const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
   const [copied, setCopied] = useState(false);
- 
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -68,9 +68,24 @@ const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
           </button>
         </div>
         <div>
-          <Label className="line-clamp-3 leading-5">
-             {snippet.description}
+          <Label className="line-clamp-2 leading-5 ">
+             {snippet.title}
           </Label>
+          <div>
+      <p
+        className={`text-sm text-muted-foreground ${
+          !isExpanded ? "line-clamp-1" : ""
+        }`}
+      >
+        {snippet.description}
+      </p>
+      <Button variant="link"
+        onClick={()=>setIsExpanded(!isExpanded)}
+        className="!p-0 !py-0 !m-0 h-5 text-xs "
+      >
+        {isExpanded ? "See less" : "See more"}
+      </Button>
+    </div>
           <div className="flex flex-wrap gap-2 py-2">
            {snippet.tags.slice(0,4).map((tag,index)=>(
               <Badge className="dark:bg-codeHeader text-gray-200" key={index}>{index === 3 ? tag.concat(" + "+snippet.tags.length.toString()):tag}</Badge>
