@@ -1,11 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "./ui/input";
-
-const TextToChip = ({placeholder="Add upto 5 tags"}) => {
+interface PropsTypes{
+   chips: string[];
+   setChips:React.Dispatch<React.SetStateAction<string[]>>;
+  placeholder: string;
+}
+const TextToChip:FC<PropsTypes> = ({placeholder="Add upto 5 tags",chips,setChips}) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [chips, setChips] = useState<string[]>([]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -15,8 +19,9 @@ const TextToChip = ({placeholder="Add upto 5 tags"}) => {
     if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
       if (inputValue.trim() !== "") {
-        if (chips.length < 5) {
+        if (chips.length < 8) {
           setChips([...chips, inputValue.trim()]);
+         
         }
 
         setInputValue("");
