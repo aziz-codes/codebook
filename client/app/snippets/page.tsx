@@ -70,13 +70,13 @@ const Snippets = () => {
       {/* Fixed Sidebar Section */}
       <div className="hidden md:flex md:col-span-3 flex-col">
         <div
-          className="sticky top-14 px-2 py-3 flex flex-col gap-3  border-l "
+          className="sticky top-14 px-2 py-3 flex flex-col gap-3  items-center mt-1"
           style={{ height: "calc(100vh - 3.5rem)" }}
         >
           <Button
             size="sm"
             variant="outline"
-            className="!ring-0 w-full !outline-none !border-none focus:!outline-none bg-green-800 hover:bg-green-800 "
+            className="!ring-0 w-full !outline-none h-10 !p-0 !border-none focus:!outline-none bg-green-800 hover:bg-green-800"
             onClick={() => router.push("/create-snippet")}
           >
             Create Snippet
