@@ -3,25 +3,30 @@ import React, { useState } from "react";
 import { TrendingUp, CodeXml, LayoutGrid, Gem } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
+import { Posts,Bounties,Snippets,Discussions } from "../user/tabs";
 const UserProfileTabs = () => {
   const [tabs, setTabs] = useState([
     {
       label: "Posts",
+      component: <Posts />,
       icon: LayoutGrid,
       isActive: true,
     },
     {
       label: "Snippets",
+      component: <Snippets />,
       icon: CodeXml,
       isActive: false,
     },
     {
       label: "Discussion",
+      component: <Discussions />,
       icon: TrendingUp,
       isActive: false,
     },
     {
       label: "Bounties",
+      component: <Bounties />,
       icon: Gem,
       isActive: false,
     },
@@ -34,6 +39,8 @@ const UserProfileTabs = () => {
     }));
     setTabs(newTabs);
   };
+  
+  const activeTab = tabs.find((tab)=>tab.isActive === true);
 
   return (
     <div className="w-full max-w-5xl flex flex-col mt-8">
@@ -57,6 +64,7 @@ const UserProfileTabs = () => {
           );
         })}
       </div>
+      <div>{activeTab?.component}</div>
     </div>
   );
 };
