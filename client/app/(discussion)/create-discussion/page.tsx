@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Info } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import MainWrapper from "@/layouts/main-wrapper";
 import { childRoutesClass, topMargin } from "@/utilities";
 const CreateDiscussion = () => {
+  const [chips,setChips] = useState<string[]>([])
   return (
     <MainWrapper classes={`flex flex-col gap-4 bg-bgCard p-4 rounded-md ${childRoutesClass} mt-${topMargin}`}>
       <div className="flex flex-col space-y-4">
@@ -41,7 +43,7 @@ const CreateDiscussion = () => {
         </div>
       </div>
       <div>
-        <TextToChip />
+        <TextToChip chips={chips} setChips={setChips}/>
         <div className="flex items-center gap-2">
           <Info className="w-3 text-gray-400" />
           <p className="text-gray-400 text-xs">
