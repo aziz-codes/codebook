@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 interface PropsTypes{
    chips: string[];
    setChips:React.Dispatch<React.SetStateAction<string[]>>;
-  placeholder: string;
+  placeholder?: string;
 }
 const TextToChip:FC<PropsTypes> = ({placeholder="Add upto 5 tags",chips,setChips}) => {
   const [inputValue, setInputValue] = useState<string>("");
