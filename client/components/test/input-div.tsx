@@ -1,8 +1,11 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
-
-const EditableContainer: React.FC = () => {
-  const [content, setContent] = useState<string>('');
+import React, {  useRef, useEffect } from 'react';
+interface Props{
+  content: string;
+  setContent: React.Dispatch<React.SetStateAction<string>>
+}
+const EditableContainer: React.FC<Props> = ({content,setContent}) => {
+ 
   const divRef = useRef<HTMLDivElement>(null);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
