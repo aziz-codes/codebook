@@ -22,14 +22,18 @@ import ImageSlider from "@/components/image-slider";
 import { X, Smile, MapPin, ImagePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
-
+interface AxiosResponseData {
+  data: {
+    link: string;
+  };
+}
 const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [loading, setloading] = useState(false);
+  const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
+  const [image,setImage] = useState<File|null>(null);
   const { data: session } = useSession();
-  
-
- 
 
   const handleBtnClick = () => {
     if (fileRef.current) {
@@ -69,6 +73,9 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImage(event.target.files[0]);
+    }
     const files = event.target.files;
     if (files) {
       const fileArray = Array.from(files);
@@ -95,11 +102,58 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const removeImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-
+  const handlePost = async () => {
+    const formData = new FormData();
+    formData.append("image", image as Blob); // Ensure image is a valid Blob
   
-
-   
-
+    try {
+      setloading(true); // Set loading state before starting the process
+      // Step 1: Upload image to Imgur
+      const imgurResponse = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        headers: {
+          Authorization: `Client-ID d82b94ef04a2e11`, // Replace with your actual Client ID
+        },
+        body: formData,
+      });
+  
+      if (!imgurResponse.ok) {
+        console.error('Image uploading failed to Imgur', imgurResponse.statusText);
+        return; // Exit if image upload fails
+      }
+  
+      const imgurData: { data: { link: string } } = await imgurResponse.json();
+  
+      // Step 2: Prepare payload for local API
+      const payload = {
+        title: content,
+        user: "6723d78cb953346dc24ff9ec", // Replace with actual user ID if needed
+        image: imgurData.data.link, // Image link from Imgur
+      };
+  
+      // Step 3: Send post data to local API
+      const localApiResponse = await fetch("http://localhost:5000/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!localApiResponse.ok) {
+        console.error('Failed to create post on local API', localApiResponse.statusText);
+        return; // Exit if local API request fails
+      }
+  
+      alert('Post created successfully'); 
+      setloading(false)
+    } catch (err) {
+      console.error('An error occurred', err);
+    } finally {
+      setloading(false); // Ensure loading state is cleared in all cases
+    }
+  };
+  
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -130,24 +184,23 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
           <div className="flex flex-col w-full gap-3 h-auto max-h-96 overflow-y-auto">
-  <EditableContainer />
-  <div className="w-full flex flex-col items-center relative">
-    <input
-      type="file"
-      hidden
-      accept="image/png, image/jpeg, image/jpg"
-      multiple
-      ref={fileRef}
-      onChange={handleFileChange}
-    />
-    {images.length > 0 && (
-      <ImageSlider images={images} removeImage={removeImage} />
-    )}
-  </div>
-</div>
-
+            <EditableContainer content={content} setContent={setContent} />
+            <div className="w-full flex flex-col items-center relative">
+              <input
+                type="file"
+                hidden
+                accept="image/png, image/jpeg, image/jpg"
+                multiple
+                ref={fileRef}
+                onChange={handleFileChange}
+              />
+              {images.length > 0 && (
+                <ImageSlider images={images} removeImage={removeImage} />
+              )}
+            </div>
+          </div>
         </div>
-         <Separator />
+        <Separator />
         <AlertDialogFooter className="!px-4 py-1 -mt-3">
           <div className="w-full  h-10  flex justify-between items-center ">
             <div className="flex items-center gap-4 ">
@@ -167,8 +220,9 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
             <Button
               variant="link"
               className="text-neon hover:text-neonHover p-0 !no-underline"
+              onClick={handlePost}
             >
-              Post
+              {loading ? "Posting...": "Post"}
             </Button>
           </div>
         </AlertDialogFooter>
