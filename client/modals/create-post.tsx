@@ -104,35 +104,37 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   };
   const handlePost = async () => {
     const formData = new FormData();
-    formData.append("image", image as Blob); // Ensure image is a valid Blob
+    formData.append("file", image as Blob);  
+    formData.append("upload_preset", "codebook");
+formData.append("cloud_name", "dde6fahrm");
   
     try {
-      setloading(true); // Set loading state before starting the process
-      // Step 1: Upload image to Imgur
-      const imgurResponse = await fetch("https://api.imgur.com/3/image", {
+      setloading(true);  
+      
+      const response = await fetch("https://api.cloudinary.com/v1_1/dde6fahrm/image/upload", {
         method: "POST",
-        headers: {
-          Authorization: `Client-ID d82b94ef04a2e11`, // Replace with your actual Client ID
-        },
+        
         body: formData,
       });
   
-      if (!imgurResponse.ok) {
-        console.error('Image uploading failed to Imgur', imgurResponse.statusText);
-        return; // Exit if image upload fails
+      if (!response.ok) {
+        console.error('Image uploading failed to Imgur', response.statusText);
+        return;  
       }
   
-      const imgurData: { data: { link: string } } = await imgurResponse.json();
   
-      // Step 2: Prepare payload for local API
+      const data = await response.json();
+      const link = data.secure_url;
+  
+     
       const payload = {
         title: content,
-        user: "6723d78cb953346dc24ff9ec", // Replace with actual user ID if needed
-        image: imgurData.data.link, // Image link from Imgur
+        user: "6723d78cb953346dc24ff9ec",  
+        image: link 
       };
   
-      // Step 3: Send post data to local API
-      const localApiResponse = await fetch("http://localhost:5000/post", {
+      
+      const localApiResponse = await fetch("http://localhost:8000/post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,7 +144,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   
       if (!localApiResponse.ok) {
         console.error('Failed to create post on local API', localApiResponse.statusText);
-        return; // Exit if local API request fails
+        return;  
       }
   
       alert('Post created successfully'); 
@@ -150,7 +152,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error('An error occurred', err);
     } finally {
-      setloading(false); // Ensure loading state is cleared in all cases
+      setloading(false);  
     }
   };
   
