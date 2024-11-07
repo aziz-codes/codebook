@@ -1,4 +1,5 @@
 import Post from "../schemas/Post.js";
+import mongoose from "mongoose";
 export const post = async (req, res) => {
   try {
     const { user, title, image } = req.body;

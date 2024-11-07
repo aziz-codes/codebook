@@ -8,6 +8,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 import {
   Tooltip,
   TooltipContent,
@@ -32,7 +33,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const [loading, setloading] = useState(false);
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
-  const [image,setImage] = useState<File|null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const { data: session } = useSession();
 
   const handleBtnClick = () => {
@@ -103,37 +104,43 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
   const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("file", image as Blob);  
-    formData.append("upload_preset", "codebook");
-formData.append("cloud_name", "dde6fahrm");
-  
     try {
-      setloading(true);  
-      
-      const response = await fetch("https://api.cloudinary.com/v1_1/dde6fahrm/image/upload", {
-        method: "POST",
-        
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        console.error('Image uploading failed to Imgur', response.statusText);
-        return;  
+      setloading(true);
+      let imageUrl = "";
+
+      // Check if there is an image to upload
+      if (image) {
+        const formData = new FormData();
+        formData.append("file", image as Blob);
+        formData.append("upload_preset", "codebook");
+        formData.append("cloud_name", "dde6fahrm");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dde6fahrm/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          console.error(
+            "Image upload to Cloudinary failed",
+            response.statusText
+          );
+          return;
+        }
+
+        const data = await response.json();
+        imageUrl = data.secure_url;
       }
-  
-  
-      const data = await response.json();
-      const link = data.secure_url;
-  
-     
+
       const payload = {
         title: content,
-        user: "6723d78cb953346dc24ff9ec",  
-        image: link 
+        user: session?.user.id,
+        image: imageUrl || null,
       };
-  
-      
+
       const localApiResponse = await fetch("http://localhost:8000/post", {
         method: "POST",
         headers: {
@@ -141,21 +148,25 @@ formData.append("cloud_name", "dde6fahrm");
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!localApiResponse.ok) {
-        console.error('Failed to create post on local API', localApiResponse.statusText);
-        return;  
+        console.error(
+          "Failed to create post on local API",
+          localApiResponse.statusText
+        );
+        return;
       }
-  
-      alert('Post created successfully'); 
-      setloading(false)
+
+      alert("Post created successfully");
+      setloading(false);
+      
     } catch (err) {
-      console.error('An error occurred', err);
+      console.error("An error occurred", err);
     } finally {
-      setloading(false);  
+      setloading(false);
     }
   };
-  
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -224,7 +235,7 @@ formData.append("cloud_name", "dde6fahrm");
               className="text-neon hover:text-neonHover p-0 !no-underline"
               onClick={handlePost}
             >
-              {loading ? "Posting...": "Post"}
+              {loading ? "Posting..." : "Post"}
             </Button>
           </div>
         </AlertDialogFooter>

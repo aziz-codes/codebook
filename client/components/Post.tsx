@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FeedImage } from "@/constants/images";
-import { Ellipsis}  from "lucide-react";
- 
+import { Ellipsis } from "lucide-react";
+import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
- 
+
 import HeartSvg from "@/helpers/heart-svg";
 import CommentSvg from "@/helpers/comment-svg";
 import BookmarkSvg from "@/helpers/bookmark-svg";
@@ -14,23 +14,33 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "./ui/button";
+type User = {
+  _id: string;
+  name: string;
+  avatar: string;
+  username: string;
+};
 
-const SinglePost = () => {
+type Post = {
+  _id: string;
+  user: User;
+  title: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
+type PostProps = {
+  post: Post;
+};
+
+const SinglePost: FC<PostProps> = ({ post }) => {
   const [liked, setLiked] = useState(false);
 
   let [likes, setLikes] = useState(24);
 
-  const post = {
-    userName: "John Doe",
-    createdAt: "2 days ago",
-    content:
-      "I have fallen in love with this design, how people are so damn creative these days.",
-    image: FeedImage.src,
-  };
   const handleLike = () => {
     setLiked((prevLiked) => {
       if (prevLiked) {
@@ -47,48 +57,50 @@ const SinglePost = () => {
     "Delete Post",
     "Save Post",
     "Share Post",
-  
   ];
   return (
     <Card className="rounded-md !border-none mb-4">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>AZ</AvatarFallback>
-            <AvatarImage src="https://github.com/shadcn.png" />
+          <Avatar  >
+            <AvatarFallback>{post.user.name.slice(0,2)}</AvatarFallback>
+            <AvatarImage src={post.user.avatar} />
           </Avatar>
           <div>
-            <p className="text-sm font-semibold   text-white">
-              {post.userName}
-            </p>
-            <p className="text-xs text-gray-500">{post.createdAt}</p>
+            <p className="text-sm font-semibold   text-white">{post.user.username}</p>
+            <div className="text-[11px] text-muted-foreground">
+          <TimeAgo
+            date={post.createdAt}
+            locale="en-US"
+            timeStyle="twitter"
+           
+          />
+        </div>
+
           </div>
         </div>
         <DropdownMenu>
-  <DropdownMenuTrigger asChild>
-    
-      <Ellipsis className="cursor-pointer hover:text-gray-400"/>
-     
-  </DropdownMenuTrigger>
-  <DropdownMenuContent className="w-36">
-    {options.map((option) => (
-      <DropdownMenuRadioItem
-        key={option}
-        value={option}
-        className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
-      >
-        {option}
-      </DropdownMenuRadioItem>
-    ))}
-  </DropdownMenuContent>
-</DropdownMenu>
-       
+          <DropdownMenuTrigger asChild>
+            <Ellipsis className="cursor-pointer hover:text-gray-400" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-36">
+            {options.map((option) => (
+              <DropdownMenuRadioItem
+                key={option}
+                value={option}
+                className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
+              >
+                {option}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <CardContent className="p-0">
         {/* Post Content */}
         <div className="mb-4 px-4">
-          <p className="text-gray-300 ">{post.content}</p>
+          <p className="text-gray-300 ">{post.title}</p>
         </div>
 
         {/* Post Image */}
@@ -103,14 +115,16 @@ const SinglePost = () => {
         )}
         <div className="px-4 py-4 flex items-center justify-between select-none  ">
           <div className="flex items-center space-x-1 text-sm relative">
-            
-            <HeartSvg stroke={liked ? "red": "white"} fill={liked ? "red": "none"} onClick={handleLike} />
-           
+            <HeartSvg
+              stroke={liked ? "red" : "white"}
+              fill={liked ? "red" : "none"}
+              onClick={handleLike}
+            />
 
             <span className="font-semibold">{likes} Likes</span>
           </div>
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
-            <CommentSvg  />
+            <CommentSvg />
             <span className="font-semibold">34 Comments</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
@@ -131,9 +145,9 @@ const SinglePost = () => {
             Post
           </Button>
         </div> */}
-       <div className="flex w-full items-center border  rounded-md px-2">
-            <TextBox />
-          </div>
+        <div className="flex w-full items-center border  rounded-md px-2">
+          <TextBox />
+        </div>
       </CardFooter>
     </Card>
   );
