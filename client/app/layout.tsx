@@ -9,6 +9,7 @@ import Provider from "@/providers/SessionProvider";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+ import QueryProvider from "@/query-provider";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -33,6 +34,7 @@ export default async function RootLayout({
         fontSans.variable
       )}
     >
+      <QueryProvider>
       <Provider>
         <ThemeProvider
           attribute="class"
@@ -65,6 +67,7 @@ export default async function RootLayout({
           </TooltipProvider>
         </ThemeProvider>
       </Provider>
+      </QueryProvider>
     </body>
   </html>
   
