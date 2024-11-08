@@ -139,7 +139,36 @@ const CreatePost = ({ children }: CreatePostProps) => {
     // Use mutate to create the post
     mutate(imageUrl);
   };
-
+  const postUtils = [
+    {
+      tooltip: "Media",
+      icon: (
+        <ImagePlus
+          onClick={handleBtnClick}
+          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
+          stroke="#00FF66"
+        />
+      ),
+    },
+    {
+      tooltip: "Emoji",
+      icon: (
+        <Smile
+          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
+          stroke="#00FF66"
+        />
+      ),
+    },
+    {
+      tooltip: "Location",
+      icon: (
+        <MapPin
+          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
+          stroke="#00FF66"
+        />
+      ),
+    },
+  ];
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -189,11 +218,20 @@ const CreatePost = ({ children }: CreatePostProps) => {
         <AlertDialogFooter className="!px-4 py-1 -mt-3">
           <div className="w-full h-10 flex justify-between items-center ">
             <div className="flex items-center gap-4 ">
-              <ImagePlus
-                onClick={handleBtnClick}
-                className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
-                stroke="#00FF66"
-              />
+            <div className="flex items-center gap-4 ">
+            {postUtils.map((item, index) => (
+              <Tooltip key={index}>
+                <TooltipTrigger className="!outline-none !ring-0">
+                  <div className="flex items-center justify-center h-6 w-6 rounded-full transition-colors duration-200">
+                    {item.icon}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs">
+                  {item.tooltip}
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </div>
             </div>
             <Button
               variant="link"
