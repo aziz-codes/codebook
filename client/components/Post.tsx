@@ -1,7 +1,6 @@
 "use client";
 import React, { FC, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FeedImage } from "@/constants/images";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
@@ -102,7 +101,10 @@ const SinglePost: FC<PostProps> = ({ post }) => {
       <CardContent className="p-0">
         {/* Post Content */}
         <div className="mb-4 px-4">
-          <p className="text-gray-300 ">{post.title}</p>
+        <p
+      className="text-gray-300"
+      dangerouslySetInnerHTML={{ __html: post.title }}
+    />
         </div>
 
         {/* Post Image */}
