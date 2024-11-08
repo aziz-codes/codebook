@@ -1,9 +1,13 @@
+"use client";
 import React from "react";
 import Post from "@/components/Post";
-import { auth } from "@/auth";
+import { useSession } from "next-auth/react";
 import MainWrapper from "@/layouts/main-wrapper";
 import { topMargin } from "@/utilities";
 import Create from "@/components/create";
+import { useQuery } from "@tanstack/react-query";
+import { getRequest } from "@/services";
+
 type User = {
   _id: string;
   name: string;
@@ -11,7 +15,7 @@ type User = {
   username: string;
 };
 
-type Post = {
+type PostData = {
   _id: string;
   user: User;
   title: string;
@@ -23,35 +27,32 @@ type Post = {
 
 type GetPostsResponse = {
   count: number;
-  result: Post[];
+  result: PostData[];
 };
-const HomePage = async () => {
-  const session = await auth();
-  let posts:Post[] = [];
-  try{
-     const res = await fetch("http://localhost:8000/post");
-     const data:GetPostsResponse = await res.json();
-     posts = data.result;
-  }
-  catch(err){
-    console.log(err);
-  }
+
+const HomePage = () => {
+  const { data, error, isLoading } = useQuery<GetPostsResponse, Error>({
+    queryKey: ["posts"],
+    queryFn: async () => await getRequest("/post"),
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading posts: {error.message}</p>;
+
   return (
     <MainWrapper classes="w-full">
- <div className={`w-full flex justify-center gap-12   mt-${topMargin}`}>
- 
-  <div className="flex flex-col gap-4 lg:w-1/2 lg:max-w-lg w-full">
-    <Create/>
-    {posts.map((post)=>(
-      <Post key={post._id} post={post}/>
-       
-    ))}
-  </div>
+      <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>
+        <div className="flex flex-col gap-4 lg:w-1/2 lg:max-w-lg w-full">
+          <Create />
+          {data?.result.map((post) => (
+            <Post key={post._id} post={post} />
+          ))}
+        </div>
 
- 
-  <div className="w-4/12 hidden  lg:flex justify-center rounded-md border">right side</div>
-</div>
-
+        <div className="w-4/12 hidden lg:flex justify-center rounded-md border">
+          right side
+        </div>
+      </div>
     </MainWrapper>
   );
 };
