@@ -8,7 +8,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Tooltip,
   TooltipContent,
@@ -18,67 +18,37 @@ import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import ImageSlider from "@/components/image-slider";
 import { X, Smile, MapPin, ImagePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
 import Link from "next/link";
- 
- 
-const CreatePost = ({ children }: { children: React.ReactNode }) => {
+
+type CreatePostProps = {
+  children: React.ReactNode;
+};
+
+const CreatePost = ({ children }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const handleBtnClick = () => {
     if (fileRef.current) {
       fileRef.current.click();
     }
   };
 
-  const postUtils = [
-    {
-      tooltip: "Media",
-      icon: (
-        <ImagePlus
-          onClick={handleBtnClick}
-          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
-          stroke="#00FF66"
-        />
-      ),
-    },
-    {
-      tooltip: "Emoji",
-      icon: (
-        <Smile
-          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
-          stroke="#00FF66"
-        />
-      ),
-    },
-    {
-      tooltip: "Location",
-      icon: (
-        <MapPin
-          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
-          stroke="#00FF66"
-        />
-      ),
-    },
-  ];
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setImage(event.target.files[0]);
-    }
-    const files = event.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
+      const fileArray = Array.from(event.target.files);
       const newImages: string[] = [];
       fileArray.forEach((file) => {
         const fileReader = new FileReader();
@@ -102,68 +72,72 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const removeImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
+
+  // Define the function for creating a post
+  const createPost = async (imageUrl: string) => {
+    const payload = {
+      title: content,
+      user: session?.user.id,
+      image: imageUrl || null,
+    };
+
+    const localApiResponse = await fetch("http://localhost:8000/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!localApiResponse.ok) {
+      throw new Error("Failed to create post on local API");
+    }
+  };
+
+  
+  const { mutate } = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["posts"]}); // Refresh the posts on success
+      alert("Post created successfully");
+      setLoading(false);
+    },
+    onError: (error) => {
+      console.error("An error occurred", error);
+      setLoading(false);
+    },
+  });
+
   const handlePost = async () => {
-    try {
-      setloading(true);
-      let imageUrl = "";
+    setLoading(true);
+    let imageUrl = "";
 
-      // Check if there is an image to upload
-      if (image) {
-        const formData = new FormData();
-        formData.append("file", image as Blob);
-        formData.append("upload_preset", "codebook");
-        formData.append("cloud_name", "dde6fahrm");
+    if (image) {
+      const formData = new FormData();
+      formData.append("file", image as Blob);
+      formData.append("upload_preset", "codebook");
+      formData.append("cloud_name", "dde6fahrm");
 
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dde6fahrm/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (!response.ok) {
-          console.error(
-            "Image upload to Cloudinary failed",
-            response.statusText
-          );
-          return;
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dde6fahrm/image/upload",
+        {
+          method: "POST",
+          body: formData,
         }
+      );
 
-        const data = await response.json();
-        imageUrl = data.secure_url;
-      }
-
-      const payload = {
-        title: content,
-        user: session?.user.id,
-        image: imageUrl || null,
-      };
-
-      const localApiResponse = await fetch("http://localhost:8000/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!localApiResponse.ok) {
-        console.error(
-          "Failed to create post on local API",
-          localApiResponse.statusText
-        );
+      if (!response.ok) {
+        console.error("Image upload to Cloudinary failed", response.statusText);
+        setLoading(false);
         return;
       }
 
-      alert("Post created successfully");
-      setloading(false);
-      
-    } catch (err) {
-      console.error("An error occurred", err);
-    } finally {
-      setloading(false);
+      const data = await response.json();
+      imageUrl = data.secure_url;
     }
+
+    // Use mutate to create the post
+    mutate(imageUrl);
   };
 
   return (
@@ -182,7 +156,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
 
         <div className="flex flex-col overflow-auto gap-3 px-4">
           <div className="flex gap-2 items-center">
-            <Avatar className="h-11 w-11 cursor-pointer" onClick={()=>router.push(`user/${session?.user.username}`)}>
+            <Avatar className="h-11 w-11 cursor-pointer" onClick={() => router.push(`user/${session?.user.username}`)}>
               <AvatarFallback>{session?.user.name?.slice(0, 2)}</AvatarFallback>
               <AvatarImage
                 src={session?.user.image as string}
@@ -191,8 +165,9 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
               />
             </Avatar>
             <div className="flex flex-col">
-              <Link href={`/user/${session?.user.username}`} className="font-semibold text-sm">{session?.user.name}</Link>
-               
+              <Link href={`/user/${session?.user.username}`} className="font-semibold text-sm">
+                {session?.user.name}
+              </Link>
             </div>
           </div>
           <div className="flex flex-col w-full gap-3 h-auto max-h-96 overflow-y-auto">
@@ -206,28 +181,19 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
                 ref={fileRef}
                 onChange={handleFileChange}
               />
-              {images.length > 0 && (
-                <ImageSlider images={images} removeImage={removeImage} />
-              )}
+              {images.length > 0 && <ImageSlider images={images} removeImage={removeImage} />}
             </div>
           </div>
         </div>
         <Separator />
         <AlertDialogFooter className="!px-4 py-1 -mt-3">
-          <div className="w-full  h-10  flex justify-between items-center ">
+          <div className="w-full h-10 flex justify-between items-center ">
             <div className="flex items-center gap-4 ">
-              {postUtils.map((item, index) => (
-                <Tooltip key={index}>
-                  <TooltipTrigger className="!outline-none !ring-0">
-                    <div className="flex items-center justify-center h-6 w-6 rounded-full transition-colors duration-200">
-                      {item.icon}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-xs">
-                    {item.tooltip}
-                  </TooltipContent>
-                </Tooltip>
-              ))}
+              <ImagePlus
+                onClick={handleBtnClick}
+                className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
+                stroke="#00FF66"
+              />
             </div>
             <Button
               variant="link"
