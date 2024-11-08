@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter } from "./ui/card";
 
 import HeartSvg from "@/helpers/heart-svg";
 import CommentSvg from "@/helpers/comment-svg";
+import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
 import {
@@ -37,6 +38,7 @@ type PostProps = {
 };
 
 const SinglePost: FC<PostProps> = ({ post }) => {
+  const router = useRouter();
   const [liked, setLiked] = useState(false);
 
   let [likes, setLikes] = useState(24);
@@ -63,12 +65,12 @@ const SinglePost: FC<PostProps> = ({ post }) => {
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-4">
         <div className="flex items-center gap-3">
-          <Avatar  >
+          <Avatar className="cursor-pointer" onClick={()=>router.push(`user/${post.user.username}`)}>
             <AvatarFallback>{post.user.name.slice(0,2)}</AvatarFallback>
             <AvatarImage src={post.user.avatar} />
           </Avatar>
           <div>
-            <p className="text-sm font-semibold   text-white">{post.user.username}</p>
+            <p className="text-sm font-semibold cursor-pointer  text-white" onClick={()=>router.push(`user/${post.user.username}`)}>{post.user.username}</p>
             <div className="text-[11px] text-muted-foreground">
           <TimeAgo
             date={post.createdAt}
