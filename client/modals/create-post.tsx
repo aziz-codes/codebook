@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -23,11 +24,9 @@ import ImageSlider from "@/components/image-slider";
 import { X, Smile, MapPin, ImagePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
-interface AxiosResponseData {
-  data: {
-    link: string;
-  };
-}
+import Link from "next/link";
+ 
+ 
 const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [loading, setloading] = useState(false);
@@ -35,7 +34,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
   const [images, setImages] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const { data: session } = useSession();
-
+  const router = useRouter();
   const handleBtnClick = () => {
     if (fileRef.current) {
       fileRef.current.click();
@@ -183,7 +182,7 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
 
         <div className="flex flex-col overflow-auto gap-3 px-4">
           <div className="flex gap-2 items-center">
-            <Avatar className="h-11 w-11">
+            <Avatar className="h-11 w-11 cursor-pointer" onClick={()=>router.push(`user/${session?.user.username}`)}>
               <AvatarFallback>{session?.user.name?.slice(0, 2)}</AvatarFallback>
               <AvatarImage
                 src={session?.user.image as string}
@@ -192,8 +191,8 @@ const CreatePost = ({ children }: { children: React.ReactNode }) => {
               />
             </Avatar>
             <div className="flex flex-col">
-              <Label className="font-semibold">{session?.user.name}</Label>
-              <span className="text-xs italic">{session?.user.username}</span>
+              <Link href={`/user/${session?.user.username}`} className="font-semibold text-sm">{session?.user.name}</Link>
+               
             </div>
           </div>
           <div className="flex flex-col w-full gap-3 h-auto max-h-96 overflow-y-auto">
