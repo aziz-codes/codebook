@@ -59,6 +59,22 @@ const SinglePost: FC<PostProps> = ({ post }) => {
     "Save Post",
     "Share Post",
   ];
+  const customFormatter = (value: number, unit: string, suffix: string) => {
+    const shortUnit = {
+      second: 'sec',
+      minute: 'min',
+      hour: 'hr',
+      day: 'day',
+      week: 'wk',
+      month: 'mo',
+      year: 'yr',
+    }[unit];
+  
+ 
+    const formattedUnit = value > 1 ? `${shortUnit}s` : shortUnit;
+  
+    return `${value} ${formattedUnit} ${suffix}`;
+  };
   return (
     <Card className="rounded-md !border-none mb-4">
       {/* User Info and Action Button */}
@@ -71,12 +87,11 @@ const SinglePost: FC<PostProps> = ({ post }) => {
           <div>
             <p className="text-sm font-semibold cursor-pointer  text-white" onClick={()=>router.push(`user/${post.user.username}`)}>{post.user.username}</p>
             <div className="text-[11px] text-muted-foreground">
-          <TimeAgo
-            date={post.createdAt}
-            locale="en-US"
-            timeStyle="twitter"
-           
-          />
+            <TimeAgo
+  date={post.createdAt}
+  formatter={customFormatter}
+/>
+
         </div>
 
           </div>
