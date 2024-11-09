@@ -1,0 +1,2 @@
+1. Main Feed post component like, comment, bookmark and comment icon UI.
+2. Adding optimistic updates.

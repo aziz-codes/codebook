@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Post from "@/components/Post";
-import { useSession } from "next-auth/react";
 import MainWrapper from "@/layouts/main-wrapper";
 import { topMargin } from "@/utilities";
 import Create from "@/components/create";
