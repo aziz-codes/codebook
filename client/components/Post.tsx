@@ -124,7 +124,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
         {/* Post Content */}
         <div className="mb-4 px-4">
           <p
-            className="text-gray-300"
+            className="text-gray-300 first-letter:capitalize"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
         </div>
