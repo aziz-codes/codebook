@@ -20,7 +20,7 @@ const TextBox = ({placeholder="Add a comment"}) => {
       adjustHeight();  
     }, [input]);
   return (
-    <div className="flex justify-between px-1 items-center w-full ">
+    <div className="flex justify-between items-center w-full ">
       <textarea
         placeholder={placeholder}
         ref={inputRef}
@@ -30,7 +30,7 @@ const TextBox = ({placeholder="Add a comment"}) => {
         style={{ height: "34px" }}  
       ></textarea>
     <div className='flex items-center gap-1'>
-    {input.length > 0 && <Button variant="link" className='!no-underline text-sky-600  p-0 px-1'>Post</Button>}
+    {input.length > 0 && <Button variant="link" className='!no-underline text-sky-600  p-0 '>Post</Button>}
     <Smile className="h-5 w-5 cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400" />
     </div>
     </div>
