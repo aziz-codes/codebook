@@ -138,39 +138,28 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             />
           </div>
         )}
-        <div className="px-4 py-4 flex items-center justify-between select-none  ">
+        <div className="px-3 py-4 flex items-center justify-between select-none  ">
           <div className="flex items-center space-x-1 text-sm relative">
             <HeartSvg
               stroke={liked ? "red" : "white"}
               fill={liked ? "red" : "none"}
               onClick={handleLike}
+              className="w-6 h-6 cursor-pointer hover:stroke-[1.2]"
             />
 
-            <span className="font-semibold">{likes} Likes</span>
+            <span className=" text-xs">{likes} Likes</span>
           </div>
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
-            <CommentSvg />
-            <span className="font-semibold">34 Comments</span>
+            <CommentSvg className="w-6 h-6 cursor-pointer"/>
+            <span className=" text-xs">34 Comments</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
-            <BookmarkSvg />
+            <BookmarkSvg className="w-6 h-6 cursor-pointer"/>
           </div>
         </div>
       </CardContent>
       <CardFooter className="p-0">
-        {/* <div className="w-full flex items-center border rounded-bl-md rounded-br-md border-l-0 border-r-0">
-          <Input
-            placeholder="Add a comment"
-            className="!ring-0 rounded-none bg-transparent border-none"
-          />
-          <Button
-            variant="secondary"
-            className="bg-transparen text-sky-500 hover:bg-transparent hover:font-semibold p-0 px-1"
-          >
-            Post
-          </Button>
-        </div> */}
-        <div className="flex w-full items-center border  rounded-md px-2">
+        <div className="flex w-full items-center border-b  rounded-md px-3">
           <TextBox />
         </div>
       </CardFooter>
