@@ -9,6 +9,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +32,7 @@ type CreatePostProps = {
 
 const CreatePost = ({ children }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null)
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
@@ -38,6 +40,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const {toast} = useToast();
 
   const handleBtnClick = () => {
     if (fileRef.current) {
@@ -98,8 +101,11 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const { mutate } = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["posts"]}); // Refresh the posts on success
-      alert("Post created successfully");
+      queryClient.invalidateQueries({queryKey: ["posts"]});  
+      toast({
+        description: "Post created successfully.",
+      })
+      cancelRef.current && cancelRef.current.click();
       setLoading(false);
     },
     onError: (error) => {
@@ -176,6 +182,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
         <AlertDialogTitle className="flex justify-between items-center border-b px-4 py-2">
           <h4 className="flex-grow text-center">Create a post</h4>
           <AlertDialogCancel
+          ref={cancelRef}
             className="flex justify-center h-8 w-8 !outline-none !ring-0 rounded-full hover:bg-bgHover cursor-pointer items-center p-0 border-0"
             onClick={handleCancel}
           >

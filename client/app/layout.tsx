@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
  import QueryProvider from "@/query-provider";
+ import { Toaster } from "@/components/ui/toaster"
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -34,6 +35,7 @@ export default async function RootLayout({
         fontSans.variable
       )}
     >
+      <Toaster />
       <QueryProvider>
       <Provider>
         <ThemeProvider
