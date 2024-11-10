@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
-
+import {AnimatePresence,motion} from 'framer-motion'
 import HeartSvg from "@/helpers/heart-svg";
 import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 type User = {
   _id: string;
   name: string;
@@ -40,7 +41,7 @@ type PostProps = {
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const [liked, setLiked] = useState(false);
-
+  const [openCommentBox, setCommentBox] = useState(false);
   let [likes, setLikes] = useState(24);
 
   const handleLike = () => {
@@ -107,7 +108,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           <DropdownMenuContent className="w-36">
             {options
               .filter((option) => !option.ownerOnly || isPostOwner)
-              .map((option) => (  
+              .map((option) => (
                 <DropdownMenuRadioItem
                   key={option.label}
                   value={option.label}
@@ -138,31 +139,45 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             />
           </div>
         )}
-        <div className="px-3 py-4 flex items-center justify-between select-none  ">
+        <div className="px-3 py-4 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative">
             <HeartSvg
               stroke={liked ? "red" : "white"}
               fill={liked ? "red" : "none"}
               onClick={handleLike}
-              className="w-6 h-6 cursor-pointer hover:stroke-[1.2]"
+              className="w-6 h-6 cursor-pointer  "
             />
 
             <span className=" text-xs">{likes} Likes</span>
           </div>
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
-            <CommentSvg className="w-6 h-6 cursor-pointer"/>
-            <span className=" text-xs">34 Comments</span>
+            <CommentSvg
+              className="w-6 h-6 cursor-pointer "
+              onClick={() => setCommentBox(!openCommentBox)}
+            />
+            <span className=" text-xs hover:underline">34 Comments</span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
-            <BookmarkSvg className="w-6 h-6 cursor-pointer"/>
+            <BookmarkSvg className="w-6 h-6 cursor-pointer" />
           </div>
         </div>
       </CardContent>
-      <CardFooter className="p-0">
-        <div className="flex w-full items-center border-b  rounded-md px-3">
-          <TextBox />
-        </div>
-      </CardFooter>
+      <AnimatePresence>
+      {openCommentBox && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.2 }}
+        >
+          <CardFooter className="p-0 flex-col items-start flex">
+            <div className="flex w-full items-center border-b rounded-md px-3">
+              <TextBox />
+            </div>
+          </CardFooter>
+        </motion.div>
+      )}
+    </AnimatePresence>
     </Card>
   );
 };
