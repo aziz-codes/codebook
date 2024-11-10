@@ -34,9 +34,10 @@ type Post = {
 };
 type PostProps = {
   post: Post;
+  sessionId: string;
 };
 
-const SinglePost: FC<PostProps> = ({ post }) => {
+const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const [liked, setLiked] = useState(false);
 
@@ -53,26 +54,26 @@ const SinglePost: FC<PostProps> = ({ post }) => {
     });
   };
   const options = [
-    "Report Post",
-    "Edit Post",
-    "Delete Post",
-    "Save Post",
-    "Share Post",
+    { label: "Report Post", ownerOnly: false },
+    { label: "Edit Post", ownerOnly: true },
+    { label: "Delete Post", ownerOnly: true },
+    { label: "Save Post", ownerOnly: false },
+    { label: "Share Post", ownerOnly: false },
   ];
+  const isPostOwner = post.user._id === sessionId;
   const customFormatter = (value: number, unit: string, suffix: string) => {
     const shortUnit = {
-      second: 'sec',
-      minute: 'min',
-      hour: 'hr',
-      day: 'day',
-      week: 'wk',
-      month: 'mo',
-      year: 'yr',
+      second: "sec",
+      minute: "min",
+      hour: "hr",
+      day: "day",
+      week: "wk",
+      month: "mo",
+      year: "yr",
     }[unit];
-  
- 
+
     const formattedUnit = value > 1 ? `${shortUnit}s` : shortUnit;
-  
+
     return `${value} ${formattedUnit} ${suffix}`;
   };
   return (
@@ -80,20 +81,23 @@ const SinglePost: FC<PostProps> = ({ post }) => {
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-4">
         <div className="flex items-center gap-3">
-          <Avatar className="cursor-pointer" onClick={()=>router.push(`user/${post.user.username}`)}>
-            <AvatarFallback>{post.user.name.slice(0,2)}</AvatarFallback>
+          <Avatar
+            className="cursor-pointer"
+            onClick={() => router.push(`user/${post.user.username}`)}
+          >
+            <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
             <AvatarImage src={post.user.avatar} />
           </Avatar>
           <div>
-            <p className="text-sm font-semibold cursor-pointer  text-white" onClick={()=>router.push(`user/${post.user.username}`)}>{post.user.username}</p>
+            <p
+              className="text-sm font-semibold cursor-pointer  text-white"
+              onClick={() => router.push(`user/${post.user.username}`)}
+            >
+              {post.user.username}
+            </p>
             <div className="text-[11px] text-muted-foreground">
-            <TimeAgo
-  date={post.createdAt}
-  formatter={customFormatter}
-/>
-
-        </div>
-
+              <TimeAgo date={post.createdAt} formatter={customFormatter} />
+            </div>
           </div>
         </div>
         <DropdownMenu>
@@ -101,25 +105,27 @@ const SinglePost: FC<PostProps> = ({ post }) => {
             <Ellipsis className="cursor-pointer hover:text-gray-400" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-36">
-            {options.map((option) => (
-              <DropdownMenuRadioItem
-                key={option}
-                value={option}
-                className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
-              >
-                {option}
-              </DropdownMenuRadioItem>
-            ))}
+            {options
+              .filter((option) => !option.ownerOnly || isPostOwner)
+              .map((option) => (  
+                <DropdownMenuRadioItem
+                  key={option.label}
+                  value={option.label}
+                  className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
+                >
+                  {option.label}
+                </DropdownMenuRadioItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       <CardContent className="p-0">
         {/* Post Content */}
         <div className="mb-4 px-4">
-        <p
-      className="text-gray-300"
-      dangerouslySetInnerHTML={{ __html: post.title }}
-    />
+          <p
+            className="text-gray-300"
+            dangerouslySetInnerHTML={{ __html: post.title }}
+          />
         </div>
 
         {/* Post Image */}

@@ -6,7 +6,7 @@ import { topMargin } from "@/utilities";
 import Create from "@/components/create";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
-
+import { useSession } from "next-auth/react";
 type User = {
   _id: string;
   name: string;
@@ -30,6 +30,7 @@ type GetPostsResponse = {
 };
 
 const HomePage = () => {
+  const {data:session} = useSession();
   const { data, error, isLoading } = useQuery<GetPostsResponse, Error>({
     queryKey: ["posts"],
     queryFn: async () => await getRequest("/post"),
@@ -37,14 +38,15 @@ const HomePage = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading posts: {error.message}</p>;
-
+ const sessionId = session?.user.id || "";
+ 
   return (
     <MainWrapper classes="w-full">
       <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>
         <div className="flex flex-col gap-4 lg:w-1/2 lg:max-w-lg w-full">
           <Create />
           {data?.result.map((post) => (
-            <Post key={post._id} post={post} />
+            <Post key={post._id} post={post} sessionId={sessionId}/>
           ))}
         </div>
 
