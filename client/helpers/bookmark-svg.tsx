@@ -19,6 +19,11 @@ xmlns="http://www.w3.org/2000/svg"
 className='cursor-pointer transition-colors duration-300 ease-in-out'
 onClick={onClick}
  
+    stroke={stroke}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth={0.9}
+ 
 {...rest}
 >
 <path d="M19 21l-7-4-7 4V5a2 2 0 012-2h10a2 2 0 012 2v16z" fill={fill} stroke={stroke}/>

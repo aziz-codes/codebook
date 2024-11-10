@@ -15,7 +15,7 @@ const HeartSvg:React.FC<HeartIconProps> = ({ fill = 'none',stroke="white", onCli
     stroke={stroke}
     strokeLinecap="round"
     strokeLinejoin="round"
-    strokeWidth={1}
+    strokeWidth={0.6}
     className='cursor-pointer transition-colors duration-300 ease-in-out'
     onClick={onClick}
     {...rest}
