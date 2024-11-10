@@ -24,7 +24,7 @@ const TextBox = ({placeholder="Add a comment"}) => {
       <textarea
         placeholder={placeholder}
         ref={inputRef}
-        className="resize-none overflow-hidden w-full p-2 outline-none bg-transparent"
+        className="resize-none overflow-hidden w-full py-2 outline-none bg-transparent"
         value={input}
         onChange={(e) => setInput(e.target.value)}  
         style={{ height: "34px" }}  
