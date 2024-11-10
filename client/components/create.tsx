@@ -11,7 +11,7 @@ const Create = () => {
   const router = useRouter();
  
   return (
-    <div className="max-w-full bg-semiDark p-4 rounded-lg shadow-md">
+    <div className="max-w-full bg-semiDark p-4 rounded-lg shadow-md mb-3">
       {/* Top: Textbox and user icon */}
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-full bg-gray-500">
