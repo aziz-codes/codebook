@@ -78,7 +78,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     return `${value} ${formattedUnit} ${suffix}`;
   };
   return (
-    <Card className="rounded-md !border-none mb-4">
+    <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-4">
         <div className="flex items-center gap-3">
@@ -102,10 +102,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           </div>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 ease-linear">
             <Ellipsis className="cursor-pointer hover:text-gray-400" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-36">
+          <DropdownMenuContent className="w-36 ">
             {options
               .filter((option) => !option.ownerOnly || isPostOwner)
               .map((option) => (
@@ -139,7 +139,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             />
           </div>
         )}
-        <div className="px-3 py-4 flex items-center justify-between select-none border-t">
+        <div className="px-3 py-2 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative">
             <HeartSvg
               stroke={liked ? "red" : "white"}
