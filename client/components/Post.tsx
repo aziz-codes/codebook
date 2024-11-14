@@ -102,7 +102,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           </div>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild className="opacity-0 group-focus:opacity-100 group-hover:opacity-100 transition-opacity duration-150 ease-linear">
+          <DropdownMenuTrigger asChild>
             <Ellipsis className="cursor-pointer hover:text-gray-400" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-36 group">
