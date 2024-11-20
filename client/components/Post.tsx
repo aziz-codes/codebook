@@ -129,6 +129,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             className="text-gray-300 first-letter:capitalize"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
+        
         </div>
 
         {/* Post Image */}
@@ -151,8 +152,8 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             />
 
             <span className=" text-xs">
-              {post.likeCount < 1 && null}{" "}
-              {post.likeCount < 1 ? "Like" : "Likes"}
+              {post.likeCount < 1 ? null: post.likeCount}
+              {post.likeCount < 1 ? " Like" : " Likes"}
             </span>
           </div>
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
@@ -161,8 +162,8 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               onClick={() => setCommentBox(!openCommentBox)}
             />
             <span className=" text-xs hover:underline">
-              {post.commentCount < 1 && null}{" "}
-              {post.commentCount < 1 ? "Comment" : "Comments"}
+              {post.commentCount < 1 ? null: post.commentCount}{" "}
+              {post.commentCount < 1 ? " Comment" : " Comments"}
             </span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
