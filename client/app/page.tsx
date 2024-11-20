@@ -22,6 +22,8 @@ type PostData = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  likeCount:number;
+  commentCount: number;
 };
 
 type GetPostsResponse = {

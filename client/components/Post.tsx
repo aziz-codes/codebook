@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
-import {AnimatePresence,motion} from 'framer-motion'
+import { AnimatePresence, motion } from "framer-motion";
 import HeartSvg from "@/helpers/heart-svg";
 import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
@@ -32,6 +32,8 @@ type Post = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  likeCount: number;
+  commentCount: number;
 };
 type PostProps = {
   post: Post;
@@ -148,14 +150,20 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               className="w-6 h-6 cursor-pointer  "
             />
 
-            <span className=" text-xs">{likes} Likes</span>
+            <span className=" text-xs">
+              {post.likeCount < 1 && null}{" "}
+              {post.likeCount < 1 ? "Like" : "Likes"}
+            </span>
           </div>
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
             <CommentSvg
               className="w-6 h-6 cursor-pointer "
               onClick={() => setCommentBox(!openCommentBox)}
             />
-            <span className=" text-xs hover:underline">34 Comments</span>
+            <span className=" text-xs hover:underline">
+              {post.commentCount < 1 && null}{" "}
+              {post.commentCount < 1 ? "Comment" : "Comments"}
+            </span>
           </div>
           <div className="flex items-center space-x-2 cursor-pointer">
             <BookmarkSvg className="w-6 h-6 cursor-pointer" />
@@ -163,21 +171,21 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
         </div>
       </CardContent>
       <AnimatePresence>
-      {openCommentBox && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.2 }}
-        >
-          <CardFooter className="p-0 flex-col items-start flex">
-            <div className="flex w-full items-center border-b rounded-md px-3">
-              <TextBox />
-            </div>
-          </CardFooter>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        {openCommentBox && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <CardFooter className="p-0 flex-col items-start flex">
+              <div className="flex w-full items-center border-b rounded-md px-3">
+                <TextBox />
+              </div>
+            </CardFooter>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 };

@@ -1,5 +1,7 @@
 import Post from "../schemas/Post.js";
 import mongoose from "mongoose";
+import Like from '../schemas/Like.js';
+import Comment from '../schemas/Comment.js'
 export const post = async (req, res) => {
   try {
     const { user, title, image } = req.body;
@@ -30,15 +32,26 @@ export const post = async (req, res) => {
   }
 };
 
-export const getPosts = async (req,res) => {
+export const getPosts = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "username avatar name")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean(); // Use lean for better performance if no virtuals are needed
 
-     res.status(200).json({count:posts.length,result:posts})
+    // Attach counts for likes and comments
+    const enrichedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const likeCount = await Like.countDocuments({ post: post._id });
+        const commentCount = await Comment.countDocuments({ post: post._id });
+        return { ...post, likeCount, commentCount };
+      })
+    );
+
+    res.status(200).json({ count: enrichedPosts.length, result: enrichedPosts });
   } catch (error) {
     console.error("Error fetching posts:", error);
-    throw new Error("Could not fetch posts.");
+    res.status(500).json({ error: "Could not fetch posts." });
   }
 };
+
