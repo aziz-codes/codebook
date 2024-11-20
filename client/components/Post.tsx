@@ -83,7 +83,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4  py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
           <Avatar
             className="cursor-pointer"
             onClick={() => router.push(`user/${post.user.username}`)}
@@ -91,14 +91,14 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
             <AvatarImage src={post.user.avatar} />
           </Avatar>
-          <div>
+          <div className="flex flex-col -space-y-0.5">
             <p
               className="text-sm font-semibold cursor-pointer  text-white"
               onClick={() => router.push(`user/${post.user.username}`)}
             >
               {post.user.username}
             </p>
-            <div className="text-[11px] text-muted-foreground">
+            <div className="text-[10px] text-muted-foreground">
               <TimeAgo date={post.createdAt} formatter={customFormatter} />
             </div>
           </div>
