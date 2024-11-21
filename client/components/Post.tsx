@@ -66,11 +66,12 @@ const [loading,setLoading] = useState(false);
     try {
       const method = "POST";
 setLoading(true)
-      await fetch(`http://localhost:8000/post/like/${postId}`, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: sessionId }),
-      });
+      // await fetch(`http://localhost:8000/post/like/${postId}`, {
+      //   method,
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ userId: sessionId }),
+      // });
+      await postRequest(`/post/like/${postId}`,{userId: sessionId})
       setLoading(false)
     } catch (error) {
       console.error("Failed to update likes:", error);
@@ -168,7 +169,7 @@ setLoading(true)
             />
           </div>
         )}
-        <div className="px-3 py-2 flex items-center justify-between select-none border-t">
+        <div className="px-3 py-3 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative">
             <HeartSvg
               stroke={liked ? "red" : "white"}
@@ -178,7 +179,7 @@ setLoading(true)
             />
             <span className="text-xs">
               {likes > 0 ? likes : null}
-              {likes === 1 ? " Like" : " Likes"}
+              {likes < 1 ? " " : " Likes"}
             </span>
           </div>
 
