@@ -179,7 +179,7 @@ setLoading(true)
             />
             <span className="text-xs">
               {likes > 0 ? likes : null}
-              {likes < 1 ? " " : " Likes"}
+              {likes < 1 ? " " : likes ===1 ? " Like" :" Likes"}
             </span>
           </div>
 
