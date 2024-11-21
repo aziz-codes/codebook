@@ -42,11 +42,9 @@ const HomePage = () => {
   const {data:session} = useSession();
   const { data, error, isLoading } = useQuery<GetPostsResponse, Error>({
     queryKey: ["posts"],
-    queryFn: async () => await getRequest("/post"),
+    queryFn: async () => await getRequest("/postss"),
   });
-
-  // if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading posts: {error.message}</p>;
+ 
  const sessionId = session?.user.id || "";
  
   return (
@@ -54,6 +52,7 @@ const HomePage = () => {
       <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>
         <div className="flex flex-col gap-4 lg:w-1/2 lg:max-w-lg w-full">
           <Create />
+          {error && <h4 className="text-center my-20">Something went wrong, pelase try again</h4>}
           {isLoading ? <>{Array.from({length:6}).map((_,index)=>(
              <PostSkeleton key={index}/>
           ))}</> : data?.result.map((post) => (
