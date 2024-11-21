@@ -13,7 +13,10 @@ type User = {
   avatar: string;
   username: string;
 };
-
+type Like={
+  userIds: string[];
+  count: number;
+}
 type PostData = {
   _id: string;
   user: User;
@@ -22,7 +25,7 @@ type PostData = {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  likeCount:number;
+  likes: Like;
   commentCount: number;
 };
 

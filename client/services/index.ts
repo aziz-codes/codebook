@@ -11,3 +11,15 @@ export const getRequest = async(endpoint:string):Promise<any>=>{
     console.log(err);
    }
 }
+
+
+export const postRequest = async(endpoint:string,data:any):Promise<any> =>{
+     const res = await fetch(`${baseUrl}${endpoint}`,{
+      method: "POST",
+       body: JSON.stringify(data)
+     },
+
+     
+   )
+   return res;
+}

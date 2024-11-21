@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC, useState, useOptimistic } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
@@ -10,6 +10,8 @@ import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
+import { postRequest } from "@/services/index"; // Assuming this is your API call function
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +26,11 @@ type User = {
   username: string;
 };
 
+type Like = {
+  userIds: string[];
+  count: number;
+};
+
 type Post = {
   _id: string;
   user: User;
@@ -32,9 +39,10 @@ type Post = {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  likeCount: number;
+  likes: Like;
   commentCount: number;
 };
+
 type PostProps = {
   post: Post;
   sessionId: string;
@@ -42,20 +50,36 @@ type PostProps = {
 
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
-  const [liked, setLiked] = useState(false);
-  const [openCommentBox, setCommentBox] = useState(false);
-  let [likes, setLikes] = useState(24);
+  const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
 
-  const handleLike = () => {
-    setLiked((prevLiked) => {
-      if (prevLiked) {
-        setLikes(likes - 1);
-      } else {
-        setLikes(likes + 1);
-      }
-      return !prevLiked;
-    });
+  console.log(liked);
+  const [openCommentBox, setCommentBox] = useState(false);
+  const [likes, setLikes] = useState(post.likes.count);
+const [loading,setLoading] = useState(false);
+  const handleLike = async (postId: string) => {
+    const isCurrentlyLiked = liked;
+    if(loading) return;
+ 
+    setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
+    setLiked(!isCurrentlyLiked);
+
+    try {
+      const method = "POST";
+setLoading(true)
+      await fetch(`http://localhost:8000/post/like/${postId}`, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: sessionId }),
+      });
+      setLoading(false)
+    } catch (error) {
+      console.error("Failed to update likes:", error);
+      setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
+      setLiked(isCurrentlyLiked);
+      setLoading(false)
+    }
   };
+
   const options = [
     { label: "Report Post", ownerOnly: false },
     { label: "Edit Post", ownerOnly: true },
@@ -63,7 +87,9 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     { label: "Save Post", ownerOnly: false },
     { label: "Share Post", ownerOnly: false },
   ];
+
   const isPostOwner = post.user._id === sessionId;
+
   const customFormatter = (value: number, unit: string, suffix: string) => {
     const shortUnit = {
       second: "sec",
@@ -79,10 +105,11 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
     return `${value} ${formattedUnit} ${suffix}`;
   };
+
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
-      <div className="flex justify-between items-center px-4  py-4">
+      <div className="flex justify-between items-center px-4 py-4">
         <div className="flex items-center gap-1.5">
           <Avatar
             className="cursor-pointer"
@@ -93,7 +120,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           </Avatar>
           <div className="flex flex-col -space-y-0.5">
             <p
-              className="text-sm font-semibold cursor-pointer  text-white"
+              className="text-sm font-semibold cursor-pointer text-white"
               onClick={() => router.push(`user/${post.user.username}`)}
             >
               {post.user.username}
@@ -114,7 +141,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
                 <DropdownMenuRadioItem
                   key={option.label}
                   value={option.label}
-                  className="cursor-pointer px-2 py-1   hover:!bg-bgCard rounded-md"
+                  className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
                 >
                   {option.label}
                 </DropdownMenuRadioItem>
@@ -129,12 +156,11 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             className="text-gray-300 first-letter:capitalize"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
-        
         </div>
 
         {/* Post Image */}
         {post.image && (
-          <div className="w-full h-96  overflow-hidden">
+          <div className="w-full h-96 overflow-hidden">
             <img
               src={post.image}
               alt="Post"
@@ -147,22 +173,22 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             <HeartSvg
               stroke={liked ? "red" : "white"}
               fill={liked ? "red" : "none"}
-              onClick={handleLike}
-              className="w-6 h-6 cursor-pointer  "
+              onClick={() => handleLike(post._id)}
+              className="w-6 h-6 cursor-pointer"
             />
-
-            <span className=" text-xs">
-              {post.likeCount < 1 ? null: post.likeCount}
-              {post.likeCount < 1 ? " Like" : " Likes"}
+            <span className="text-xs">
+              {likes > 0 ? likes : null}
+              {likes === 1 ? " Like" : " Likes"}
             </span>
           </div>
+
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
             <CommentSvg
-              className="w-6 h-6 cursor-pointer "
+              className="w-6 h-6 cursor-pointer"
               onClick={() => setCommentBox(!openCommentBox)}
             />
-            <span className=" text-xs hover:underline">
-              {post.commentCount < 1 ? null: post.commentCount}{" "}
+            <span className="text-xs hover:underline">
+              {post.commentCount < 1 ? null : post.commentCount}{" "}
               {post.commentCount < 1 ? " Comment" : " Comments"}
             </span>
           </div>
@@ -192,4 +218,3 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 };
 
 export default SinglePost;
-// test commit

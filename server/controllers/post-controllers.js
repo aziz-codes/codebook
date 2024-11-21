@@ -42,9 +42,20 @@ export const getPosts = async (req, res) => {
     // Attach counts for likes and comments
     const enrichedPosts = await Promise.all(
       posts.map(async (post) => {
-        const likeCount = await Like.countDocuments({ post: post._id });
+
         const commentCount = await Comment.countDocuments({ post: post._id });
-        return { ...post, likeCount, commentCount };
+
+        // Get the users who liked the post
+        const likedUsers = await Like.find({ post: post._id }).select("user");
+
+        return {
+          ...post,
+          likes: {
+            userIds: likedUsers.map(like => like.user), // List of userIds who liked the post
+            count: likedUsers.length,  // Total like count
+          },
+          commentCount,
+        };
       })
     );
 
@@ -54,4 +65,5 @@ export const getPosts = async (req, res) => {
     res.status(500).json({ error: "Could not fetch posts." });
   }
 };
+
 

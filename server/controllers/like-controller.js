@@ -1,11 +1,12 @@
 import Like from "../schemas/Like.js"; // Assuming you have a Like schema
 import Post from "../schemas/Post.js";
-import { post } from "./post-controllers.js";
+
 
 export const toggleLikePost = async (req, res) => {
     try {
       const { id:postId } = req.params; // Get postId from the URL
       const { userId } = req.body;   // Get userId from the request body
+ 
   console.log(`post id is ${postId} and user id is ${userId}`)
       // Check if the user has already liked the post
       const existingLike = await Like.findOne({ post: postId, user: userId });
