@@ -16,6 +16,9 @@ export const getRequest = async(endpoint:string):Promise<any>=>{
 export const postRequest = async(endpoint:string,data:any):Promise<any> =>{
      const res = await fetch(`${baseUrl}${endpoint}`,{
       method: "POST",
+      headers:{
+        "Content-Type": "application/json"
+      },
        body: JSON.stringify(data)
      },
 
