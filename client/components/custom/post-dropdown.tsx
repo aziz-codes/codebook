@@ -41,7 +41,7 @@ type Post = {
   commentCount: number;
 };
 
-const PostDropdown = ({ isPostOwner, post }: { isPostOwner: boolean; post: string }) => {
+const PostDropdown = ({ isPostOwner, post,setOpen:childOpen}: { isPostOwner: boolean; post: string,setOpen:React.Dispatch<React.SetStateAction<boolean>> }) => {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
 const [open,setOpen] = useState(false);
@@ -60,6 +60,7 @@ const [open,setOpen] = useState(false);
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey:["posts"]});
       setOpen(false);
+      childOpen(false);
     },
     onError: (error) => {
       console.error("Error deleting post:", error);
