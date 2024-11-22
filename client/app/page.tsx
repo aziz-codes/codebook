@@ -59,6 +59,7 @@ const HomePage = () => {
             <h4 className="text-center my-20">
               Something went wrong, pelase try again
             </h4>
+            
           )}
           {isLoading ? (
             <>
@@ -67,7 +68,7 @@ const HomePage = () => {
               ))}
             </>
           ) : (
-            data?.result.map((post) => (
+            !error && data?.result.map((post) => (
               <Post key={post._id} post={post} sessionId={sessionId} />
             ))
           )}

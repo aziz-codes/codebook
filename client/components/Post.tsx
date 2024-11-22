@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState, useOptimistic } from "react";
+import React, { FC, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
@@ -10,7 +10,7 @@ import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
-import { postRequest } from "@/services/index"; // Assuming this is your API call function
+import { postRequest } from "@/services/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DropdownMenu,
@@ -51,42 +51,36 @@ type PostProps = {
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
-
-  console.log(liked);
+  const queryClient = useQueryClient();
   const [openCommentBox, setCommentBox] = useState(false);
   const [likes, setLikes] = useState(post.likes.count);
-const [loading,setLoading] = useState(false);
+  const [option, setOption] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleLike = async (postId: string) => {
     const isCurrentlyLiked = liked;
-    if(loading) return;
- 
+    if (loading) return;
+
     setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
     setLiked(!isCurrentlyLiked);
 
     try {
-      const method = "POST";
-setLoading(true)
-      // await fetch(`http://localhost:8000/post/like/${postId}`, {
-      //   method,
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ userId: sessionId }),
-      // });
-      await postRequest(`/post/like/${postId}`,{userId: sessionId})
-      setLoading(false)
+      setLoading(true);
+      await postRequest(`/post/like/${postId}`, { userId: sessionId });
+      setLoading(false);
     } catch (error) {
       console.error("Failed to update likes:", error);
       setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
       setLiked(isCurrentlyLiked);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   const options = [
-    { label: "Report Post", ownerOnly: false },
-    { label: "Edit Post", ownerOnly: true },
-    { label: "Delete Post", ownerOnly: true },
-    { label: "Save Post", ownerOnly: false },
-    { label: "Share Post", ownerOnly: false },
+    { label: "Report Post", action: "report", ownerOnly: false },
+    { label: "Edit Post", action: "edit", ownerOnly: true },
+    { label: "Delete Post", action: "delete", ownerOnly: true },
+    { label: "Save Post", action: "save", ownerOnly: false },
+    { label: "Share Post", action: "share", ownerOnly: false },
   ];
 
   const isPostOwner = post.user._id === sessionId;
@@ -107,6 +101,11 @@ setLoading(true)
     return `${value} ${formattedUnit} ${suffix}`;
   };
 
+  const handleOptionSelect = (option: string) => {
+    if (option === "delete") {
+
+    }
+  };
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
@@ -126,7 +125,7 @@ setLoading(true)
             >
               {post.user.username}
             </p>
-            <div className="text-[10px] text-muted-foreground">
+            <div className="text-[10px] text-gray-400">
               <TimeAgo date={post.createdAt} formatter={customFormatter} />
             </div>
           </div>
@@ -143,6 +142,7 @@ setLoading(true)
                   key={option.label}
                   value={option.label}
                   className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
+                  onClick={() => handleOptionSelect(option.action)}
                 >
                   {option.label}
                 </DropdownMenuRadioItem>
@@ -179,7 +179,7 @@ setLoading(true)
             />
             <span className="text-xs">
               {likes > 0 ? likes : null}
-              {likes < 1 ? " " : likes ===1 ? " Like" :" Likes"}
+              {likes < 1 ? " " : likes === 1 ? " Like" : " Likes"}
             </span>
           </div>
 

@@ -66,4 +66,60 @@ export const getPosts = async (req, res) => {
   }
 };
 
+ 
 
+export const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the post ID from the URL params
+
+    console.log("Post ID to delete:", id);
+
+    // Validate the ID format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Find and delete the post by ID
+    const post = await Post.findByIdAndDelete(id);
+    console.log("Deleted Post:", post); // Log the result to verify it's being deleted
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // If deletion is successful
+    res.status(204).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ error: "Could not delete post." });
+  }
+};
+
+
+
+export const getSinglePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log('post id is ' + id);
+
+    // Validate the ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // Find the post by ID
+    const post = await Post.findById(id);
+
+    // If no post found
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Send the post data
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    res.status(500).json({ error: "Could not fetch post." });
+  }
+};
