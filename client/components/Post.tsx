@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
@@ -11,13 +11,15 @@ import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
 import { postRequest } from "@/services/index";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import PostDropdown from "./custom/post-dropdown";
 
 type User = {
   _id: string;
@@ -50,11 +52,12 @@ type PostProps = {
 
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
+  const deleteRef = useRef<HTMLButtonElement>(null);
   const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
-  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
   const [likes, setLikes] = useState(post.likes.count);
-  const [option, setOption] = useState("");
+
   const [loading, setLoading] = useState(false);
   const handleLike = async (postId: string) => {
     const isCurrentlyLiked = liked;
@@ -75,14 +78,6 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     }
   };
 
-  const options = [
-    { label: "Report Post", action: "report", ownerOnly: false },
-    { label: "Edit Post", action: "edit", ownerOnly: true },
-    { label: "Delete Post", action: "delete", ownerOnly: true },
-    { label: "Save Post", action: "save", ownerOnly: false },
-    { label: "Share Post", action: "share", ownerOnly: false },
-  ];
-
   const isPostOwner = post.user._id === sessionId;
 
   const customFormatter = (value: number, unit: string, suffix: string) => {
@@ -101,11 +96,6 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     return `${value} ${formattedUnit} ${suffix}`;
   };
 
-  const handleOptionSelect = (option: string) => {
-    if (option === "delete") {
-
-    }
-  };
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
@@ -130,24 +120,12 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             </div>
           </div>
         </div>
-        <DropdownMenu>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger asChild>
-            <Ellipsis className="cursor-pointer hover:text-gray-400" />
+            <Ellipsis className="cursor-pointer hover:text-gray-400" onClick={()=>setOpen(true)}/>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-36 group">
-            {options
-              .filter((option) => !option.ownerOnly || isPostOwner)
-              .map((option) => (
-                <DropdownMenuRadioItem
-                  key={option.label}
-                  value={option.label}
-                  className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
-                  onClick={() => handleOptionSelect(option.action)}
-                >
-                  {option.label}
-                </DropdownMenuRadioItem>
-              ))}
-          </DropdownMenuContent>
+
+          <PostDropdown isPostOwner={isPostOwner} post={post._id} setOpen={setOpen}/>
         </DropdownMenu>
       </div>
       <CardContent className="p-0">
