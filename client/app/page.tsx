@@ -74,7 +74,7 @@ const HomePage = () => {
           )}
         </div>
 
-        <div className="w-4/12 hidden lg:flex justify-center rounded-md border">
+        <div className="w-4/12 hidden lg:flex justify-center rounded-md ">
           right side
         </div>
       </div>
