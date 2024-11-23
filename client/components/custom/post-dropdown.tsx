@@ -107,7 +107,7 @@ const [open,setOpen] = useState(false);
       </DropdownMenuRadioItem>
      {isPostOwner&& <div onClick={()=>setOpen(true)}
         
-        className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
+        className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md text-sm text-red-500"
       >
         Delete
       </div>}

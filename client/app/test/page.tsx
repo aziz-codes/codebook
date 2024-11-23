@@ -5,10 +5,10 @@ import { useState } from "react";
 
 const Test = () => {
   const [open, setOpen] = useState(false);
-  const [emojis, setEmojis] = useState<string[]>([]); // Array to hold selected emojis
+  const [emojis, setEmojis] = useState<string[]>([]);
 
   const handleEmojiSelect = (item: any) => {
-    setEmojis((prev) => [...prev, item.native]); // Append the selected emoji
+    setEmojis((prev) => [...prev, item.native]);
   };
 
   return (
@@ -24,14 +24,36 @@ const Test = () => {
           </span>
         ))}
       </div>
+
       {open && (
-        <Picker
-          data={data}
-          onEmojiSelect={handleEmojiSelect}
-          previewPosition="none"
-          onClickOutside={() => setOpen(false)}
-          theme="dark"
-        />
+        <div style={{ position: "relative" }}>
+          {/* Custom close button */}
+          <button
+            onClick={() => setOpen(false)}
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              background: "transparent",
+              border: "none",
+              fontSize: "20px",
+              cursor: "pointer",
+            }}
+          >
+            ✖
+          </button>
+
+          <Picker
+          navPosition="none"
+            data={data}
+            onEmojiSelect={handleEmojiSelect}
+            previewPosition="none"
+            onClickOutside={() => setOpen(false)}
+             className="border"
+            emojiSize={12}  
+            emojiButtonSize={20}  
+          />
+        </div>
       )}
     </div>
   );
