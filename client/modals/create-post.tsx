@@ -107,6 +107,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
       })
       cancelRef.current && cancelRef.current.click();
       setLoading(false);
+      setContent("")
     },
     onError: (error) => {
       console.error("An error occurred", error);
