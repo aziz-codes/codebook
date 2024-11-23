@@ -53,13 +53,14 @@ type PostProps = {
 
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
- const queryClient =  useQueryClient()
+  const queryClient = useQueryClient();
   const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
   const [likes, setLikes] = useState(post.likes.count);
-
+  const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  // handle like functionality
   const handleLike = async (postId: string) => {
     const isCurrentlyLiked = liked;
     if (loading) return;
@@ -71,7 +72,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       setLoading(true);
       await postRequest(`/post/like/${postId}`, { userId: sessionId });
       setLoading(false);
-      queryClient.invalidateQueries({queryKey:["posts"]});
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     } catch (error) {
       console.error("Failed to update likes:", error);
       setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
@@ -97,10 +98,33 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
     return `${value} ${formattedUnit} ${suffix}`;
   };
-useEffect(()=>{
-  document.body.classList.remove("pointer-events-none");
-  document.body.style.pointerEvents = "";
-},[open])
+  useEffect(() => {
+    document.body.classList.remove("pointer-events-none");
+    document.body.style.pointerEvents = "";
+  }, [open]);
+
+  const handleComment = async () => {
+    if (comment.trim() === "") {
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = {
+        user: sessionId,
+        text: comment.trim(),
+        post: post._id,
+      };
+      await postRequest(`/post/comment/${post._id}`, payload);
+      setComment("");
+      setCommentBox(false);
+      setLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    } catch (error) {
+      console.error("Failed to comment:", error);
+      setLoading(false);
+    }
+  };
+
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
@@ -127,10 +151,17 @@ useEffect(()=>{
         </div>
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger asChild>
-            <Ellipsis className="cursor-pointer hover:text-gray-400" onClick={()=>setOpen(true)}/>
+            <Ellipsis
+              className="cursor-pointer hover:text-gray-400"
+              onClick={() => setOpen(true)}
+            />
           </DropdownMenuTrigger>
 
-          <PostDropdown isPostOwner={isPostOwner} post={post._id} setOpen={setOpen}/>
+          <PostDropdown
+            isPostOwner={isPostOwner}
+            post={post._id}
+            setOpen={setOpen}
+          />
         </DropdownMenu>
       </div>
       <CardContent className="p-0">
@@ -191,7 +222,12 @@ useEffect(()=>{
           >
             <CardFooter className="p-0 flex-col items-start flex">
               <div className="flex w-full items-center border-b rounded-md px-3">
-                <TextBox />
+                <TextBox
+                  comment={comment}
+                  setComment={setComment}
+                  onComment={handleComment}
+                  loading={loading}
+                />
               </div>
             </CardFooter>
           </motion.div>

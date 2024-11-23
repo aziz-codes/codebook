@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-router.post("/",saveComment)
+router.post("/:postid",saveComment)
 router.get("/",getComments)
 
 

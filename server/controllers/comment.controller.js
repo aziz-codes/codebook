@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 export const saveComment = async (req, res) => {
   try {
-    const { user, post, text } = req.body;
+    const { user,  text } = req.body;
+    const {postid:post} = req.params;
 
     // Validate required fields
     if (!user || !post || !text) {
