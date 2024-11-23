@@ -9,8 +9,9 @@ const router = express.Router();
 router.post("/", post);
 router.get("/", getPosts);
 router.delete('/:id',deletePost);
-// router.get("/:id", getSinglePost);
 
 router.post("/like/:id",toggleLikePost)
+
+
 
   export default router;

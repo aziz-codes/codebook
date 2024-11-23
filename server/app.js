@@ -3,6 +3,7 @@ import express from 'express'
 import snippetRoutes from './routes/snippets-routes.js';
 import userRoute from './routes/user-routes.js';
 import postRoutes from './routes/post.routes.js';
+import commentRoutes from './routes/comment.routes.js'
 import mongoose from 'mongoose';
 import cors from 'cors';
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use("/snippets",snippetRoutes)
 app.use("/user",userRoute);
 app.use("/post",postRoutes);
+app.use("/post/comment",commentRoutes);
 const port = 8000;
 app.listen(port,()=>{
     console.log(`server is running on port:${port}`)
