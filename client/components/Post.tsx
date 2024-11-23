@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
 import { postRequest } from "@/services/index";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -52,7 +53,7 @@ type PostProps = {
 
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
-  const deleteRef = useRef<HTMLButtonElement>(null);
+ const queryClient =  useQueryClient()
   const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
@@ -70,6 +71,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       setLoading(true);
       await postRequest(`/post/like/${postId}`, { userId: sessionId });
       setLoading(false);
+      queryClient.invalidateQueries({queryKey:["posts"]});
     } catch (error) {
       console.error("Failed to update likes:", error);
       setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
