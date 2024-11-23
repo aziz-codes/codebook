@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DropdownMenuContent,
   DropdownMenuRadioItem,
@@ -61,6 +61,8 @@ const [open,setOpen] = useState(false);
       queryClient.invalidateQueries({queryKey:["posts"]});
       setOpen(false);
       childOpen(false);
+      document.body.classList.remove("pointer-events-none");
+      
     },
     onError: (error) => {
       console.error("Error deleting post:", error);
@@ -74,7 +76,7 @@ const [open,setOpen] = useState(false);
     setLoading(true);
     mutation.mutate(post);
   };
-
+ 
   return (
     <DropdownMenuContent className="w-36 group">
       {isPostOwner && (

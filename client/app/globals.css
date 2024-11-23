@@ -80,3 +80,8 @@
     @apply !cursor-pointer flex items-center gap-x-2 !px-4 !py-3.5 !m-1.5 rounded-lg font-medium;
   }
 }
+
+
+body{
+  pointer-events: all !important;
+}

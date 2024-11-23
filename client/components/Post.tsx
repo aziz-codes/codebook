@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
@@ -95,7 +95,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
     return `${value} ${formattedUnit} ${suffix}`;
   };
-
+useEffect(()=>{
+  document.body.classList.remove("pointer-events-none");
+  document.body.style.pointerEvents = "";
+},[open])
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
