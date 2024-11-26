@@ -97,7 +97,7 @@ export const getPosts = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const { id } = req.params; // Extract the post ID from the URL params
+    const { id } = req.params;  
 
     console.log("Post ID to delete:", id);
 
@@ -106,15 +106,15 @@ export const deletePost = async (req, res) => {
       return res.status(400).json({ message: "Invalid post ID" });
     }
 
-    // Find and delete the post by ID
+ 
     const post = await Post.findByIdAndDelete(id);
-    console.log("Deleted Post:", post); // Log the result to verify it's being deleted
+    console.log("Deleted Post:", post);  
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // If deletion is successful
+    
     res.status(204).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error("Error deleting post:", error);
