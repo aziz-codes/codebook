@@ -38,5 +38,36 @@ export const saveComment = async (req, res) => {
 
 
 export const getComments = async(req,res)=>{
- return  res.status(200).json({message:'api success'});
+  try {
+    const { postid:postId } = req.params;
+
+    const comments = await Comment.aggregate([
+      { $match: { post: new mongoose.Types.ObjectId(postId) } }, // Filter by post ID
+      {
+        $lookup: {
+          from: "users", // Join with the "users" collection
+          localField: "user", // `user` in Comment schema
+          foreignField: "_id", // `_id` in User schema
+          as: "userDetails", // Name the result array
+        },
+      },
+      { $unwind: "$userDetails" }, // Flatten the userDetails array
+      {
+        $project: {
+          _id: 1,
+          post: 1,
+          text: 1,
+          createdAt: 1,
+          "userDetails.username": 1,
+          "userDetails.avatar": 1,
+        },
+      },
+      { $sort: { createdAt: -1 } }, // Sort by creation date (most recent first)
+    ]);
+
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Could not fetch comments." });
+  }
 }

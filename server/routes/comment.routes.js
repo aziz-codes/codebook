@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.post("/:postid",saveComment)
-router.get("/",getComments)
+router.get("/:postid",getComments)
 
 
 export default router;

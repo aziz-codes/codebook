@@ -1,7 +1,6 @@
 import Post from "../schemas/Post.js";
 import mongoose from "mongoose";
-import Like from '../schemas/Like.js';
-import Comment from '../schemas/Comment.js'
+ 
 export const post = async (req, res) => {
   try {
     const { user, title, image } = req.body;
