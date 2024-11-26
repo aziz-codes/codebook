@@ -1,3 +1,1 @@
-1. Main Feed post component like, comment, bookmark and comment icon UI.
-2. Adding optimistic updates.
-3. Feed UI
+**Display a loader on initial load unitl the next auth session is fetched and Post component is ready.**
