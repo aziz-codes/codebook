@@ -100,9 +100,11 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       };
       await postRequest(`/post/comment/${post._id}`, payload);
       setComment("");
-      setCommentBox(false);
+     
       setLoading(false);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [`comments/${post._id}`] });
+
     } catch (error) {
       console.error("Failed to comment:", error);
       setLoading(false);

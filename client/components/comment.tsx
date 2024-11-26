@@ -3,11 +3,28 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Heart } from 'lucide-react';
 import { CommentType } from '@/types/post';
+import ReactTimeago from 'react-timeago';
 
 interface CommentProps {
   comment: CommentType;
  
 }
+
+const customFormatter = (value: number, unit: string, suffix: string) => {
+  const shortUnit = {
+    second: "sec",
+    minute: "min",
+    hour: "hr",
+    day: "day",
+    week: "wk",
+    month: "mo",
+    year: "yr",
+  }[unit];
+
+  const formattedUnit = value > 1 ? `${shortUnit}s` : shortUnit;
+
+  return `${value} ${formattedUnit} ${suffix}`;
+};
 
 const Comment: React.FC<CommentProps> = ({ comment}) => {
   return (
@@ -20,9 +37,12 @@ const Comment: React.FC<CommentProps> = ({ comment}) => {
         <div className="bg-bgHover p-3 rounded-lg">
           <div className="flex justify-between items-start">
             <p className="font-normal text-sm">{comment.userDetails.username}</p>
-            <p className="text-xs text-gray-400">{comment.createdAt}</p>
+            <div className="text-[10px] text-gray-400">
+              <ReactTimeago date={comment.createdAt} formatter={customFormatter} />
+            </div>
+            
           </div>
-          <p className="mt-1 text-xs">{comment.text}</p>
+          <p className="mt-1 text-xs first-letter:uppercase">{comment.text}</p>
         </div>
         <div className="flex space-x-4">
           <Button variant="ghost" size="sm">
