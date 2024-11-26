@@ -10,7 +10,7 @@ interface CommentProps {
 
 const Comment: React.FC<CommentProps> = ({ comment }) => {
   return (
-    <div className="flex space-x-4 mb-4">
+    <div className="flex space-x-3 mb-4">
       <Avatar className="w-8 h-8">
         <AvatarImage src={comment.avatar} alt={comment.author} />
         <AvatarFallback>{comment.author[0]}</AvatarFallback>
