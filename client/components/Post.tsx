@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis, Heart } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +10,7 @@ import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
-import { postRequest,getRequest } from "@/services/index";
+import { postRequest, getRequest } from "@/services/index";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -22,8 +22,8 @@ import {
 import { CommentType, Post } from "@/types/post";
 import PostDropdown from "./custom/post-dropdown";
 
- import Comment from '@/components/comment'
- 
+import Comment from "@/components/comment";
+import { customFormatter } from "@/utils/utils";
 
 type PostProps = {
   post: Post;
@@ -33,12 +33,12 @@ type PostProps = {
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const postLikes = post.likes.map((like)=>like.user)
+  const postLikes = post.likes.map((like) => like.user);
   const [liked, setLiked] = useState<null | boolean>(null);
-  useEffect(()=>{
-    setLiked(postLikes.includes(sessionId))
-  },[sessionId]);
-  
+  useEffect(() => {
+    setLiked(postLikes.includes(sessionId));
+  }, [sessionId]);
+
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
   const [likes, setLikes] = useState(post.likes.length);
@@ -67,21 +67,6 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
   const isPostOwner = post.user._id === sessionId;
 
-  const customFormatter = (value: number, unit: string, suffix: string) => {
-    const shortUnit = {
-      second: "sec",
-      minute: "min",
-      hour: "hr",
-      day: "day",
-      week: "wk",
-      month: "mo",
-      year: "yr",
-    }[unit];
-
-    const formattedUnit = value > 1 ? `${shortUnit}s` : shortUnit;
-
-    return `${value} ${formattedUnit} ${suffix}`;
-  };
   useEffect(() => {
     document.body.classList.remove("pointer-events-none");
     document.body.style.pointerEvents = "";
@@ -100,27 +85,26 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       };
       await postRequest(`/post/comment/${post._id}`, payload);
       setComment("");
-     
+
       setLoading(false);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.invalidateQueries({ queryKey: [`comments/${post._id}`] });
-
     } catch (error) {
       console.error("Failed to comment:", error);
       setLoading(false);
     }
   };
-  
 
   // fetching comments for each post.
 
-  const { data:comments, error, isLoading } = useQuery<CommentType[],Error>({
+  const {
+    data: comments,
+    error,
+    isLoading,
+  } = useQuery<CommentType[], Error>({
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
-
- 
-
 
   return (
     <Card className="rounded-md !border-none mb-4 group">
@@ -139,7 +123,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               className="text-sm font-semibold cursor-pointer text-white"
               onClick={() => router.push(`user/${post.user.username}`)}
             >
-              {post.user.username} 
+              {post.user.username}
             </p>
 
             <div className="text-[10px] text-gray-400">
@@ -219,11 +203,13 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             transition={{ duration: 0.2 }}
           >
             <CardFooter className="p-0 flex-col items-start flex">
-              <div className="px-3">
-                <h4 className="text-sm mt-1 mb-2">comments are {comments?.length}</h4>
+              <div className="px-3 w-full ">
+                <h4 className="text-sm mt-1 mb-2">
+                  comments are {comments?.length}
+                </h4>
                 {isLoading && "Loading comments"}
                 {comments?.map((comment, index) => (
-                  <Comment comment={comment} key={index}   />
+                  <Comment comment={comment} key={index} />
                 ))}
               </div>
               <div className="flex w-full items-center border-b rounded-md px-3">
