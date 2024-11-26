@@ -23,3 +23,14 @@ export interface CommentData {
     commentCount: number;
   };
   
+
+  export type CommentType ={
+    _id: string;
+    postId: string;
+    text: string;
+    createdAt: string;
+    userDetails:{
+      avatar:string;
+      username:string;
+    }
+  }
