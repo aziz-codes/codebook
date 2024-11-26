@@ -1,3 +1,4 @@
+import { User } from "./user";
 export interface CommentData {
     author: string;
     avatar: string;
@@ -5,4 +6,19 @@ export interface CommentData {
     timestamp: string;
     likes: number;
   }
+  type Like = {
+    userIds: string[];
+    count: number;
+  };
+  export type Post = {
+    _id: string;
+    user: User;
+    title: string;
+    image: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    likes: Like;
+    commentCount: number;
+  };
   

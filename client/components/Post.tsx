@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Heart } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,32 +19,10 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { Post } from "@/types/post";
 import PostDropdown from "./custom/post-dropdown";
 
-type User = {
-  _id: string;
-  name: string;
-  avatar: string;
-  username: string;
-};
-
-type Like = {
-  userIds: string[];
-  count: number;
-};
-
-type Post = {
-  _id: string;
-  user: User;
-  title: string;
-  image: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  likes: Like;
-  commentCount: number;
-};
+import Comment from "./comment";
 
 type PostProps = {
   post: Post;
@@ -124,7 +102,24 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       setLoading(false);
     }
   };
-
+  const comments = [
+    {
+      id: 1,
+      author: "Alice Johnson",
+      avatar: "/placeholder.svg?height=32&width=32",
+      content: "Great post! I love using React and Tailwind together.",
+      timestamp: "1h ago",
+      likes: 7,
+    },
+    {
+      id: 2,
+      author: "Bob Smith",
+      avatar: "/placeholder.svg?height=32&width=32",
+      content: "Thanks for sharing this. It's very helpful!",
+      timestamp: "45m ago",
+      likes: 3,
+    },
+  ];
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
@@ -221,6 +216,12 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             transition={{ duration: 0.2 }}
           >
             <CardFooter className="p-0 flex-col items-start flex">
+              <div className="px-3">
+                <h4 className="text-sm mt-1 mb-2">comments</h4>
+                {comments.map((comment, index) => (
+                  <Comment comment={comment} key={index} />
+                ))}
+              </div>
               <div className="flex w-full items-center border-b rounded-md px-3">
                 <TextBox
                   comment={comment}
