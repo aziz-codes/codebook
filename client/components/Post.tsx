@@ -10,8 +10,8 @@ import CommentSvg from "@/helpers/comment-svg";
 import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
-import { postRequest } from "@/services/index";
-import { useQueryClient } from "@tanstack/react-query";
+import { postRequest,getRequest } from "@/services/index";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -19,10 +19,11 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Post } from "@/types/post";
+import { CommentType, Post } from "@/types/post";
 import PostDropdown from "./custom/post-dropdown";
 
-import Comment from "./comment";
+ import Comment from '@/components/comment'
+ 
 
 type PostProps = {
   post: Post;
@@ -32,10 +33,15 @@ type PostProps = {
 const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [liked, setLiked] = useState(post.likes.userIds.includes(sessionId));
+  const postLikes = post.likes.map((like)=>like.user)
+  const [liked, setLiked] = useState<null | boolean>(null);
+  useEffect(()=>{
+    setLiked(postLikes.includes(sessionId))
+  },[sessionId]);
+  
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
-  const [likes, setLikes] = useState(post.likes.count);
+  const [likes, setLikes] = useState(post.likes.length);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   // handle like functionality
@@ -102,24 +108,18 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       setLoading(false);
     }
   };
-  const comments = [
-    {
-      id: 1,
-      author: "Alice Johnson",
-      avatar: "/placeholder.svg?height=32&width=32",
-      content: "Great post! I love using React and Tailwind together.",
-      timestamp: "1h ago",
-      likes: 7,
-    },
-    {
-      id: 2,
-      author: "Bob Smith",
-      avatar: "/placeholder.svg?height=32&width=32",
-      content: "Thanks for sharing this. It's very helpful!",
-      timestamp: "45m ago",
-      likes: 3,
-    },
-  ];
+  
+
+  // fetching comments for each post.
+
+  const { data:comments, error, isLoading } = useQuery<CommentType[],Error>({
+    queryKey: [`comments/${post._id}`],
+    queryFn: async () => await getRequest(`/post/comment/${post._id}`),
+  });
+
+ 
+
+
   return (
     <Card className="rounded-md !border-none mb-4 group">
       {/* User Info and Action Button */}
@@ -137,8 +137,9 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               className="text-sm font-semibold cursor-pointer text-white"
               onClick={() => router.push(`user/${post.user.username}`)}
             >
-              {post.user.username}
+              {post.user.username} 
             </p>
+
             <div className="text-[10px] text-gray-400">
               <TimeAgo date={post.createdAt} formatter={customFormatter} />
             </div>
@@ -217,9 +218,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           >
             <CardFooter className="p-0 flex-col items-start flex">
               <div className="px-3">
-                <h4 className="text-sm mt-1 mb-2">comments</h4>
-                {comments.map((comment, index) => (
-                  <Comment comment={comment} key={index} />
+                <h4 className="text-sm mt-1 mb-2">comments are {comments?.length}</h4>
+                {isLoading && "Loading comments"}
+                {comments?.map((comment, index) => (
+                  <Comment comment={comment} key={index}   />
                 ))}
               </div>
               <div className="flex w-full items-center border-b rounded-md px-3">
