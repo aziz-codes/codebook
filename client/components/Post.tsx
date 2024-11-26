@@ -113,7 +113,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
         <div className="flex items-center gap-1.5">
           <Avatar
             className="cursor-pointer"
-            onClick={() => router.push(`user/${post.user.username}`)}
+            onClick={() => router.push(`${post.user.username}`)}
           >
             <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
             <AvatarImage src={post.user.avatar} />
@@ -121,7 +121,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           <div className="flex flex-col -space-y-0.5">
             <p
               className="text-sm font-semibold cursor-pointer text-white"
-              onClick={() => router.push(`user/${post.user.username}`)}
+              onClick={() => router.push(`/${post.user.username}`)}
             >
               {post.user.username}
             </p>

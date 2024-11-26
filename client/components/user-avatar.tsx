@@ -44,7 +44,7 @@ const UserAvatar = () => {
         <DropdownMenuRadioItem
           value="right"
           className="  cursor-pointer px-2 hover:!bg-bgCard rounded-md "
-          onClick={() => router.push("/user/21")}
+          onClick={() => router.push(`/${user?.user.username}`)}
         >
           My Profile
         </DropdownMenuRadioItem>
