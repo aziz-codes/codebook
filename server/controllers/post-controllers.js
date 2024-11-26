@@ -34,37 +34,64 @@ export const post = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate("user", "username avatar name")
-      .sort({ createdAt: -1 })
-      .lean(); // Use lean for better performance if no virtuals are needed
-
-    // Attach counts for likes and comments
-    const enrichedPosts = await Promise.all(
-      posts.map(async (post) => {
-
-        const commentCount = await Comment.countDocuments({ post: post._id });
-
-        // Get the users who liked the post
-        const likedUsers = await Like.find({ post: post._id }).select("user");
-
-        return {
-          ...post,
+    // Aggregation pipeline to fetch posts with enriched data
+    const posts = await Post.aggregate([
+      { $sort: { createdAt: -1 } }, // Sort by creation date
+      {
+        $lookup: {
+          from: "users", // Join with the "users" collection
+          localField: "user", // Match the "user" field in the Post model
+          foreignField: "_id", // With the "_id" field in the User model
+          as: "user", // Output the result into this field
+        },
+      },
+      { $unwind: "$user" }, // Flatten the userDetails array
+      {
+        $lookup: {
+          from: "comments", // Join with the "comments" collection
+          localField: "_id", // Match the "post" field in Comments
+          foreignField: "post",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "likes", // Join with the "likes" collection
+          localField: "_id", // Match the "post" field in Likes
+          foreignField: "post",
+          as: "likes",
+        },
+      },
+      {
+        $addFields: {
+          commentCount: { $size: "$comments" }, // Count the number of comments
           likes: {
-            userIds: likedUsers.map(like => like.user), // List of userIds who liked the post
-            count: likedUsers.length,  // Total like count
+            userIds: { $reduce: {
+              input: { $concatArrays: "$likes.userIds" }, // Flatten userIds arrays from all like objects
+              initialValue: [], // Start with an empty array
+              in: { $setUnion: ["$$value", "$$this"] } // Ensure uniqueness of userIds
+            }},
           },
-          commentCount,
-        };
-      })
-    );
+        },
+      },
+      {
+        $project: {
+          "likes.count": 0, // Optionally remove the count field
+          "likes._id": 0,  // Optionally remove the _id field
+          "likes.createdAt": 0, // Optionally remove the createdAt field
+          "likes.updatedAt": 0, // Optionally remove the updatedAt field
+        },
+      },
+    ]);
 
-    res.status(200).json({ count: enrichedPosts.length, result: enrichedPosts });
+    res.status(200).json({ count: posts.length, result: posts });
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Could not fetch posts." });
   }
 };
+
+
 
  
 
