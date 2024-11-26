@@ -1,46 +1,24 @@
 "use client";
 import React from "react";
-import Post from "@/components/Post";
+import SinglePost from "@/components/Post";
 import MainWrapper from "@/layouts/main-wrapper";
 import { topMargin } from "@/utilities";
- 
+
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
 import { useSession } from "next-auth/react";
 import PostSkeleton from "@/skeletons/post-skeleton";
 import dynamic from "next/dynamic";
 import CreateSkeleton from "@/skeletons/create-skeleton";
- 
+import { Post } from "@/types/post";
 const CreatePost = dynamic(() => import("@/components/create"), {
   ssr: false,
   loading: () => <CreateSkeleton />,
 });
-type User = {
-  _id: string;
-  name: string;
-  avatar: string;
-  username: string;
-};
-type Like = {
-  userIds: string[];
-  count: number;
-  user: string;
-};
-type PostData = {
-  _id: string;
-  user: User;
-  title: string;
-  image: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  likes: Like[];
-  commentCount: number;
-};
 
 type GetPostsResponse = {
   count: number;
-  result: PostData[];
+  result: Post[];
 };
 
 const HomePage = () => {
@@ -50,7 +28,7 @@ const HomePage = () => {
     queryFn: async () => await getRequest("/post"),
   });
 
-  const sessionId = session?.user.id as string|| null
+  const sessionId = (session?.user.id as string) || null;
 
   return (
     <MainWrapper classes="w-full">
@@ -61,17 +39,17 @@ const HomePage = () => {
             <h4 className="text-center my-20">
               Something went wrong, pelase try again
             </h4>
-            
           )}
-          {isLoading || sessionId === null?  (
+          {isLoading || sessionId === null ? (
             <>
               {Array.from({ length: 6 }).map((_, index) => (
                 <PostSkeleton key={index} />
               ))}
             </>
           ) : (
-            !error && data?.result.map((post) => (
-              <Post key={post._id} post={post} sessionId={sessionId} />
+            !error &&
+            data?.result.map((post) => (
+              <SinglePost key={post._id} post={post} sessionId={sessionId} />
             ))
           )}
         </div>
