@@ -9,6 +9,7 @@ export interface CommentData {
   type Like = {
     userIds: string[];
     count: number;
+    user: string;
   };
   export type Post = {
     _id: string;
@@ -18,7 +19,7 @@ export interface CommentData {
     createdAt: string;
     updatedAt: string;
     __v: number;
-    likes: Like;
+    likes: Like[];
     commentCount: number;
   };
   

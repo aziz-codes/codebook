@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import PostSkeleton from "@/skeletons/post-skeleton";
 import dynamic from "next/dynamic";
 import CreateSkeleton from "@/skeletons/create-skeleton";
+ 
 const CreatePost = dynamic(() => import("@/components/create"), {
   ssr: false,
   loading: () => <CreateSkeleton />,
@@ -23,6 +24,7 @@ type User = {
 type Like = {
   userIds: string[];
   count: number;
+  user: string;
 };
 type PostData = {
   _id: string;
@@ -32,7 +34,7 @@ type PostData = {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  likes: Like;
+  likes: Like[];
   commentCount: number;
 };
 
@@ -48,7 +50,7 @@ const HomePage = () => {
     queryFn: async () => await getRequest("/post"),
   });
 
-  const sessionId = session?.user.id || "";
+  const sessionId = session?.user.id as string|| null
 
   return (
     <MainWrapper classes="w-full">
@@ -61,7 +63,7 @@ const HomePage = () => {
             </h4>
             
           )}
-          {isLoading ? (
+          {isLoading || sessionId === null?  (
             <>
               {Array.from({ length: 6 }).map((_, index) => (
                 <PostSkeleton key={index} />
