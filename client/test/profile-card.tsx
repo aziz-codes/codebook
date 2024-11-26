@@ -1,16 +1,19 @@
 "use client";
 import React from "react";
-import { useSession } from "next-auth/react";
+ 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
-const ProfileCard = () => {
-  const { data: session } = useSession();
+import {  UserProfileType } from "@/types/user";
+type ProfileCardProps = {
+  profile: UserProfileType;  
+};
+const ProfileCard:React.FC<ProfileCardProps> = ({profile:user}) => {
+ 
   const stats = [
     {
       name: "Posts",
-      count: "3.2K",
+      count: user.postCount,
     },
     {
       name: "Discussions",
@@ -18,28 +21,29 @@ const ProfileCard = () => {
     },
     {
       name: "Snippets",
-      count: "43",
+      count: user.snippetCount,
     },
     {
       name: "Bounties",
       count: "12/4",
     },
   ];
+  console.log(user.user.name)
   return (
     <div className="bg-bgCard w-full rounded-md px-4 py-4 grid grid-cols-12 gap-4">
       <div className="col-span-12 md:col-span-4 flex flex-col  p-4 justify-center items-center">
         <Avatar className="rounded-full md:rounded-md h-44 w-44">
           <AvatarFallback>
-            {session?.user.name?.charAt(0)}
-            {session?.user.name?.charAt(1)}
+            {user.user.name?.charAt(0)}
+            {user.user.name?.charAt(1)}
           </AvatarFallback>
-          <AvatarImage src={session?.user.image as string} />
+          <AvatarImage src={user.user.avatar} />
         </Avatar>
         <div className="py-3 text-center">
           <Label className="text-center text-lg capitalize">
-            {session?.user.name}
+            {user.user.name}
           </Label>
-          <p className="text-sm">{session?.user.username}</p>
+          <p className="text-sm">{user.user.username}</p>
           <Label className="font-[400]">Frontend Web Developer</Label>
         </div>
       </div>
