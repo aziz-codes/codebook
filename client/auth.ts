@@ -6,6 +6,7 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
+ 
 
 export const config = {
   providers: [
@@ -19,6 +20,7 @@ export const config = {
   },
   pages: {
     signIn: "/login",
+    newUser:"/new-user"
   },
 
   //   callbacks starts
@@ -31,10 +33,18 @@ export const config = {
         session.user.email = token.email;
         session.user.image = token.picture;
         session.user.username = token.name?.split(" ").join("").toLowerCase();
+        session.user.isNewUser = token.isNewUser;
+       
       }
       return session;
     },
-    async jwt({ token }) {
+    async jwt({ token ,user}) {
+
+     if(token.id){
+      return token;
+     }
+     
+
       const { email, name, picture: avatar } = token;
 
       try {
@@ -58,12 +68,15 @@ export const config = {
         }
 
         const userData = await response.json();
-
+        console.log(userData.status)
         token.id = userData.id;
         token.name = userData.name;
         token.email = userData.email;
         token.picture = userData.avatar;
         token.username = userData.username;
+        token.isNewUser = userData.status;
+      console.log(userData.status)
+ 
       } catch (error) {
         console.error("Error in jwt callback:", error);
       }
