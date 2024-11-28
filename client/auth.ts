@@ -20,7 +20,6 @@ export const config = {
   },
   pages: {
     signIn: "/login",
-    newUser:"/new-user"
   },
 
   //   callbacks starts
@@ -32,13 +31,12 @@ export const config = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.picture;
-        session.user.username = token.name?.split(" ").join("").toLowerCase();
-        session.user.isNewUser = token.isNewUser;
-       
+        session.user.username = "";
+        session.user.isOnboarded = token.isOnboarded;
       }
       return session;
     },
-    async jwt({ token ,user}) {
+    async jwt({ token}) {
 
      if(token.id){
       return token;
@@ -58,7 +56,7 @@ export const config = {
               id: token.id,
               name,
               avatar,
-              username: name?.split(" ").join("").toLowerCase(),
+              username: "",
             }),
           }
         );
@@ -74,8 +72,8 @@ export const config = {
         token.email = userData.email;
         token.picture = userData.avatar;
         token.username = userData.username;
-        token.isNewUser = userData.status;
-      console.log(userData.status)
+        token.isOnboarded = userData.isOnboarded;
+      console.log("userData.status ",userData.isOnboarded)
  
       } catch (error) {
         console.error("Error in jwt callback:", error);

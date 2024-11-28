@@ -7,6 +7,7 @@ declare module "next-auth/jwt" {
     id: string;
     username?: string | null;
     isNewUser: boolean;
+    isOnboarded: boolean;
   }
 }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     user: User & {
       username?: string | null;
       isNewUser: boolean;
+      isOnboarded?: boolean
     };
   }
 }
@@ -22,4 +24,5 @@ declare module "next-auth" {
 interface User {
   username?: string | null;
   isNewUser?: boolean
+  isOnboarded?: boolean;
 }

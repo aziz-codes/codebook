@@ -9,23 +9,27 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log(token?.isNewUser);
+  console.log("Token:", token);
+  console.log("Is Onboarded:", token?.isOnboarded);
 
-  const publicPath = path === "/login";
+  const isPublicPath = path === "/login";
 
-  if (publicPath && token) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
-
-  if (!publicPath && !token) {
+  // If no token, redirect to login (applies to non-public paths)
+  if (!token && !isPublicPath) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (token?.isNewUser) {
-  
-    return NextResponse.redirect(new URL("/new-user", req.nextUrl));
+  // If token exists but user isn't onboarded, redirect to onboarding
+  if (token && !token.isOnboarded && path !== "/onboarding") {
+    return NextResponse.redirect(new URL("/onboarding", req.nextUrl));
   }
 
+  // If user is logged in and tries to access the login page, redirect to dashboard
+  if (token && isPublicPath) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+
+  // Allow request to proceed for other cases
   return NextResponse.next();
 }
 
@@ -38,5 +42,6 @@ export const config = {
     "/snippets",
     "/peoples",
     "/create-snippet",
+    "/onboarding"
   ],
 };
