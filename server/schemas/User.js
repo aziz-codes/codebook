@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
     },
+    tagline:{
+      type: String
+    },
+    isOnboarded: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

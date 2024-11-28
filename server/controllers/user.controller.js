@@ -2,15 +2,15 @@ import User from "../schemas/User.js";
 import Post from '../schemas/Post.js';
 import Snippet from '../schemas/Snippet.js';
 export const saveUser = async (req, res) => {
-  console.log('save user route')
+  
     const { email, id, name, avatar, username } = req.body;
-let newUser = false;
+ 
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            user = new User({ id, name, email, avatar, username });
+            user = new User({ id, name, email, avatar, username,isOnboarded: false, });
             await user.save();
-            newUser = true;
+            
             
         }
         res.status(200).json({
@@ -19,8 +19,9 @@ let newUser = false;
             email: user.email,
             avatar: user.avatar,
             username: user.username,
-            status: newUser
+            isOnboarded: user.isOnboarded
         });
+        
     } catch (error) {
         res.status(500).json({ message: "Failed to create or fetch user", error: error.message });
     }
