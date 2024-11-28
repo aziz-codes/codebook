@@ -1,4 +1,6 @@
 import Post from "../schemas/Post.js";
+import Like from '../schemas/Like.js';
+import Comment from '../schemas/Comment.js';
 import mongoose from "mongoose";
  
 export const post = async (req, res) => {
@@ -96,7 +98,7 @@ export const getPosts = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const { id } = req.params;  
+    const { id } = req.params;
 
     console.log("Post ID to delete:", id);
 
@@ -105,16 +107,22 @@ export const deletePost = async (req, res) => {
       return res.status(400).json({ message: "Invalid post ID" });
     }
 
- 
+    // Find and delete the post
     const post = await Post.findByIdAndDelete(id);
-    console.log("Deleted Post:", post);  
+    console.log("Deleted Post:", post);
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    
-    res.status(204).json({ message: "Post deleted successfully" });
+    // Delete associated likes and comments
+    const likeDeletionResult = await Like.deleteMany({ post: id });
+    console.log("Deleted Likes:", likeDeletionResult.deletedCount);
+
+    const commentDeletionResult = await Comment.deleteMany({ post: id });
+    console.log("Deleted Comments:", commentDeletionResult.deletedCount);
+
+    res.status(200).json({ message: "Post and associated data deleted successfully" });
   } catch (error) {
     console.error("Error deleting post:", error);
     res.status(500).json({ error: "Could not delete post." });
