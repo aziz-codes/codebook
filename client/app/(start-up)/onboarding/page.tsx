@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Input } from "@/components/ui/input";
  import { useSession } from "next-auth/react";
 import { patchRequest } from "@/services";
@@ -22,6 +22,7 @@ const NewUser = () => {
   const {toast} = useToast();
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
+   
   
  
   const handleChange = (
@@ -41,7 +42,7 @@ const handleSubmit = async()=>{
       const response = await patchRequest(`/user/${session?.user.id}`, formData);
       const data = await response.json();
       if (data.success) {
-        window.location.href="/"
+         router.push('/onboard?rollout=true')
         setFormData({
           username: "",
           tagline: "",
