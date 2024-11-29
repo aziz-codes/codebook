@@ -1,6 +1,7 @@
 import User from "../schemas/User.js";
 import Post from "../schemas/Post.js";
 import Snippet from "../schemas/Snippet.js";
+import Follower from "../schemas/Followers.js";
 export const saveUser = async (req, res) => {
   const { email, id, name, avatar, username } = req.body;
 
@@ -52,11 +53,16 @@ export const getUser = async (req, res) => {
     // Count the total number of snippets created by the user
     const snippetCount = await Snippet.countDocuments({ user: user._id });
 
+    const followers = await Follower.countDocuments({ followingId: user._id });
+    const following = await Follower.countDocuments({ followerId: user._id });
+
     // Return the user data with post and snippet counts
     res.status(200).json({
       user,
       postCount,
       snippetCount,
+      followers,
+      following
     });
     console.log(user)
   } catch (error) {

@@ -3,9 +3,10 @@
 const router = express.Router();
 
 // Add a follower
-router.post("/follow", async (req, res) => {
-  const { followerId, followingId } = req.body;
-
+router.post("/follow/:followerId", async (req, res) => {
+  const followingId = req.params.followerId;
+  const {  followerId } = req.body;
+  
   try {
     // Prevent self-follow
     if (followerId === followingId) {
