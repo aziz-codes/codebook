@@ -9,7 +9,7 @@ type ProfileCardProps = {
   profile: UserProfileType;  
 };
 const ProfileCard:React.FC<ProfileCardProps> = ({profile:user}) => {
- 
+
   const stats = [
     {
       name: "Posts",
@@ -44,7 +44,7 @@ const ProfileCard:React.FC<ProfileCardProps> = ({profile:user}) => {
             {user.user.name}
           </Label>
           <p className="text-sm">{user.user.username}</p>
-          <Label className="font-[400]">Frontend Web Developer</Label>
+          <Label className="font-[400]">{user.user.tagline}</Label>
         </div>
       </div>
       <div className="col-span-12  md:col-span-7  overflow-hidden  p-4 flex flex-col gap-5 items-center md:items-start">
@@ -58,10 +58,7 @@ const ProfileCard:React.FC<ProfileCardProps> = ({profile:user}) => {
         </div>
         {/* BIO */}
         <Label className="line-clamp-3 font-normal leading-5 max-w-xs">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Officia
-          accusamus quia, ab quaerat eveniet, enim corporis modi iste reiciendis
-          consectetur distinctio itaque esse qui saepe sed beatae sit alias.
-          Corporis.enwkfnweknfkw wefwfnkw fwnfwbfwewm fw wfnwkfek
+        {user.user.bio}
         </Label>
         <div className="flex items-center  space-x-4 max-w-xs">
           <Button size="sm" variant="secondary" className="flex-1">
