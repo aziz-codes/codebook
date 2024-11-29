@@ -6,7 +6,6 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
- 
 
 export const config = {
   providers: [
@@ -31,21 +30,16 @@ export const config = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.image = token.picture;
-        session.user.username = "";
+        session.user.username = token.username;
         session.user.isOnboarded = token.isOnboarded;
       }
       return session;
     },
-    async jwt({ token}) {
-
-     if(token.id){
-      return token;
-     }
-     
-
+    async jwt({ token }) {
       const { email, name, picture: avatar } = token;
 
       try {
+        console.log("fetching user informaton again...");
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/user`,
           {
@@ -66,15 +60,14 @@ export const config = {
         }
 
         const userData = await response.json();
-        console.log(userData.status)
+
         token.id = userData.id;
         token.name = userData.name;
         token.email = userData.email;
         token.picture = userData.avatar;
         token.username = userData.username;
         token.isOnboarded = userData.isOnboarded;
-      console.log("userData.status ",userData.isOnboarded)
- 
+        console.log("userData.status ", userData.isOnboarded);
       } catch (error) {
         console.error("Error in jwt callback:", error);
       }
