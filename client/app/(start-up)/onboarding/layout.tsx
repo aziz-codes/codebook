@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 const NewUserLayout = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
+  
   const {data:session,status} = useSession();
   if(status === "loading"){
     return <h4>Loading session pelase wait</h4>
