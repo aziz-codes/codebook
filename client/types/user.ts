@@ -10,6 +10,8 @@ export type User = {
     username: string;
     name: string;
     avatar: string;
+    bio: string;
+    tagline: string;
    }
     postCount: number;
     snippetCount: number;
