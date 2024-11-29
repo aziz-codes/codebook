@@ -13,7 +13,7 @@ export const getRequest = async(endpoint:string):Promise<any>=>{
 }
 
 
-export const postRequest = async(endpoint:string,data:any):Promise<any> =>{
+export const postRequest = async(endpoint:string,data?:any):Promise<any> =>{
      const res = await fetch(`${baseUrl}${endpoint}`,{
       method: "POST",
       headers:{
@@ -26,7 +26,19 @@ export const postRequest = async(endpoint:string,data:any):Promise<any> =>{
    )
    return res;
 }
+export const patchRequest = async(endpoint:string,data?:any):Promise<any> =>{
+  const res = await fetch(`${baseUrl}${endpoint}`,{
+   method: "PATCH",
+   headers:{
+     "Content-Type": "application/json"
+   },
+    body: JSON.stringify(data)
+  },
 
+  
+)
+return res;
+}
 export const deleteRequest = async(endpoint:string,data:any):Promise<any>=>{
    return await fetch(`${baseUrl}}${endpoint}`,{
       method: "DELETE",
