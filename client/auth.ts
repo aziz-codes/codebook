@@ -39,7 +39,6 @@ export const config = {
       const { email, name, picture: avatar } = token;
 
       try {
-        console.log("fetching user informaton again...");
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/user`,
           {
@@ -67,7 +66,6 @@ export const config = {
         token.picture = userData.avatar;
         token.username = userData.username;
         token.isOnboarded = userData.isOnboarded;
-        console.log("userData.status ", userData.isOnboarded);
       } catch (error) {
         console.error("Error in jwt callback:", error);
       }
