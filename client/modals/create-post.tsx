@@ -25,6 +25,7 @@ import { X, Smile, MapPin, ImagePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
 import Link from "next/link";
+import { postRequest } from "@/services";
 
 type CreatePostProps = {
   children: React.ReactNode;
@@ -32,7 +33,7 @@ type CreatePostProps = {
 
 const CreatePost = ({ children }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
-  const cancelRef = useRef<HTMLButtonElement>(null)
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
@@ -40,7 +41,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const handleBtnClick = () => {
     if (fileRef.current) {
@@ -84,30 +85,23 @@ const CreatePost = ({ children }: CreatePostProps) => {
       image: imageUrl || null,
     };
 
-    const localApiResponse = await fetch("http://localhost:8000/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const localApiResponse = await postRequest("/post", payload);
 
     if (!localApiResponse.ok) {
       throw new Error("Failed to create post on local API");
     }
   };
 
-  
   const { mutate } = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["posts"]});  
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       toast({
         description: "Post created successfully.",
-      })
+      });
       cancelRef.current && cancelRef.current.click();
       setLoading(false);
-      setContent("")
+      setContent("");
     },
     onError: (error) => {
       console.error("An error occurred", error);
@@ -183,7 +177,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
         <AlertDialogTitle className="flex justify-between items-center border-b px-4 py-2">
           <h4 className="flex-grow text-center">Create a post</h4>
           <AlertDialogCancel
-          ref={cancelRef}
+            ref={cancelRef}
             className="flex justify-center h-8 w-8 !outline-none !ring-0 rounded-full hover:bg-bgHover cursor-pointer items-center p-0 border-0"
             onClick={handleCancel}
           >
@@ -193,7 +187,10 @@ const CreatePost = ({ children }: CreatePostProps) => {
 
         <div className="flex flex-col overflow-auto gap-3 px-4">
           <div className="flex gap-2 items-center">
-            <Avatar className="h-11 w-11 cursor-pointer" onClick={() => router.push(`user/${session?.user.username}`)}>
+            <Avatar
+              className="h-11 w-11 cursor-pointer"
+              onClick={() => router.push(`user/${session?.user.username}`)}
+            >
               <AvatarFallback>{session?.user.name?.slice(0, 2)}</AvatarFallback>
               <AvatarImage
                 src={session?.user.image as string}
@@ -202,7 +199,10 @@ const CreatePost = ({ children }: CreatePostProps) => {
               />
             </Avatar>
             <div className="flex flex-col">
-              <Link href={`/user/${session?.user.username}`} className="font-semibold text-sm">
+              <Link
+                href={`/user/${session?.user.username}`}
+                className="font-semibold text-sm"
+              >
                 {session?.user.name}
               </Link>
             </div>
@@ -218,7 +218,9 @@ const CreatePost = ({ children }: CreatePostProps) => {
                 ref={fileRef}
                 onChange={handleFileChange}
               />
-              {images.length > 0 && <ImageSlider images={images} removeImage={removeImage} />}
+              {images.length > 0 && (
+                <ImageSlider images={images} removeImage={removeImage} />
+              )}
             </div>
           </div>
         </div>
@@ -226,20 +228,20 @@ const CreatePost = ({ children }: CreatePostProps) => {
         <AlertDialogFooter className="!px-4 py-1 -mt-3">
           <div className="w-full h-10 flex justify-between items-center ">
             <div className="flex items-center gap-4 ">
-            <div className="flex items-center gap-4 ">
-            {postUtils.map((item, index) => (
-              <Tooltip key={index}>
-                <TooltipTrigger className="!outline-none !ring-0">
-                  <div className="flex items-center justify-center h-6 w-6 rounded-full transition-colors duration-200">
-                    {item.icon}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="text-xs">
-                  {item.tooltip}
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
+              <div className="flex items-center gap-4 ">
+                {postUtils.map((item, index) => (
+                  <Tooltip key={index}>
+                    <TooltipTrigger className="!outline-none !ring-0">
+                      <div className="flex items-center justify-center h-6 w-6 rounded-full transition-colors duration-200">
+                        {item.icon}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="text-xs">
+                      {item.tooltip}
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
             </div>
             <Button
               variant="link"
