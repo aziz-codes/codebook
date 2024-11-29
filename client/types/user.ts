@@ -7,6 +7,7 @@ export type User = {
 
   export type UserProfileType = {
    user:{
+    _id: string;
     username: string;
     name: string;
     avatar: string;
@@ -15,4 +16,6 @@ export type User = {
    }
     postCount: number;
     snippetCount: number;
+    followers: number;
+    following: number;
   };
