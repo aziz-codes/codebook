@@ -2,25 +2,47 @@
 import React, { useEffect, useState } from 'react'
 import UserCard from '@/components/uers/card'
 import { Button } from '@/components/ui/button'
-import { getRequest } from '@/services'
+import { getRequest, postRequest } from '@/services'
 import { User } from '@/types/user'
 import ButtonLoader from '@/utils/components/button-loader'
 import { useSession } from 'next-auth/react'
  import { expertise } from '@/utils/utils'
-
- type Expertise={
-  label: string,
-  items: string[]
- }
+import { useMutation } from '@tanstack/react-query'
+ 
+ 
 const getFollowers = () => {
-    const {data:session} = useSession();
+    const {data:session,status} = useSession();
     const [loading,setLoading] = useState(false);
+
 const [data,setData] = useState<User[]>([]);
 const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
  
+ 
 const [search,setSearch] = useState("");
 
+const postReq = async():Promise<any>=>{
+
+  const payload = {
+    expertise: selectedExpertise
+  }
  
+    
+    return await postRequest(`/user/expertise/${session?.user.id}`,payload)
+}
+ 
+
+const {mutate,isPending} = useMutation({
+  mutationFn: postReq,
+  onSuccess:()=>{
+   
+     window.location.href="/"
+  },
+  onError:(error)=>{
+    
+     console.log(error);
+  }
+  
+})
 
 const handleChipSelect = (chip: string) => {
   setSelectedExpertise((prev) =>
@@ -44,9 +66,10 @@ const filteredExpertise = expertise.map((category) => ({
            }
            getData();
     },[session])
-  const handleRefresh = ()=>{
-    window.location.href="/"
+  const handleRefresh = ()=>{  
+    mutate();
   }
+
   return (
     <div className="flex flex-col h-full  scrollbar-none">
     <div className="flex flex-grow flex-col md:flex-row gap-3 h-[90%]">
@@ -64,10 +87,10 @@ const filteredExpertise = expertise.map((category) => ({
             {category.items.map((item) => (
               <div
                 key={item}
-                className={`cursor-pointer px-4 py-1.5 rounded-full text-sm border ${
+                className={`cursor-pointer px-4 py-1.5 rounded-full text-sm border hover:bg-gray-300 ${
                   selectedExpertise.includes(item)
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-300 text-gray-700"
+                    ? "bg-blue-500 text-white hover:bg-blue-500"
+                    : "bg-gray-200 text-gray-700"
                 }`}
                 onClick={() => handleChipSelect(item)}
               >
@@ -86,7 +109,7 @@ const filteredExpertise = expertise.map((category) => ({
           {loading ? <ButtonLoader /> : null}
         </div>
         <div className="flex flex-col overflow-y-auto gap-4 scrollbar-none ">
-          {data.map((user, index) => (
+          {data.filter((data)=>data._id!==session?.user.id).map((user, index) => (
             <UserCard
               user={user}
               key={index}
@@ -94,26 +117,21 @@ const filteredExpertise = expertise.map((category) => ({
               username={session?.user.username}
             />
           ))}
-            {data.map((user, index) => (
-            <UserCard
-              user={user}
-              key={index}
-              sessionId={session?.user.id}
-              username={session?.user.username}
-            />
-          ))}
+          
         </div>
       </div>
     </div>
 
     {/* Continue Button */}
-    <div className=" flex justify-end border-gray-200 h-[10%] my-3 items-center">
+    <div className=" flex justify-end border-gray-200 h-[10%] my-3 items-center ">
       <Button
         variant="default"
-        className="w-full md:w-auto !ring-0 !outline-none"
+        title={selectedExpertise.length ===0 ? "Please select your expert" : ""}
+        className="!ring-0 !outline-none w-full max-w-xs"
         onClick={handleRefresh}
+        disabled={status ==="loading" || selectedExpertise.length === 0}
       >
-        Continue
+        {isPending ? <ButtonLoader />: "Continue"}
       </Button>
     </div>
   </div>
