@@ -11,6 +11,7 @@ import PostSkeleton from "@/skeletons/post-skeleton";
 import dynamic from "next/dynamic";
 import CreateSkeleton from "@/skeletons/create-skeleton";
 import { Post } from "@/types/post";
+import MainLoader from "@/utils/components/main-loader";
 const CreatePost = dynamic(() => import("@/components/create"), {
   ssr: false,
   loading: () => <CreateSkeleton />,
@@ -22,14 +23,16 @@ type GetPostsResponse = {
 };
 
 const HomePage = () => {
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
   const { data, error, isLoading } = useQuery<GetPostsResponse, Error>({
     queryKey: ["posts"],
     queryFn: async () => await getRequest("/post"),
   });
 
   const sessionId = (session?.user.id as string) || null;
-
+if(status === "loading"){
+  return <MainLoader />
+}
   return (
     <MainWrapper classes="w-full">
       <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>
@@ -48,7 +51,7 @@ const HomePage = () => {
             </>
           ) : (
             !error &&
-            data?.result.map((post) => (
+            data&&data.result.map((post) => (
               <SinglePost key={post._id} post={post} sessionId={sessionId} />
             ))
           )}
