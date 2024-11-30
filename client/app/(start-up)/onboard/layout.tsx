@@ -18,11 +18,11 @@ const NewUserLayout = ({ children }: { children: React.ReactNode }) => {
   
   return (
     <Dialog open>
-    <DialogContent className="p-0 py-6 max-h-[90vh] overflow-y-auto max-w-sm !ring-0">
+    <DialogContent className="p-0 py-6 max-h-[90vh] overflow-y-auto scrollbar-none max-w-full !ring-0">
       <DialogHeader className="text-center p-0 !px-4">
-        <DialogTitle className="py-2">Accounts to Follow</DialogTitle>
+        <DialogTitle className="py-2">Choose your expertise</DialogTitle>
       </DialogHeader>
-      <div className="px-4">
+      <div className="px-4 !h-[75vh]  ">
         {children}
       </div>
     </DialogContent>
