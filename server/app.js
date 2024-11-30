@@ -6,6 +6,7 @@ import postRoutes from './routes/post.routes.js';
 import commentRoutes from './routes/comment.routes.js'
 import followerRoutes from './routes/follower.routes.js'
 import followersInitialRoute from './routes/utils.routes.js'
+import expertiseRoutes from './routes/expertise.routes.js'
 import mongoose from 'mongoose';
 import cors from 'cors';
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/user",followerRoutes)
 app.use("/post",postRoutes);
 app.use("/post/comment",commentRoutes);
 app.use("/user",followersInitialRoute)
+app.use("/user/",expertiseRoutes);
 const port = 8000;
 app.listen(port,()=>{
     console.log(`server is running on port:${port}`)
