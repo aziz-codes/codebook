@@ -36,6 +36,6 @@ followerSchema.statics.getFollowing = async function (userId) {
   return this.find({ followerId: userId }).populate("followingId", "username name avatar");
 };
 
-const Follower = mongoose.model("Follower", followerSchema);
+const Follower = mongoose.models.Follower || mongoose.model("Follower", followerSchema);
 
 export default Follower;
