@@ -53,7 +53,8 @@ export const getUser = async (req, res) => {
     // Count the total number of snippets created by the user
     const snippetCount = await Snippet.countDocuments({ user: user._id });
 
-    const followers = await Follower.countDocuments({ followingId: user._id });
+    const followers = await Follower.find({ followingId: user._id }).select('followerId');
+
     const following = await Follower.countDocuments({ followerId: user._id });
 
     // Return the user data with post and snippet counts

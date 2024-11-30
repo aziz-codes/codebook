@@ -26,8 +26,9 @@ router.post("/follow/:followerId", async (req, res) => {
 });
 
 // Remove a follower
-router.delete("/unfollow", async (req, res) => {
-  const { followerId, followingId } = req.body;
+router.delete("/unfollow/:id", async (req, res) => {
+  const {id:followingId} = req.params
+  const { followerId } = req.body;
 
   try {
     // Remove follow relationship

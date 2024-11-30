@@ -4,7 +4,10 @@ export type User = {
     avatar: string;
     username: string;
   };
-
+export type Follower={
+  _id: string;
+  followerId: string;
+}
   export type UserProfileType = {
    user:{
     _id: string;
@@ -16,6 +19,6 @@ export type User = {
    }
     postCount: number;
     snippetCount: number;
-    followers: number;
+    followers: Follower[];
     following: number;
   };

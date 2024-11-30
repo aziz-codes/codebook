@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { UserProfileType } from "@/types/user";
 import { UsersRound } from "lucide-react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { postRequest } from "@/services";
+import { deleteRequest, postRequest } from "@/services";
 import { useToast } from "@/hooks/use-toast";
 import ButtonLoader from "@/utils/components/button-loader";
 import { useParams } from "next/navigation";
@@ -20,35 +20,57 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
   const {toast} = useToast();
   const {username} = useParams();
   const { data: session } = useSession();
-  const [loading,setLoading] = useState(false);
+ 
   const queryClient = useQueryClient();
   const payload = {
     followerId: session?.user.id
   }
+  const deleteFollower = async(id:string)=>{
+    if(!id) return;
+    
+    await deleteRequest(`/user/unfollow/${id}`,payload)
+  }
+  // mutation for unfollowing
+  const {mutate:Unfollow,isPending:unFollowLoading} = useMutation({
+    mutationFn: deleteFollower,
+    onSuccess:()=>{
+      queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
+ 
+    },
+    onError: (error) => {
+      console.log(error);
+       toast({
+        description: "Something went wrong, please try again",
+         })  
+      }
+  })
   const postFollower =async(id:string)=>{
      if(!id) return;
-     setLoading(true)
+    
      await postRequest(`/user/follow/${id}`,payload)
   }
-    const {mutate} = useMutation({
+  // mutation for following
+    const {mutate,isPending:followLoading} = useMutation({
       mutationFn: postFollower,
       onSuccess:()=>{
         queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
-        setLoading(false)
+       
       },
       onError: (error) => {
          toast({
           description: "Something went wrong, please try again",
         
          })
-         setLoading(false)
+         
       }
     })
   // Function to handle follow button click
   const handleFollow = async (id:string) => {
     mutate(id)
-     
   };
+    const handleUnFollow = (id:string)=>{
+     Unfollow(id) 
+  }
 
   const stats = [
     {
@@ -68,6 +90,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
       count: "12/4",
     },
   ];
+  const isFollowing = user.followers.some(item => item.followerId === session?.user.id);
+
 
   return (
     <div className="bg-bgCard w-full rounded-md px-4 py-4 grid grid-cols-12 gap-2">
@@ -86,8 +110,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
           <div className="flex items-center gap-1 mt-2">
             <UsersRound className="h-4 w-4 text-gray-400" />
             <div className="flex text-xs space-x-1">
-              <h4 className="font-semibold">{user.followers}</h4>
-              <p className="text-gray-400 text-xs">{user.followers > 1 ?"Followers":"Follower"}</p>
+              <h4 className="font-semibold">{user.followers.length}</h4>
+              <p className="text-gray-400 text-xs">{user.followers.length > 1 ?"Followers":"Follower"}</p>
             </div>
             <div className="flex text-xs space-x-1">
               <h4 className="font-semibold">{user.following}</h4>
@@ -122,15 +146,25 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
             </button>
           ) : (
             <>
-              <Button
+             {isFollowing ? <Button
+                size="sm"
+                variant="secondary"
+                className="flex-1"
+                onClick={()=>handleUnFollow(user.user._id)}
+                
+              >
+               {unFollowLoading? <ButtonLoader />: "Following"}
+               
+              </Button>: <Button
                 size="sm"
                 variant="secondary"
                 className="flex-1"
                 onClick={()=>handleFollow(user.user._id)}
                 
               >
-               {loading? <ButtonLoader />: "Follow"}
-              </Button>
+               {followLoading? <ButtonLoader />: "Follow"}
+               
+              </Button>}
               <Button size="sm" variant="secondary" className="flex-1">
                 Message
               </Button>
