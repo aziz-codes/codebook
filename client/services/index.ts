@@ -40,7 +40,7 @@ export const patchRequest = async(endpoint:string,data?:any):Promise<any> =>{
 return res;
 }
 export const deleteRequest = async(endpoint:string,data:any):Promise<any>=>{
-   return await fetch(`${baseUrl}}${endpoint}`,{
+   return await fetch(`${baseUrl}${endpoint}`,{
       method: "DELETE",
       headers:{
         "Content-Type": "application/json"
