@@ -200,10 +200,10 @@ const CreatePost = ({ children }: CreatePostProps) => {
             </Avatar>
             <div className="flex flex-col">
               <Link
-                href={`/user/${session?.user.username}`}
+                href={`/${session?.user.username}`}
                 className="font-semibold text-sm"
               >
-                {session?.user.name}
+                {session?.user.username}
               </Link>
             </div>
           </div>
