@@ -40,19 +40,20 @@ const UserCard:React.FC<UserProps> = ({user,sessionId,username }) => {
         mutate(id)
     }
   return (
-    <div className="h-24 max-w-full w-full rounded-md border shadow-md flex justify-between px-4 py-4 items-center">
+    <div className="h-auto max-w-full w-full flex-wrap rounded-md border shadow-md flex justify-between px-4 py-4 items-center">
     <div className="flex items-center gap-3">
       <img 
         src={user.avatar} 
         alt={user.username} 
-        className="w-14 h-14 rounded-full object-cover border border-gray-300" 
+        className="w-10 h-10 rounded-full object-cover border border-gray-300" 
       />
       <div className="flex flex-col -gap-1.5">
-        <h4 className="text-lg font-semibold">{user.name}</h4>
+      <h4 className="text-sm font-semibold truncate max-w-[70px]">{user.name}</h4>
+
         <p className="text-xs text-gray-500">{user.username}</p>
       </div>
     </div>
-    <Button variant="outline" className="bg-electric rounded-full hover:bg-blue-600 !ring-0 !outline-none" onClick={()=>handleFollow(user._id)}>
+    <Button size="sm" variant="outline" className="bg-electric rounded-full hover:bg-blue-600 !ring-0 !outline-none" onClick={()=>handleFollow(user._id)}>
        {loading ? <ButtonLoader />: "Follow"}
     </Button>
   </div>
