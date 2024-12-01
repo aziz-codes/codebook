@@ -1,1 +1,1 @@
-**Display a loader on initial load unitl the next auth session is fetched and Post component is ready.**
+(completed)**Display a loader on initial load unitl the next auth session is fetched and Post component is ready.**
