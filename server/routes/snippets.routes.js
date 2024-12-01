@@ -1,5 +1,5 @@
 import express from 'express';
-import { allSnippets, saveSnippet } from '../controllers/snippet-controllers.js';
+import { allSnippets, saveSnippet } from '../controllers/snippet.controller.js';
 
 
 const router = express.Router();
