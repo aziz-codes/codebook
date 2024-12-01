@@ -16,7 +16,7 @@ const Create = () => {
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-full bg-gray-500">
           {/* User's avatar */}
-          <Avatar>
+          <Avatar onClick={()=>router.push(`/${session?.user.username}`)} className="cursor-pointer">
             <AvatarFallback>{session?.user.name?.slice(0, 2)}</AvatarFallback>
             <AvatarImage src={session?.user.image as string} alt="user" />
           </Avatar>
