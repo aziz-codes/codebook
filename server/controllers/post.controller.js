@@ -157,3 +157,54 @@ export const getSinglePost = async (req, res) => {
     res.status(500).json({ error: "Could not fetch post." });
   }
 };
+
+
+export const getPostLikes = async (req, res) => {
+  const { id } = req.params; // Get the post ID from the request params
+
+  if (!id) {
+      return res.status(400).json({ error: "Post ID is required" });
+  }
+
+  try {
+      // Use aggregation to find likes and populate user details
+      const likes = await Like.aggregate([
+          {
+              $match: { post: new mongoose.Types.ObjectId(id) } // Match likes for the specific post
+          },
+          {
+              $lookup: {
+                  from: 'users', // Lookup users collection
+                  localField: 'user', // Match the 'user' field in Like model
+                  foreignField: '_id', // Match it to the '_id' field in User model
+                  as: 'userDetails' // Output the joined data as 'userDetails'
+              }
+          },
+          {
+              $unwind: '$userDetails'  
+          },
+          {
+              $project: {
+                  'userDetails.avatar': 1, // Include avatar
+                  'userDetails.username': 1, // Include username
+                  'userDetails._id': 1,
+                  _id: 0 // Exclude _id from the result
+              }
+          }
+      ]);
+
+      if (likes.length === 0) {
+          return res.status(404).json({ error: "No likes found for this post" });
+      }
+      const reformattedLikes = likes.map(like => ({
+        avatar: like.userDetails.avatar,
+        id: like.userDetails._id,
+        username: like.userDetails.username
+    }));
+
+      return res.status(200).json({ success: true, likes:reformattedLikes });
+  } catch (error) {
+      console.error("Error fetching post likes:", error);
+      return res.status(500).json({ error: "Internal server error" });
+  }
+};
