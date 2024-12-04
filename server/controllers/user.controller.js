@@ -65,7 +65,7 @@ export const getUser = async (req, res) => {
       followers,
       following
     });
-    console.log(user)
+ 
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Could not fetch user data." });
