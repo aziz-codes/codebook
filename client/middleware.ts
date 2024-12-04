@@ -8,9 +8,7 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log('Token:', token);
-  console.log('Is Onboarded:', token?.isOnboarded);
-  console.log('Request Path:', path);
+  
 
   const isPublicPath = path === "/login";
   const isOnboardingPage = path === "/onboarding"; // Check if the user is already on the onboarding page
