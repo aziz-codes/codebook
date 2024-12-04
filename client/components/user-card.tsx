@@ -5,7 +5,7 @@ import { Label } from "./ui/label";
 import { Globe } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
+ 
 
 const UserCard = async () => {
   const session = await auth();
