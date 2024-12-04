@@ -21,9 +21,9 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
         <AvatarFallback>{comment.userDetails.username[0]}</AvatarFallback>
       </Avatar>
       <div className="flex-grow">
-        <div className="bg-bgHover p-3 rounded-lg w-full">
+        <div className="bg-bgHover px-3 py-2 rounded-lg w-full">
           <div className="flex justify-between items-start">
-            <p className="font-normal text-sm">
+            <p className="font-semibold text-slate-300 text-sm">
               {comment.userDetails.username}
             </p>
             <div className="text-[10px] text-gray-400">
@@ -35,13 +35,10 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
           </div>
           <p className="mt-1 text-xs first-letter:uppercase">{comment.text}</p>
         </div>
-        <div className="flex space-x-4">
-          <Button variant="ghost" size="sm">
-            <Heart className={`w-4 h-4 mr-1  `} />3
-          </Button>
-          <Button variant="ghost" size="sm">
-            Reply
-          </Button>
+        <div className="flex space-x-4 items-center text-xs mt-1">
+           
+            <Heart className={`w-4 h-4 mr-1 hover:text-gray-400 transition-all duration-300 ease-linear cursor-pointer  `} />3
+           
         </div>
       </div>
     </div>
