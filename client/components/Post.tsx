@@ -24,6 +24,12 @@ import PostDropdown from "./custom/post-dropdown";
 
 import Comment from "@/components/comment";
 import { customFormatter } from "@/utils/utils";
+import {
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import LikesPopup from "./custom/likes-popup";
 
 type PostProps = {
   post: Post;
@@ -44,6 +50,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+ 
   // handle like functionality
   const handleLike = async (postId: string) => {
     const isCurrentlyLiked = liked;
@@ -57,6 +64,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
       await postRequest(`/post/like/${postId}`, { userId: sessionId });
       setLoading(false);
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [`likes/${postId}`] });
     } catch (error) {
       console.error("Failed to update likes:", error);
       setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
@@ -173,10 +181,15 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               onClick={() => handleLike(post._id)}
               className="w-6 h-6 cursor-pointer"
             />
-            <span className="text-xs">
+           
+          <LikesPopup post={post._id}>
+          <span className="text-xs cursor-pointer">
               {likes > 0 ? likes : null}
               {likes < 1 ? " " : likes === 1 ? " Like" : " Likes"}
             </span>
+          </LikesPopup>
+     
+       
           </div>
 
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
@@ -204,9 +217,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           >
             <CardFooter className="p-0 flex-col items-start flex">
               <div className="px-3 w-full ">
-                <h4 className="text-sm mt-1 mb-2">
-                  comments are {comments?.length}
-                </h4>
+                <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
                 {isLoading && "Loading comments"}
                 {comments?.map((comment, index) => (
                   <Comment comment={comment} key={index} />
