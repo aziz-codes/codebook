@@ -164,7 +164,7 @@ export const getAllUsers = async (req, res) => {
           from: "followers", // The collection name for Follower
           localField: "_id", // Field in the User collection
           foreignField: "followingId", // Field in the Follower collection
-          as: "followerData", // Output array for followers
+          as: "followers", // Output array for followers
         },
       },
       {
@@ -172,7 +172,7 @@ export const getAllUsers = async (req, res) => {
           from: "followers",
           localField: "_id",
           foreignField: "followerId",
-          as: "followingData", // Output array for following
+          as: "following", // Output array for following
         },
       },
       {
@@ -183,10 +183,10 @@ export const getAllUsers = async (req, res) => {
           avatar: 1,
           bio: 1,
           tagline: 1,
-          follower: { $size: "$followerData" }, // Count of followers
-          following: { $size: "$followingData" }, // Count of following
+          followers: { $map: { input: "$followers", as: "f", in: "$$f.followerId" } }, // Extract only followerId
+          following: { $map: { input: "$following", as: "f", in: "$$f.followingId" } }, // Extract only followingId
           isFollowing: {
-            $in: [currentUserId, "$followerData.followerId"], // Check if logged-in user follows them
+            $in: [currentUserId, "$followers.followerId"], // Check if logged-in user follows them
           },
         },
       },

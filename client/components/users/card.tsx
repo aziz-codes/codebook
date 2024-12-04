@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import { User } from "@/types/user";
 import React from "react";
 import { Button } from "../ui/button";
-import { postRequest } from "@/services";
+import { deleteRequest, postRequest } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import ButtonLoader from "@/utils/components/button-loader";
@@ -13,22 +13,29 @@ interface UserProps {
   username?: string | undefined | null;
 }
 const UserCard: React.FC<UserProps> = ({ user }) => {
-  const {data:session} = useSession();
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-
+  const username = session?.user.username;
+  const payload = {
+    followerId: session?.user.id,
+  };
   const postFollower = async (id: string) => {
     if (!id) return;
-    const payload = {
-      followerId: session?.user.id,
-    };
 
     await postRequest(`/user/follow/${id}`, payload);
+  };
+
+  const deleteFollower = async (id: string) => {
+    if (!id) return;
+  
+    await deleteRequest(`/user/unfollow/${id}`, payload);
   };
   const { mutate, isPending } = useMutation({
     mutationFn: postFollower,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userProfile", session?.user.username] });
+    
+      queryClient.invalidateQueries({ queryKey: [`${session?.user.username}-follow-list`] });
     },
     onError: (error) => {
       toast({
@@ -36,9 +43,29 @@ const UserCard: React.FC<UserProps> = ({ user }) => {
       });
     },
   });
+
+  const { mutate: Unfollow, isPending: unFollowLoading } = useMutation({
+    mutationFn: deleteFollower,
+    onSuccess: () => {
+      console.log("validating unfollowers for ", username);
+      queryClient.invalidateQueries({ queryKey: [`${session?.user.username}-follow-list`] });
+    },
+    onError: (error) => {
+      console.log(error);
+      toast({
+        description: "Something went wrong, please try again",
+      });
+    },
+  });
+
   const handleFollow = (id: string) => {
     mutate(id);
   };
+
+  const handleUnFollow = (id: string) => {
+    Unfollow(id);
+  };
+
   return (
     <div className="h-auto max-w-full w-full flex-wrap rounded-md border shadow-md flex justify-between px-4 py-4 items-center">
       <div className="flex items-center gap-3">
@@ -55,14 +82,25 @@ const UserCard: React.FC<UserProps> = ({ user }) => {
           <p className="text-xs text-gray-500">{user.username}</p>
         </div>
       </div>
-      <Button
-        size="sm"
-        variant="outline"
-        className="bg-electric rounded-full hover:bg-blue-600 !ring-0 !outline-none"
-        onClick={() => handleFollow(user._id)}
-      >
-        {isPending ? <ButtonLoader /> : "Follow"}
-      </Button>
+      {user.followers?.includes(session?.user.id as string) ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="bg-electric rounded-full hover:bg-blue-600 !ring-0 !outline-none"
+          onClick={() => handleUnFollow(user._id)}
+        >
+          {unFollowLoading ? <ButtonLoader /> : "Following"}
+        </Button>
+      ) : (
+        <Button
+          size="sm"
+          variant="outline"
+          className="bg-electric rounded-full hover:bg-blue-600 !ring-0 !outline-none"
+          onClick={() => handleFollow(user._id)}
+        >
+          {isPending ? <ButtonLoader /> : "Follow"}
+        </Button>
+      )}
     </div>
   );
 };

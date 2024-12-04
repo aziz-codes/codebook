@@ -44,6 +44,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
          })  
       }
   })
+  
   const postFollower =async(id:string)=>{
      if(!id) return;
     

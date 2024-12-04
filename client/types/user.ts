@@ -3,6 +3,8 @@ export type User = {
     name: string;
     avatar: string;
     username: string;
+    followers?: string[];
+    following?: string[];
   };
 export type Follower={
   _id: string;

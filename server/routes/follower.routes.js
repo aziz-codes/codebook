@@ -6,6 +6,7 @@ const router = express.Router();
 router.post("/follow/:followerId", async (req, res) => {
   const followingId = req.params.followerId;
   const {  followerId } = req.body;
+
   
   try {
     // Prevent self-follow
