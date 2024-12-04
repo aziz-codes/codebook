@@ -22,3 +22,16 @@ export type Follower={
     followers: Follower[];
     following: number;
   };
+
+  export type DevCardUser={
+    _id: string;
+    username: string;
+    name: string;
+    avatar: string;
+    bio: string;
+    tagline: string;
+    follower: number;
+    following: number;
+    isFollowing: boolean;
+
+  }
