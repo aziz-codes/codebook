@@ -151,3 +151,58 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ error: "Could not update user." });
   }
 };
+
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const {token:currentUserId} = req.params; // Assuming current logged-in user's ID is available
+
+    // Aggregation pipeline
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "followers", // The collection name for Follower
+          localField: "_id", // Field in the User collection
+          foreignField: "followingId", // Field in the Follower collection
+          as: "followerData", // Output array for followers
+        },
+      },
+      {
+        $lookup: {
+          from: "followers",
+          localField: "_id",
+          foreignField: "followerId",
+          as: "followingData", // Output array for following
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          name: 1,
+          avatar: 1,
+          bio: 1,
+          tagline: 1,
+          follower: { $size: "$followerData" }, // Count of followers
+          following: { $size: "$followingData" }, // Count of following
+          isFollowing: {
+            $in: [currentUserId, "$followerData.followerId"], // Check if logged-in user follows them
+          },
+        },
+      },
+    ]);
+
+    // Respond with the transformed user data
+    return res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    console.error("Error fetching users with follower data:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch users",
+      error: error.message,
+    });
+  }
+};
