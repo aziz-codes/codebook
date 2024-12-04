@@ -24,11 +24,7 @@ import PostDropdown from "./custom/post-dropdown";
 
 import Comment from "@/components/comment";
 import { customFormatter } from "@/utils/utils";
-import {
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+
 import LikesPopup from "./custom/likes-popup";
 
 type PostProps = {
@@ -50,7 +46,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const [likes, setLikes] = useState(post.likes.length);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
- 
+
   // handle like functionality
   const handleLike = async (postId: string) => {
     const isCurrentlyLiked = liked;
@@ -181,15 +177,13 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
               onClick={() => handleLike(post._id)}
               className="w-6 h-6 cursor-pointer"
             />
-           
-          <LikesPopup post={post._id}>
-          <span className="text-xs cursor-pointer">
-              {likes > 0 ? likes : null}
-              {likes < 1 ? " " : likes === 1 ? " Like" : " Likes"}
-            </span>
-          </LikesPopup>
-     
-       
+
+            <LikesPopup post={post._id}>
+              <span className="text-xs cursor-pointer">
+                {likes > 0 ? likes : null}
+                {likes < 1 ? " " : likes === 1 ? " Like" : " Likes"}
+              </span>
+            </LikesPopup>
           </div>
 
           <div className="flex items-center space-x-1 cursor-pointer text-sm">
