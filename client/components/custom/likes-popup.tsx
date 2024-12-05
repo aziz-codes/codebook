@@ -31,12 +31,12 @@ const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44 h-auto max-h-56 overflow-y-auto">
+      <DropdownMenuContent className="w-44 h-auto max-h-56 overflow-y-auto shadow-md !border-bgHover">
         <DropdownMenuGroup>
          {isLoading && "Loading"}
          {error && "Error"}
          {!data && "No data"}
-         {data?.likes.map((like)=>(
+         {data?.likes?.map((like)=>(
             <DropdownMenuItem key={like.id} className="hover:!bg-bgHover rounded-md cursor-pointer" onClick={()=>router.push(`/${like.username}`)}>
               <div className="flex items-center gap-2">
                  <Avatar className="h-6 w-6">

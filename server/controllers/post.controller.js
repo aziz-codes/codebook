@@ -1,8 +1,8 @@
 import Post from "../schemas/Post.js";
-import Like from '../schemas/Like.js';
-import Comment from '../schemas/Comment.js';
+import Like from "../schemas/Like.js";
+import Comment from "../schemas/Comment.js";
 import mongoose from "mongoose";
- 
+
 export const post = async (req, res) => {
   try {
     const { user, title, image } = req.body;
@@ -24,12 +24,10 @@ export const post = async (req, res) => {
       .json({ message: "Post created successfully", post: savedPost });
   } catch (error) {
     console.error("Error creating post:", error);
-    res
-      .status(500)
-      .json({
-        message: "An error occurred while creating the post",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "An error occurred while creating the post",
+      error: error.message,
+    });
   }
 };
 
@@ -67,18 +65,20 @@ export const getPosts = async (req, res) => {
         $addFields: {
           commentCount: { $size: "$comments" }, // Count the number of comments
           likes: {
-            userIds: { $reduce: {
-              input: { $concatArrays: "$likes.userIds" }, // Flatten userIds arrays from all like objects
-              initialValue: [], // Start with an empty array
-              in: { $setUnion: ["$$value", "$$this"] } // Ensure uniqueness of userIds
-            }},
+            userIds: {
+              $reduce: {
+                input: { $concatArrays: "$likes.userIds" }, // Flatten userIds arrays from all like objects
+                initialValue: [], // Start with an empty array
+                in: { $setUnion: ["$$value", "$$this"] }, // Ensure uniqueness of userIds
+              },
+            },
           },
         },
       },
       {
         $project: {
           "likes.count": 0, // Optionally remove the count field
-          "likes._id": 0,  // Optionally remove the _id field
+          "likes._id": 0, // Optionally remove the _id field
           "likes.createdAt": 0, // Optionally remove the createdAt field
           "likes.updatedAt": 0, // Optionally remove the updatedAt field
         },
@@ -92,16 +92,11 @@ export const getPosts = async (req, res) => {
   }
 };
 
-
-
- 
-
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("Post ID to delete:", id);
-
+ 
     // Validate the ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid post ID" });
@@ -109,7 +104,7 @@ export const deletePost = async (req, res) => {
 
     // Find and delete the post
     const post = await Post.findByIdAndDelete(id);
-    console.log("Deleted Post:", post);
+    
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -117,25 +112,23 @@ export const deletePost = async (req, res) => {
 
     // Delete associated likes and comments
     const likeDeletionResult = await Like.deleteMany({ post: id });
-    console.log("Deleted Likes:", likeDeletionResult.deletedCount);
+ 
 
     const commentDeletionResult = await Comment.deleteMany({ post: id });
-    console.log("Deleted Comments:", commentDeletionResult.deletedCount);
+    
 
-    res.status(200).json({ message: "Post and associated data deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "Post and associated data deleted successfully" });
   } catch (error) {
     console.error("Error deleting post:", error);
     res.status(500).json({ error: "Could not delete post." });
   }
 };
 
-
-
 export const getSinglePost = async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log('post id is ' + id);
 
     // Validate the ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -158,53 +151,52 @@ export const getSinglePost = async (req, res) => {
   }
 };
 
-
 export const getPostLikes = async (req, res) => {
   const { id } = req.params; // Get the post ID from the request params
 
   if (!id) {
-      return res.status(400).json({ error: "Post ID is required" });
+    return res.status(400).json({ error: "Post ID is required" });
   }
 
   try {
-      // Use aggregation to find likes and populate user details
-      const likes = await Like.aggregate([
-          {
-              $match: { post: new mongoose.Types.ObjectId(id) } // Match likes for the specific post
-          },
-          {
-              $lookup: {
-                  from: 'users', // Lookup users collection
-                  localField: 'user', // Match the 'user' field in Like model
-                  foreignField: '_id', // Match it to the '_id' field in User model
-                  as: 'userDetails' // Output the joined data as 'userDetails'
-              }
-          },
-          {
-              $unwind: '$userDetails'  
-          },
-          {
-              $project: {
-                  'userDetails.avatar': 1, // Include avatar
-                  'userDetails.username': 1, // Include username
-                  'userDetails._id': 1,
-                  _id: 0 // Exclude _id from the result
-              }
-          }
-      ]);
+    // Use aggregation to find likes and populate user details
+    const likes = await Like.aggregate([
+      {
+        $match: { post: new mongoose.Types.ObjectId(id) }, // Match likes for the specific post
+      },
+      {
+        $lookup: {
+          from: "users", // Lookup users collection
+          localField: "user", // Match the 'user' field in Like model
+          foreignField: "_id", // Match it to the '_id' field in User model
+          as: "userDetails", // Output the joined data as 'userDetails'
+        },
+      },
+      {
+        $unwind: "$userDetails",
+      },
+      {
+        $project: {
+          "userDetails.avatar": 1, // Include avatar
+          "userDetails.username": 1, // Include username
+          "userDetails._id": 1,
+          _id: 0, // Exclude _id from the result
+        },
+      },
+    ]);
 
-      if (likes.length === 0) {
-          return res.status(404).json({ error: "No likes found for this post" });
-      }
-      const reformattedLikes = likes.map(like => ({
-        avatar: like.userDetails.avatar,
-        id: like.userDetails._id,
-        username: like.userDetails.username
+    if (likes.length === 0) {
+      return res.status(404).json({ error: "No likes found for this post" });
+    }
+    const reformattedLikes = likes.map((like) => ({
+      avatar: like.userDetails.avatar,
+      id: like.userDetails._id,
+      username: like.userDetails.username,
     }));
 
-      return res.status(200).json({ success: true, likes:reformattedLikes });
+    return res.status(200).json({ success: true, likes: reformattedLikes });
   } catch (error) {
-      console.error("Error fetching post likes:", error);
-      return res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching post likes:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };

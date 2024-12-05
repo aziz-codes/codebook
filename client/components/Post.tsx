@@ -26,6 +26,7 @@ import Comment from "@/components/comment";
 import { customFormatter } from "@/utils/utils";
 
 import LikesPopup from "./custom/likes-popup";
+import Image from "next/image";
 
 type PostProps = {
   post: Post;
@@ -161,16 +162,12 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
         {/* Post Image */}
         {post.image && (
-          <div className="w-full h-96 overflow-hidden">
-            <img
-              src={post.image}
-              alt="Post"
-              className="w-full h-full object-cover"
-            />
+          <div className="w-full h-auto max-h-[600px] aspect-square overflow-hidden relative ">
+            <Image src={post.image} alt="Post" fill className="object-cover rounded-sm" />
           </div>
         )}
         <div className="px-3 py-3 flex items-center justify-between select-none border-t">
-          <div className="flex items-center space-x-1 text-sm relative">
+          <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
               stroke={liked ? "red" : "white"}
               fill={liked ? "red" : "none"}
