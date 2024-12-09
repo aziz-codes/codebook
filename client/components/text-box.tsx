@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import ButtonLoader from "@/utils/components/button-loader";
 interface CommentProps{
   comment: string;
   setComment: React.Dispatch<React.SetStateAction<string>>
@@ -47,9 +48,9 @@ const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,s
             onClick={() => setOpen((prev) => !prev)}
           />
           {comment.length > 0 && (
-            <Button variant="link" className="!no-underline text-sky-600  p-0 " onClick={onComment}>
+           !loading ? <Button variant="link" className="!no-underline text-sky-600  p-0 " onClick={onComment}>
               {loading? "laoding":"Post"}
-            </Button>
+            </Button> : <ButtonLoader />
           )}
         </div>
         {open && (
