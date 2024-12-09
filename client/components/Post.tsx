@@ -27,6 +27,7 @@ import { customFormatter } from "@/utils/utils";
 
 import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
+import PostModal from "./custom/post-modal";
 
 type PostProps = {
   post: Post;
@@ -162,9 +163,16 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
         {/* Post Image */}
         {post.image && (
-          <div className="w-full h-auto max-h-[600px] aspect-square overflow-hidden relative ">
-            <Image src={post.image} alt="Post" fill className="object-cover rounded-sm" />
-          </div>
+          <PostModal image={post.image}>
+            <div className="w-full h-auto max-h-[500px] aspect-square overflow-hidden relative ">
+              <Image
+                src={post.image}
+                alt="Post"
+                fill
+                className="object-cover rounded-sm"
+              />
+            </div>
+          </PostModal>
         )}
         <div className="px-3 py-3 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
