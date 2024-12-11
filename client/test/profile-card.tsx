@@ -131,7 +131,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile: user }) => {
           ))}
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-400">{user.user.username}</p>
+          <p className="text-sm font-semibold text-gray-400">@{user.user.username}</p>
           <Label className="font-[400]">{user.user.tagline}</Label>
           <Label
             className="line-clamp-3 font-normal leading-5 max-w-xs text-xs py-2"
