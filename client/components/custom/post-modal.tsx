@@ -15,7 +15,7 @@ const PostModal: React.FC<{ children: React.ReactNode; image: string }> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className="sm:max-w-[425px] md:max-w-4xl px-0">
+      <AlertDialogContent className="sm:max-w-[425px] md:max-w-4xl px-4">
         <DialogHeader></DialogHeader>
 
         <AlertDialogCancel
@@ -26,25 +26,21 @@ const PostModal: React.FC<{ children: React.ReactNode; image: string }> = ({
           <X className="h-5 w-5" />
         </AlertDialogCancel>
         <div className="w-full  flex gap-3 h-[85vh] ">
-          <div className="relative w-full h-full bg-transparent overflow-hidden rounded-md">
+          <div className="relative w-full h-full  overflow-hidden rounded-md px-3 border ">
             <Image
-              // src="https://res.cloudinary.com/dde6fahrm/image/upload/v1733429345/xucncmsshz10uijkop3k.png"
-              // src="https://res.cloudinary.com/dde6fahrm/image/upload/v1733429776/q7pvkdzb4bfb2kafopmz.png"
               src={image}
-              alt="Photo by Drew Beamer"
+              alt="post thumbnail"
               fill
-              className="w-full h-full object-contain rounded-md px-2 py-1"
+              className="absolute w-full h-full object-cover blur-md -z-10"
+            />
+            <Image
+              src={image}
+              alt="post thumbnail"
+              fill
+              className="w-full h-auto object-contain rounded-3xl z-10"
             />
           </div>
-
-          {/* <div className="relative w-full max-w-full h-full overflow-hidden">
-            <img
-              className="absolute top-0 left-0 w-full h-full object-cover"
-              src="https://res.cloudinary.com/dde6fahrm/image/upload/v1733429776/q7pvkdzb4bfb2kafopmz.png"
-              alt="Uploaded Image"
-            />
-          </div> */}
-          <div className="w-full max-w-xs">right section</div>
+          <div className="w-full max-w-xs border">comments section</div>
         </div>
       </AlertDialogContent>
     </AlertDialog>
