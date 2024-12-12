@@ -1,9 +1,10 @@
+"use client"
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 import { Heart } from "lucide-react";
 import { CommentType } from "@/types/post";
 import ReactTimeago from "react-timeago";
+import { useRouter } from "next/navigation";
 import { customFormatter } from "@/utils/utils";
 
 interface CommentProps {
@@ -11,9 +12,10 @@ interface CommentProps {
 }
 
 const Comment: React.FC<CommentProps> = ({ comment }) => {
+  const router = useRouter();
   return (
     <div className="flex space-x-3 mb-4 w-full ">
-      <Avatar className="w-8 h-8">
+      <Avatar className="w-8 h-8 cursor-pointer" onClick={()=>router.push(`/${comment.userDetails.username}`)}>
         <AvatarImage
           src={comment.userDetails.avatar}
           alt={comment.userDetails.username}
@@ -23,7 +25,7 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
       <div className="flex-grow">
         <div className="bg-bgHover px-3 py-2 rounded-lg w-full">
           <div className="flex justify-between items-start">
-            <p className="font-semibold text-slate-300 text-sm">
+            <p className="font-semibold text-slate-300 text-sm cursor-pointer" onClick={()=>router.push(`/${comment.userDetails.username}`)}>
               {comment.userDetails.username}
             </p>
             <div className="text-[10px] text-gray-400">
