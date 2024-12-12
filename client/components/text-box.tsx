@@ -37,7 +37,7 @@ const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,s
         <textarea
           placeholder={placeholder}
           ref={inputRef}
-          className="resize-none overflow-hidden w-full py-2 outline-none bg-transparent text-sm"
+          className="resize-none max-h-32 scrollbar-none overflow-y-auto w-full py-2 outline-none bg-transparent text-sm"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           style={{ height: "34px" }}
@@ -54,7 +54,7 @@ const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,s
           )}
         </div>
         {open && (
-          <div className="absolute right-2 top-2">
+          <div className="absolute right-4 top-2 z-50" >
             <Picker
               data={data}
               navPosition="none"
