@@ -28,7 +28,6 @@ import { customFormatter } from "@/utils/utils";
 import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
 import PostModal from "./custom/post-modal";
- 
 
 type PostProps = {
   post: Post;
@@ -39,7 +38,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const postLikes = post.likes.map((like) => like.user);
-  const [openPostModal,setPostModelOpen] = useState(false);
+  const [openPostModal, setPostModelOpen] = useState(false);
   const [liked, setLiked] = useState<null | boolean>(null);
   useEffect(() => {
     setLiked(postLikes.includes(sessionId));
@@ -115,10 +114,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   });
 
   return (
-    <Card className="rounded-md !border-none mb-4 group">
+    <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}
       <div className="flex justify-between items-center px-4 py-4">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 select-none">
           <Avatar
             className="cursor-pointer"
             onClick={() => router.push(`${post.user.username}`)}
@@ -165,20 +164,28 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
         {/* Post Image */}
         {post.image && (
-          
-            <div className="w-full h-auto max-h-[500px] aspect-square overflow-hidden relative ">
-              <Image
-                src={post.image}
-                alt="Post"
-                fill
-                className="object-cover rounded-sm"
-                onClick={()=>setPostModelOpen(true)}
-              />
-            </div>
-           
+          <div className="w-full h-auto max-h-[500px] aspect-square overflow-hidden relative ">
+            <Image
+              src={post.image}
+              alt="Post"
+              fill
+              className="object-cover rounded-sm"
+              onClick={() => setPostModelOpen(true)}
+            />
+          </div>
         )}
-       {openPostModal &&  <PostModal open={openPostModal} post={post} setter={setPostModelOpen}/>}
-        
+        {openPostModal && (
+          <PostModal
+            open={openPostModal}
+            post={post}
+            setter={setPostModelOpen}
+            comment={comment}
+            setComment={setComment}
+            onComment={handleComment}
+            loading={loading}
+          />
+        )}
+
         <div className="px-3 py-3 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
