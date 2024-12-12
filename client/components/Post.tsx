@@ -28,6 +28,7 @@ import { customFormatter } from "@/utils/utils";
 import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
 import PostModal from "./custom/post-modal";
+ 
 
 type PostProps = {
   post: Post;
@@ -38,6 +39,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const postLikes = post.likes.map((like) => like.user);
+  const [openPostModal,setPostModelOpen] = useState(false);
   const [liked, setLiked] = useState<null | boolean>(null);
   useEffect(() => {
     setLiked(postLikes.includes(sessionId));
@@ -163,17 +165,20 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
 
         {/* Post Image */}
         {post.image && (
-          <PostModal image={post.image}>
+          
             <div className="w-full h-auto max-h-[500px] aspect-square overflow-hidden relative ">
               <Image
                 src={post.image}
                 alt="Post"
                 fill
                 className="object-cover rounded-sm"
+                onClick={()=>setPostModelOpen(true)}
               />
             </div>
-          </PostModal>
+           
         )}
+       {openPostModal &&  <PostModal open={openPostModal} post={post} setter={setPostModelOpen}/>}
+        
         <div className="px-3 py-3 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
