@@ -5,15 +5,20 @@ import { Button } from "./ui/button";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import ButtonLoader from "@/utils/components/button-loader";
-interface CommentProps{
+interface CommentProps {
   comment: string;
-  setComment: React.Dispatch<React.SetStateAction<string>>
-  onComment: ()=>void;
+  setComment: React.Dispatch<React.SetStateAction<string>>;
+  onComment: () => void;
   placeholder?: string;
   loading: boolean;
 }
-const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,setComment,onComment,loading}) => {
- 
+const TextBox: React.FC<CommentProps> = ({
+  placeholder = "Add a comment",
+  comment,
+  setComment,
+  onComment,
+  loading,
+}) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -47,14 +52,21 @@ const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,s
             className="h-4 w-4 cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400"
             onClick={() => setOpen((prev) => !prev)}
           />
-          {comment.length > 0 && (
-           !loading ? <Button variant="link" className="!no-underline text-sky-600  p-0 " onClick={onComment}>
-              {loading? "laoding":"Post"}
-            </Button> : <ButtonLoader />
-          )}
+          {comment.length > 0 &&
+            (!loading ? (
+              <Button
+                variant="link"
+                className="!no-underline text-sky-600  p-0 "
+                onClick={onComment}
+              >
+                {loading ? "laoding" : "Post"}
+              </Button>
+            ) : (
+              <ButtonLoader />
+            ))}
         </div>
         {open && (
-          <div className="absolute right-4 top-2 z-50" >
+          <div className="absolute right-4 top-2 z-50">
             <Picker
               data={data}
               navPosition="none"
@@ -74,3 +86,4 @@ const TextBox:React.FC<CommentProps>= ({ placeholder = "Add a comment",comment,s
 };
 
 export default TextBox;
+// test commit
