@@ -1,4 +1,5 @@
 import Comment from "../schemas/Comment.js"
+import Post from "../schemas/Post.js";
 import mongoose from "mongoose";
 
 export const saveComment = async (req, res) => {
@@ -71,3 +72,32 @@ export const getComments = async(req,res)=>{
     res.status(500).json({ error: "Could not fetch comments." });
   }
 }
+
+export const deleteComment = async (req, res) => {
+  try {
+    const { postid:postId } = req.params;  // Post ID from the URL
+    const { commentid:commentId } = req.body;  // Comment ID from the request body
+
+    // Step 1: Check if the post exists
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Step 2: Check if the comment exists and belongs to the post
+    const comment = await Comment.findOne({ _id: commentId, post });
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found or does not belong to this post" });
+    }
+
+    // Step 3: Delete the comment
+    await Comment.deleteOne({ _id: commentId });
+
+    // Step 4: Return success response
+    res.status(200).json({ message: "Comment deleted successfully" });
+
+  } catch (e) {
+    console.log("Error:", e);
+    res.status(500).json({ message: "An error occurred while deleting the comment" });
+  }
+};
