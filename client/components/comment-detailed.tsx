@@ -54,10 +54,10 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
-                Delete
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md text-red-500">
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
