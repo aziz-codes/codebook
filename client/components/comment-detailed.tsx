@@ -16,6 +16,7 @@ import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
 import { deleteRequest } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 interface CommentProps {
   comment: CommentType;
   isOpen: boolean;
@@ -26,6 +27,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
   isOpen,
   toggleDropdown,
 }) => {
+  const {data:session} = useSession();
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -91,12 +93,12 @@ const CommentDetailed: React.FC<CommentProps> = ({
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
               </DropdownMenuItem>
-              <DropdownMenuItem
+            {comment.userDetails._id ===session?.user.id &&  <DropdownMenuItem
                 className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"
                 onClick={() => handleDeleteComment(comment._id)}
               >
                 {isPending ? "Loading...": "Delete"}
-              </DropdownMenuItem>
+              </DropdownMenuItem>}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
