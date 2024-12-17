@@ -32,5 +32,6 @@ export interface CommentData {
     userDetails:{
       avatar:string;
       username:string;
+      _id:string
     }
   }
