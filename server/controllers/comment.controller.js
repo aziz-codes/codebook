@@ -61,6 +61,7 @@ export const getComments = async(req,res)=>{
           createdAt: 1,
           "userDetails.username": 1,
           "userDetails.avatar": 1,
+          "userDetails._id": 1,
         },
       },
       { $sort: { createdAt: -1 } }, // Sort by creation date (most recent first)
