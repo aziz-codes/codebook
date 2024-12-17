@@ -1,5 +1,5 @@
-"use client"
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { DialogHeader } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { Post,CommentType } from "@/types/post";
+import { Post, CommentType } from "@/types/post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
@@ -19,13 +19,13 @@ import { getRequest } from "@/services";
 import Comment from "../comment";
 import CommentDetailed from "../comment-detailed";
 
-interface Props{
+interface Props {
   post: Post;
-  children?: React.ReactNode
+  children?: React.ReactNode;
   open: boolean;
   setter: React.Dispatch<React.SetStateAction<boolean>>;
   setComment: React.Dispatch<React.SetStateAction<string>>;
-  onComment: ()=>void;
+  onComment: () => void;
   comment: string;
   loading: boolean;
 }
@@ -38,9 +38,9 @@ const PostModal: React.FC<Props> = ({
   onComment,
   comment,
   loading,
- 
 }) => {
   const router = useRouter();
+  const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const {
     data: comments,
     error,
@@ -49,9 +49,11 @@ const PostModal: React.FC<Props> = ({
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
+  const toggleDropdown = (commentId: string) => {
+    setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
+  };
   return (
     <AlertDialog open={open} onOpenChange={setter}>
-    
       <AlertDialogContent className="sm:max-w-[425px] md:max-w-6xl px-4 ">
         <DialogHeader></DialogHeader>
 
@@ -79,42 +81,51 @@ const PostModal: React.FC<Props> = ({
           </div>
           {/* right side  */}
           <div className="w-full max-w-md  flex flex-col px-4 gap-3">
-          <div className="flex items-center gap-1.5">
-          <Avatar
-            className="cursor-pointer"
-            onClick={() => router.push(`${post.user.username}`)}
-          >
-            <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
-            <AvatarImage src={post.user.avatar} />
-          </Avatar>
-          <div className="flex flex-col -space-y-0.5">
-            <p
-              className="text-sm font-semibold cursor-pointer text-white"
-              onClick={() => router.push(`/${post.user.username}`)}
-            >
-              {post.user.username}
-            </p>
+            <div className="flex items-center gap-1.5">
+              <Avatar
+                className="cursor-pointer"
+                onClick={() => router.push(`${post.user.username}`)}
+              >
+                <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
+                <AvatarImage src={post.user.avatar} />
+              </Avatar>
+              <div className="flex flex-col -space-y-0.5">
+                <p
+                  className="text-sm font-semibold cursor-pointer text-white"
+                  onClick={() => router.push(`/${post.user.username}`)}
+                >
+                  {post.user.username}
+                </p>
 
-            <div className="text-[10px] text-gray-400">
-              <ReactTimeago date={post.createdAt} formatter={customFormatter} /> ago
+                <div className="text-[10px] text-gray-400">
+                  <ReactTimeago
+                    date={post.createdAt}
+                    formatter={customFormatter}
+                  />{" "}
+                  ago
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
             <div className="h-auto max-h-24 pb-4 text-sm">{post.title}</div>
             <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none">
-            {isLoading && "Loading comments"}
-                {comments?.map((comment, index) => (
-                  <CommentDetailed comment={comment} key={index}/>
-                ))}
+              {isLoading && "Loading comments"}
+              {comments?.map((comment, index) => (
+                <CommentDetailed
+                  comment={comment}
+                  key={index}
+                  isOpen={activeDropdownId === comment._id}
+                  toggleDropdown={() => toggleDropdown(comment._id)}
+                />
+              ))}
             </div>
             <div className="flex w-full items-center border-b rounded-md px-3 border">
-                <TextBox
-                  comment={comment}
-                  setComment={setComment}
-                  onComment={onComment}
-                  loading={loading}
-                />
-              </div>
+              <TextBox
+                comment={comment}
+                setComment={setComment}
+                onComment={onComment}
+                loading={loading}
+              />
+            </div>
           </div>
         </div>
       </AlertDialogContent>

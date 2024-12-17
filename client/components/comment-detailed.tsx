@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,15 @@ import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
 interface CommentProps {
   comment: CommentType;
+  isOpen: boolean;
+  toggleDropdown: ()=>void
 }
-const CommentDetailed: React.FC<CommentProps> = ({ comment }) => {
+const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown }) => {
+ 
+  
   const router = useRouter();
+
+  
   return (
     <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
       <Avatar
@@ -39,9 +45,9 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment }) => {
           >
             {comment.userDetails.username}
           </p>
-          <DropdownMenu>
+          <DropdownMenu open={isOpen} onOpenChange={toggleDropdown} >
             <DropdownMenuTrigger asChild>
-              <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white " />
+              <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white "  />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
