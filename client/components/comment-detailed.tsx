@@ -24,7 +24,9 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown
   
   const router = useRouter();
 
-  
+  const handleDeleteComment = (commentId:string)=>{
+      
+  }
   return (
     <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
       <Avatar
@@ -56,7 +58,7 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md text-red-500">
+              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md text-red-500" onClick={()=>handleDeleteComment(comment._id)}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
