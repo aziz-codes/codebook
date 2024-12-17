@@ -26,7 +26,7 @@ export interface CommentData {
 
   export type CommentType ={
     _id: string;
-    postId: string;
+    post: string;
     text: string;
     createdAt: string;
     userDetails:{
