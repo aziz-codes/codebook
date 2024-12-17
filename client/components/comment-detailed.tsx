@@ -14,19 +14,52 @@ import { CommentType } from "@/types/post";
 import { useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
+import { deleteRequest } from "@/services";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface CommentProps {
   comment: CommentType;
   isOpen: boolean;
-  toggleDropdown: ()=>void
+  toggleDropdown: () => void;
 }
-const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown }) => {
- 
-  
+const CommentDetailed: React.FC<CommentProps> = ({
+  comment,
+  isOpen,
+  toggleDropdown,
+}) => {
+  const queryClient = useQueryClient();
+
   const router = useRouter();
 
-  const handleDeleteComment = (commentId:string)=>{
-      
-  }
+  const deleteReq = async (commentId: string): Promise<void> => {
+    const res = await deleteRequest(`/post/comment/${comment.post}`, {
+      commentid: commentId,
+    });
+    if (!res.ok) {
+      throw new Error("Failed to delete comment");
+    }
+  };
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (commentId: string) => deleteReq(commentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`comments/${comment.post}`],
+
+      }); 
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+        
+      });
+    },
+    onError: () => {
+      console.error("Failed to delete comment");
+    },
+  });
+
+  const handleDeleteComment = async (commentId: string) => {
+    mutate(commentId);
+    
+  };
   return (
     <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
       <Avatar
@@ -47,9 +80,9 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown
           >
             {comment.userDetails.username}
           </p>
-          <DropdownMenu open={isOpen} onOpenChange={toggleDropdown} >
+          <DropdownMenu open={isOpen} onOpenChange={toggleDropdown}>
             <DropdownMenuTrigger asChild>
-              <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white "  />
+              <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white " />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
@@ -58,8 +91,11 @@ const CommentDetailed: React.FC<CommentProps> = ({ comment,isOpen,toggleDropdown
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md text-red-500" onClick={()=>handleDeleteComment(comment._id)}>
-                Delete
+              <DropdownMenuItem
+                className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"
+                onClick={() => handleDeleteComment(comment._id)}
+              >
+                {isPending ? "Loading...": "Delete"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
