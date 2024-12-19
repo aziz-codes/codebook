@@ -58,6 +58,7 @@ export const getComments = async(req,res)=>{
           _id: 1,
           post: 1,
           text: 1,
+          like: 1,
           createdAt: 1,
           "userDetails.username": 1,
           "userDetails.avatar": 1,
