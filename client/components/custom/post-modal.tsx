@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
 import Comment from "../comment";
 import CommentDetailed from "../comment-detailed";
+import ModalCommentSkeleton from "@/skeletons/modal-comments-skeleton";
 
 interface Props {
   post: Post;
@@ -108,7 +109,7 @@ const PostModal: React.FC<Props> = ({
             </div>
             <div className="h-auto max-h-24 pb-4 text-sm">{post.title}</div>
             <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none">
-              {isLoading && "Loading comments"}
+              {isLoading && <ModalCommentSkeleton />}
               {comments?.map((comment, index) => (
                 <CommentDetailed
                   comment={comment}
