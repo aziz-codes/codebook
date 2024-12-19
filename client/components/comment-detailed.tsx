@@ -27,7 +27,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
   isOpen,
   toggleDropdown,
 }) => {
-  const {data:session} = useSession();
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -46,11 +46,9 @@ const CommentDetailed: React.FC<CommentProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`comments/${comment.post}`],
-
-      }); 
+      });
       queryClient.invalidateQueries({
         queryKey: ["posts"],
-        
       });
     },
     onError: () => {
@@ -60,7 +58,6 @@ const CommentDetailed: React.FC<CommentProps> = ({
 
   const handleDeleteComment = async (commentId: string) => {
     mutate(commentId);
-    
   };
   return (
     <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
@@ -93,12 +90,14 @@ const CommentDetailed: React.FC<CommentProps> = ({
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
               </DropdownMenuItem>
-            {comment.userDetails._id ===session?.user.id &&  <DropdownMenuItem
-                className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"
-                onClick={() => handleDeleteComment(comment._id)}
-              >
-                {isPending ? "Loading...": "Delete"}
-              </DropdownMenuItem>}
+              {comment.userDetails._id === session?.user.id && (
+                <DropdownMenuItem
+                  className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"
+                  onClick={() => handleDeleteComment(comment._id)}
+                >
+                  {isPending ? "Loading..." : "Delete"}
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -112,6 +111,11 @@ const CommentDetailed: React.FC<CommentProps> = ({
           </div>
           <Button variant="link" size="icon" className="!p-0 !w-auto">
             <Heart className="h-4 w-4" />
+            {comment.likes.length > 0 && (
+              <span className="text-xs text-gray-400 ml-1 ">
+                {comment.likes}
+              </span>
+            )}
           </Button>
 
           <Button

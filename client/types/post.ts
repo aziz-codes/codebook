@@ -28,6 +28,7 @@ export interface CommentData {
     _id: string;
     post: string;
     text: string;
+    likes: string[];
     createdAt: string;
     userDetails:{
       avatar:string;
