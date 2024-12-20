@@ -14,7 +14,7 @@ import { CommentType } from "@/types/post";
 import { useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
-import { deleteRequest } from "@/services";
+import { deleteRequest, postRequest } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 interface CommentProps {
@@ -29,7 +29,8 @@ const CommentDetailed: React.FC<CommentProps> = ({
 }) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-
+   const [liked, setLiked] = useState(comment.likes?.includes(session?.user.id as string))
+   const [likes,setLikes] = useState(comment.likes.length)
   const router = useRouter();
 
   const deleteReq = async (commentId: string): Promise<void> => {
@@ -58,7 +59,27 @@ const CommentDetailed: React.FC<CommentProps> = ({
 
   const handleDeleteComment = async (commentId: string) => {
     mutate(commentId);
+  }; 
+  const handleLikeComment = async () => {
+    const previousLiked = liked;
+    const previousLikes = likes;
+  
+    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+    setLiked(!liked);
+  
+    const res = await postRequest(`/post/comment/react/${comment._id}`, { userid: session?.user.id });
+  
+    if (!res.ok) {
+      setLikes(previousLikes); // Revert to previous likes
+      setLiked(previousLiked); // Revert to previous liked state
+    } else {
+      queryClient.invalidateQueries({ queryKey: [`comments/${comment.post}`] });
+    }
   };
+  
+
+  console.log('new comment likes are ',comment.likes)
+  
   return (
     <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
       <Avatar
@@ -109,11 +130,11 @@ const CommentDetailed: React.FC<CommentProps> = ({
               formatter={customFormatter}
             />
           </div>
-          <Button variant="link" size="icon" className="!p-0 !w-auto">
-            <Heart className="h-4 w-4" />
+          <Button variant="link" size="icon" className="!p-0 !w-auto !no-underline">
+            <Heart className={`h-4 w-4 ${liked && 'fill-red-500 stroke-red-500'}`} onClick={handleLikeComment}/>
             {comment.likes.length > 0 && (
-              <span className="text-xs text-gray-400 ml-1 ">
-                {comment.likes}
+              <span className="text-xs text-gray-400 ml-1 no-underline">
+                {likes}
               </span>
             )}
           </Button>
