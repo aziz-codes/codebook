@@ -103,3 +103,38 @@ export const deleteComment = async (req, res) => {
     res.status(500).json({ message: "An error occurred while deleting the comment" });
   }
 };
+export const handleCommentReact = async (req, res) => {
+  try {
+    const { commentid } = req.params; // Extract comment ID from the params
+    const { userid: userId } = req.body; // Extract user ID from the request body
+
+    // Find the comment
+    const comment = await Comment.findById(commentid);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Check if the user has already liked the comment
+    const alreadyLiked = comment.likes.includes(userId);
+
+    if (alreadyLiked) {
+      // If the user has already liked the comment, remove their like (dislike)
+      comment.likes = comment.likes.filter((id) => id.toString() !== userId);
+    } else {
+      // If the user has not liked the comment, add their like
+      comment.likes.push(userId);
+    }
+
+    // Save the updated comment
+    await comment.save();
+
+    res.status(200).json({
+      message: alreadyLiked ? "Comment disliked" : "Comment liked",
+      likesCount: comment.likes.length, // Return the updated likes count
+    });
+  } catch (error) {
+    console.error("Error handling comment react:", error);
+    res.status(500).json({ error: "An error occurred while processing the request." });
+  }
+};
