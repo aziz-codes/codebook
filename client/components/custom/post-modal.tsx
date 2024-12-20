@@ -16,7 +16,6 @@ import { customFormatter } from "@/utils/utils";
 import TextBox from "../text-box";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
-import Comment from "../comment";
 import CommentDetailed from "../comment-detailed";
 import ModalCommentSkeleton from "@/skeletons/modal-comments-skeleton";
 
