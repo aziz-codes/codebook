@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +16,13 @@ import { customFormatter } from "@/utils/utils";
 import { deleteRequest, postRequest } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+
 interface CommentProps {
   comment: CommentType;
   isOpen: boolean;
   toggleDropdown: () => void;
 }
+
 const CommentDetailed: React.FC<CommentProps> = ({
   comment,
   isOpen,
@@ -29,8 +30,8 @@ const CommentDetailed: React.FC<CommentProps> = ({
 }) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-   const [liked, setLiked] = useState(comment.likes?.includes(session?.user.id as string))
-   const [likes,setLikes] = useState(comment.likes.length)
+  const [liked, setLiked] = useState(comment.likes?.includes(session?.user.id as string));
+  const [likes, setLikes] = useState(comment.likes.length);
   const router = useRouter();
 
   const deleteReq = async (commentId: string): Promise<void> => {
@@ -42,7 +43,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
     }
   };
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: deleteComment, isPending } = useMutation({
     mutationFn: (commentId: string) => deleteReq(commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -58,30 +59,51 @@ const CommentDetailed: React.FC<CommentProps> = ({
   });
 
   const handleDeleteComment = async (commentId: string) => {
-    mutate(commentId);
-  }; 
-  const handleLikeComment = async () => {
-    const previousLiked = liked;
-    const previousLikes = likes;
-  
+    deleteComment(commentId);
+  };
+
+  const { mutate: likeComment } = useMutation({
+    mutationFn: (commentId: string) => postRequest(`/post/comment/react/${commentId}`, { userid: session?.user.id }),
+    onMutate: (commentId: string) => {
+      // Cache the previous comments data to roll back if needed
+      const previousData = queryClient.getQueryData([`comments/${comment.post}`]);
+
+      // Optimistically update the like status
+      queryClient.setQueryData([`comments/${comment.post}`], (oldData: any) => {
+        return oldData.map((item: CommentType) => {
+          if (item._id === commentId) {
+            return {
+              ...item,
+              likes: liked
+                ? item.likes.filter((id: string) => id !== session?.user.id)
+                : [...item.likes, session?.user.id],
+            };
+          }
+          return item;
+        });
+      });
+
+      // Return context to roll back on failure
+      return { previousData };
+    },
+    onError: (err, variables, context) => {
+      // Rollback the optimistic update if the mutation fails
+      queryClient.setQueryData([`comments/${comment.post}`], context?.previousData);
+    },
+    onSettled: () => {
+      // Always refetch the data after mutation
+      queryClient.invalidateQueries({queryKey:[`comments/${comment.post}`]});
+    },
+  });
+
+  const handleLikeComment = () => {
     setLikes((prev) => (liked ? prev - 1 : prev + 1));
     setLiked(!liked);
-  
-    const res = await postRequest(`/post/comment/react/${comment._id}`, { userid: session?.user.id });
-  
-    if (!res.ok) {
-      setLikes(previousLikes); // Revert to previous likes
-      setLiked(previousLiked); // Revert to previous liked state
-    } else {
-      queryClient.invalidateQueries({ queryKey: [`comments/${comment.post}`] });
-    }
+    likeComment(comment._id);
   };
-  
 
-  console.log('new comment likes are ',comment.likes)
-  
   return (
-    <div className="flex space-x-2 py-2   text-white rounded-lg shadow-sm group">
+    <div className="flex space-x-2 py-2 text-white rounded-lg shadow-sm group">
       <Avatar
         className="w-8 h-8 cursor-pointer"
         onClick={() => router.push(`/${comment.userDetails.username}`)}
@@ -123,7 +145,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
           </DropdownMenu>
         </div>
         <p className="text-xs first-letter:uppercase">{comment.text}</p>
-        <div className=" flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
           <div className="text-xs text-gray-400">
             <ReactTimeago
               date={comment.createdAt}
@@ -131,11 +153,9 @@ const CommentDetailed: React.FC<CommentProps> = ({
             />
           </div>
           <Button variant="link" size="icon" className="!p-0 !w-auto !no-underline">
-            <Heart className={`h-4 w-4 ${liked && 'fill-red-500 stroke-red-500'}`} onClick={handleLikeComment}/>
+            <Heart className={`h-4 w-4 ${liked && "fill-red-500 stroke-red-500"}`} onClick={handleLikeComment} />
             {comment.likes.length > 0 && (
-              <span className="text-xs text-gray-400 ml-1 no-underline">
-                {likes}
-              </span>
+              <span className="text-xs text-gray-400 ml-1 no-underline">{likes}</span>
             )}
           </Button>
 
