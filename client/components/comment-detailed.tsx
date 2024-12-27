@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import { customFormatter } from "@/utils/utils";
 import { deleteRequest, postRequest } from "@/services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import useCustomMutation from "@/hooks/use-custom-mutation";
 
 interface CommentProps {
   comment: CommentType;
@@ -30,74 +31,58 @@ const CommentDetailed: React.FC<CommentProps> = ({
 }) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [liked, setLiked] = useState(comment.likes?.includes(session?.user.id as string));
-  const [likes, setLikes] = useState(comment.likes.length);
+  const [liked, setLiked] = useState(false);
+
   const router = useRouter();
 
-  const deleteReq = async (commentId: string): Promise<void> => {
-    const res = await deleteRequest(`/post/comment/${comment.post}`, {
-      commentid: commentId,
-    });
-    if (!res.ok) {
-      throw new Error("Failed to delete comment");
-    }
-  };
+  useEffect(() => {
+    setLiked(comment.likes.includes(session?.user.id as string));
+  }, [session?.user.id, comment.likes]);
 
-  const { mutate: deleteComment, isPending } = useMutation({
-    mutationFn: (commentId: string) => deleteReq(commentId),
+  const { mutate: deleteComment, isPending } = useCustomMutation({
+    // mutationFn: (commentId: string) => deleteReq(commentId),
+    mutationFn: async (commentId) =>
+      deleteRequest(`/post/comment/${comment.post}`, { commentid: commentId }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [`comments/${comment.post}`],
       });
       queryClient.invalidateQueries({
-        queryKey: ["posts"],
+        queryKey: [`posts`],
       });
     },
-    onError: () => {
-      console.error("Failed to delete comment");
+    onError: (err: any) => {
+      console.error("Failed to delete comment", err);
+      alert("errro deletign comment");
     },
   });
 
   const handleDeleteComment = async (commentId: string) => {
     deleteComment(commentId);
   };
+  console.log(
+    "likes for comment ",
+    comment.text,
+    " are ",
+    comment.likes.length
+  );
+  const { mutate: likeComment, isPending: liking } = useMutation({
+    mutationFn: (commentId: string) =>
+      postRequest(`/post/comment/react/${commentId}`, {
+        userid: session?.user.id,
+      }),
 
-  const { mutate: likeComment } = useMutation({
-    mutationFn: (commentId: string) => postRequest(`/post/comment/react/${commentId}`, { userid: session?.user.id }),
-    onMutate: (commentId: string) => {
-      // Cache the previous comments data to roll back if needed
-      const previousData = queryClient.getQueryData([`comments/${comment.post}`]);
-
-      // Optimistically update the like status
-      queryClient.setQueryData([`comments/${comment.post}`], (oldData: any) => {
-        return oldData.map((item: CommentType) => {
-          if (item._id === commentId) {
-            return {
-              ...item,
-              likes: liked
-                ? item.likes.filter((id: string) => id !== session?.user.id)
-                : [...item.likes, session?.user.id],
-            };
-          }
-          return item;
-        });
-      });
-
-      // Return context to roll back on failure
-      return { previousData };
-    },
     onError: (err, variables, context) => {
-      // Rollback the optimistic update if the mutation fails
-      queryClient.setQueryData([`comments/${comment.post}`], context?.previousData);
+      console.log("something went wrong");
     },
     onSettled: () => {
       // Always refetch the data after mutation
-      queryClient.invalidateQueries({queryKey:[`comments/${comment.post}`]});
+      queryClient.invalidateQueries({ queryKey: [`comments/${comment.post}`] });
     },
   });
 
   const handleLikeComment = () => {
-    setLikes((prev) => (liked ? prev - 1 : prev + 1));
+    if (liking) return;
     setLiked(!liked);
     likeComment(comment._id);
   };
@@ -152,10 +137,21 @@ const CommentDetailed: React.FC<CommentProps> = ({
               formatter={customFormatter}
             />
           </div>
-          <Button variant="link" size="icon" className="!p-0 !w-auto !no-underline">
-            <Heart className={`h-4 w-4 ${liked && "fill-red-500 stroke-red-500"}`} onClick={handleLikeComment} />
+          <Button
+            variant="link"
+            size="icon"
+            className="!p-0 !w-auto !no-underline"
+          >
+            <Heart
+              className={`h-4 w-4 ${
+                liked ? "fill-red-500 stroke-red-500" : "fill-none stroke-white"
+              }`}
+              onClick={handleLikeComment}
+            />
             {comment.likes.length > 0 && (
-              <span className="text-xs text-gray-400 ml-1 no-underline">{likes}</span>
+              <span className="text-xs text-gray-400 ml-1 no-underline">
+                {comment.likes.length}
+              </span>
             )}
           </Button>
 
@@ -173,6 +169,5 @@ const CommentDetailed: React.FC<CommentProps> = ({
 };
 
 export default CommentDetailed;
-
 
 // 3000 contributions comepleted

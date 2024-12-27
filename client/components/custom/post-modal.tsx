@@ -52,9 +52,11 @@ const PostModal: React.FC<Props> = ({
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
+ 
+  
   return (
     <AlertDialog open={open} onOpenChange={setter}>
-      <AlertDialogContent className="sm:max-w-[425px] md:max-w-6xl px-4 ">
+      <AlertDialogContent className="sm:max-w-[425px] md:max-w-6xl px-0 ">
         <DialogHeader></DialogHeader>
 
         <AlertDialogCancel
@@ -64,7 +66,7 @@ const PostModal: React.FC<Props> = ({
         >
           <X className="h-5 w-5" />
         </AlertDialogCancel>
-        <div className="w-full flex gap-3 h-[85vh] ">
+        <div className="w-full flex gap-0 h-[85vh] ">
           <div className="relative w-full h-full  overflow-hidden rounded-md px-3">
             <Image
               src={post.image}
@@ -80,8 +82,8 @@ const PostModal: React.FC<Props> = ({
             />
           </div>
           {/* right side  */}
-          <div className="w-full max-w-md  flex flex-col px-4 gap-3">
-            <div className="flex items-center gap-1.5">
+          <div className="w-full max-w-md  flex flex-col  gap-3">
+            <div className="flex items-center gap-1.5 px-4">
               <Avatar
                 className="cursor-pointer"
                 onClick={() => router.push(`${post.user.username}`)}
@@ -101,14 +103,15 @@ const PostModal: React.FC<Props> = ({
                   <ReactTimeago
                     date={post.createdAt}
                     formatter={customFormatter}
-                  />{" "}
+                  />
                   ago
                 </div>
               </div>
             </div>
-            <div className="h-auto max-h-24 pb-4 text-sm">{post.title}</div>
-            <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none">
+            <div className="h-auto max-h-24 pb-4 text-sm border-b px-4">{post.title}</div>
+            <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none px-4">
               {isLoading && <ModalCommentSkeleton />}
+              {comments?.length ===0 && <div className="flex items-center h-full justify-center text-xl font-bold">No comments yet  !</div>}
               {comments?.map((comment, index) => (
                 <CommentDetailed
                   comment={comment}
@@ -118,13 +121,15 @@ const PostModal: React.FC<Props> = ({
                 />
               ))}
             </div>
-            <div className="flex w-full items-center border-b rounded-md px-3 border">
-              <TextBox
+            <div className=" px-4">
+             <div className="flex w-full items-center border-b rounded-md  border px-4">
+             <TextBox
                 comment={comment}
                 setComment={setComment}
                 onComment={onComment}
                 loading={loading}
               />
+             </div>
             </div>
           </div>
         </div>
