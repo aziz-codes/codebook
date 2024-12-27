@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Heart } from "lucide-react";
 import { CommentType } from "@/types/post";
 import ReactTimeago from "react-timeago";
 import { useRouter } from "next/navigation";
@@ -44,7 +43,13 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
           <p className="mt-1 text-xs first-letter:uppercase">{comment.text}</p>
         </div>
         <div className="flex space-x-4 items-center text-xs mt-1">
-          {comment.likes.length > 0 && <p className="text-gray-400 text-[10px]"> {comment.likes.length} {comment.likes.length > 1?"likes": "like"}</p>}
+          {comment.likes.length > 0 && (
+            <p className="text-gray-400 text-[10px]">
+              {" "}
+              {comment.likes.length}{" "}
+              {comment.likes.length > 1 ? "likes" : "like"}
+            </p>
+          )}
         </div>
       </div>
     </div>
