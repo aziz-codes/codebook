@@ -4,24 +4,25 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { useSession } from "next-auth/react";
 import ButtonLoader from "@/utils/components/button-loader";
+import { postRequest } from "@/services";
+import { useQueryClient } from "@tanstack/react-query";
 interface CommentProps {
-  comment: string;
-  setComment: React.Dispatch<React.SetStateAction<string>>;
-  onComment: () => void;
+   post_id:string;  
   placeholder?: string;
-  loading: boolean;
+ 
 }
 const TextBox: React.FC<CommentProps> = ({
   placeholder = "Add a comment",
-  comment,
-  setComment,
-  onComment,
-  loading,
+  post_id
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const[comment,setComment] = useState("");
+const {data:session} = useSession();
+const queryClient = useQueryClient();
   const handleEmojiSelect = (item: any) => {
     setComment(comment.concat(item.native));
   };
@@ -36,6 +37,31 @@ const TextBox: React.FC<CommentProps> = ({
   useEffect(() => {
     adjustHeight();
   }, [comment]);
+
+    const handleComment = async () => {
+       if (comment.trim() === "") {
+         return;
+       }
+       setLoading(true);
+       try {
+         const payload = {
+           user: session?.user.id,
+           text: comment.trim(),
+           post: post_id,
+         };
+         await postRequest(`/post/comment/${post_id}`, payload);
+         setComment("");
+   
+         setLoading(false);
+         queryClient.invalidateQueries({ queryKey: ["posts"] });
+         queryClient.invalidateQueries({ queryKey: [`comments/${post_id}`] });
+       } catch (error) {
+         console.error("Failed to comment:", error);
+         setLoading(false);
+       }
+     };
+
+
   return (
     <>
       <div className="flex justify-between items-center w-full relative">
@@ -57,7 +83,7 @@ const TextBox: React.FC<CommentProps> = ({
               <Button
                 variant="link"
                 className="!no-underline text-sky-600  p-0 "
-                onClick={onComment}
+                onClick={handleComment}
               >
                 {loading ? "laoding" : "Post"}
               </Button>
