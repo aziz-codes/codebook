@@ -1,16 +1,22 @@
 // time formatter for react time ago.
-export   const customFormatter = (value: number, unit: string, suffix: string) => {
-    const shortUnit = {
-      second: "s",
-      minute: "m",
-      hour: "h",
-      day: "d",
-      week: "w",
-      month: "m",
-      year: "y",
-    }[unit];
-    return `${value}${shortUnit}`;
-  };
+export const customFormatter = (value: number, unit: string, suffix: string) => {
+  if (unit === "second" && value < 60) {
+    return "just now";
+  }
+
+  const shortUnit = {
+    second: "s",
+    minute: "m",
+    hour: "h",
+    day: "d",
+    week: "w",
+    month: "m",
+    year: "y",
+  }[unit];
+
+  return `${value}${shortUnit}`;
+};
+
 
 
   export const expertise = [
