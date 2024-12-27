@@ -47,7 +47,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(false);
   const [likes, setLikes] = useState(post.likes.length);
-  const [comment, setComment] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   // handle like functionality
@@ -79,29 +79,6 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     document.body.style.pointerEvents = "";
   }, [open]);
 
-  const handleComment = async () => {
-    if (comment.trim() === "") {
-      return;
-    }
-    setLoading(true);
-    try {
-      const payload = {
-        user: sessionId,
-        text: comment.trim(),
-        post: post._id,
-      };
-      await postRequest(`/post/comment/${post._id}`, payload);
-      setComment("");
-
-      setLoading(false);
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: [`comments/${post._id}`] });
-    } catch (error) {
-      console.error("Failed to comment:", error);
-      setLoading(false);
-    }
-  };
-
   // fetching comments for each post.
 
   const {
@@ -112,6 +89,8 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
+
+  const postIsBookmarked = post.bookmarkUserIds.includes(sessionId);
 
   return (
     <Card className="rounded-md !border-none mb-4 group ">
@@ -211,7 +190,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           </div>
 
           <div className="flex items-center space-x-2 cursor-pointer">
-            <BookmarkSvg className="w-6 h-6 cursor-pointer" />
+            <BookmarkSvg
+              className="w-6 h-6 cursor-pointer"
+              fill={postIsBookmarked ? "white" : ""}
+            />
           </div>
         </div>
       </CardContent>
