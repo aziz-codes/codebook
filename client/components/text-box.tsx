@@ -26,7 +26,6 @@ const queryClient = useQueryClient();
   const handleEmojiSelect = (item: any) => {
     setComment(comment.concat(item.native));
   };
-
   const adjustHeight = () => {
     if (inputRef.current) {
       inputRef.current.style.height = "34px";

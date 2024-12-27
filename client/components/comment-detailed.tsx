@@ -60,12 +60,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
   const handleDeleteComment = async (commentId: string) => {
     deleteComment(commentId);
   };
-  console.log(
-    "likes for comment ",
-    comment.text,
-    " are ",
-    comment.likes.length
-  );
+
   const { mutate: likeComment, isPending: liking } = useMutation({
     mutationFn: (commentId: string) =>
       postRequest(`/post/comment/react/${commentId}`, {

@@ -179,10 +179,6 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             open={openPostModal}
             post={post}
             setter={setPostModelOpen}
-            comment={comment}
-            setComment={setComment}
-            onComment={handleComment}
-            loading={loading}
           />
         )}
 
@@ -235,12 +231,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
                 ))}
               </div>
               <div className="flex w-full items-center border-b rounded-md px-3">
-                <TextBox
-                  comment={comment}
-                  setComment={setComment}
-                  onComment={handleComment}
-                  loading={loading}
-                />
+                <TextBox post_id={post._id} />
               </div>
             </CardFooter>
           </motion.div>

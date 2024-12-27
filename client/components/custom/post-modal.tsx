@@ -24,20 +24,12 @@ interface Props {
   children?: React.ReactNode;
   open: boolean;
   setter: React.Dispatch<React.SetStateAction<boolean>>;
-  setComment: React.Dispatch<React.SetStateAction<string>>;
-  onComment: () => void;
-  comment: string;
-  loading: boolean;
 }
 
 const PostModal: React.FC<Props> = ({
   open,
   post,
   setter,
-  setComment,
-  onComment,
-  comment,
-  loading,
 }) => {
   const router = useRouter();
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
@@ -124,10 +116,7 @@ const PostModal: React.FC<Props> = ({
             <div className=" px-4">
              <div className="flex w-full items-center border-b rounded-md  border px-4">
              <TextBox
-                comment={comment}
-                setComment={setComment}
-                onComment={onComment}
-                loading={loading}
+                 post_id={post._id}
               />
              </div>
             </div>
