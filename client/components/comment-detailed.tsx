@@ -108,9 +108,6 @@ const CommentDetailed: React.FC<CommentProps> = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-bgHover rounded-md">
                 Report
               </DropdownMenuItem>
               {comment.userDetails._id === session?.user.id && (
