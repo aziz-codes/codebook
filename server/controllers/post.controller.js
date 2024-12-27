@@ -62,6 +62,14 @@ export const getPosts = async (req, res) => {
         },
       },
       {
+        $lookup: {
+          from: "bookmarks", // Join with the "bookmarks" collection
+          localField: "_id", // Match the "post" field in Bookmarks
+          foreignField: "postId", // Match the "postId" field in Bookmarks
+          as: "bookmarks",
+        },
+      },
+      {
         $addFields: {
           commentCount: { $size: "$comments" }, // Count the number of comments
           likes: {
@@ -73,6 +81,13 @@ export const getPosts = async (req, res) => {
               },
             },
           },
+          bookmarkUserIds: {
+            $map: {
+              input: "$bookmarks",
+              as: "bookmark",
+              in: "$$bookmark.userId", // Extract userId from bookmarks
+            },
+          },
         },
       },
       {
@@ -81,6 +96,7 @@ export const getPosts = async (req, res) => {
           "likes._id": 0, // Optionally remove the _id field
           "likes.createdAt": 0, // Optionally remove the createdAt field
           "likes.updatedAt": 0, // Optionally remove the updatedAt field
+          bookmarks: 0, // Optionally remove the entire bookmarks array
         },
       },
     ]);
@@ -96,7 +112,6 @@ export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
- 
     // Validate the ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid post ID" });
@@ -104,7 +119,6 @@ export const deletePost = async (req, res) => {
 
     // Find and delete the post
     const post = await Post.findByIdAndDelete(id);
-    
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -112,10 +126,8 @@ export const deletePost = async (req, res) => {
 
     // Delete associated likes and comments
     const likeDeletionResult = await Like.deleteMany({ post: id });
- 
 
     const commentDeletionResult = await Comment.deleteMany({ post: id });
-    
 
     res
       .status(200)
