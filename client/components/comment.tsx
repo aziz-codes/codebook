@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Heart } from "lucide-react";
@@ -15,7 +15,10 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
   const router = useRouter();
   return (
     <div className="flex space-x-3 mb-4 w-full ">
-      <Avatar className="w-8 h-8 cursor-pointer" onClick={()=>router.push(`/${comment.userDetails.username}`)}>
+      <Avatar
+        className="w-8 h-8 cursor-pointer"
+        onClick={() => router.push(`/${comment.userDetails.username}`)}
+      >
         <AvatarImage
           src={comment.userDetails.avatar}
           alt={comment.userDetails.username}
@@ -25,7 +28,10 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
       <div className="flex-grow">
         <div className="bg-bgHover px-3 py-2 rounded-lg w-full">
           <div className="flex justify-between items-start">
-            <p className="font-semibold text-slate-300 text-sm cursor-pointer" onClick={()=>router.push(`/${comment.userDetails.username}`)}>
+            <p
+              className="font-semibold text-slate-300 text-sm cursor-pointer"
+              onClick={() => router.push(`/${comment.userDetails.username}`)}
+            >
               {comment.userDetails.username}
             </p>
             <div className="text-[10px] text-gray-400">
@@ -38,9 +44,7 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
           <p className="mt-1 text-xs first-letter:uppercase">{comment.text}</p>
         </div>
         <div className="flex space-x-4 items-center text-xs mt-1">
-           
-            <Heart className={`w-4 h-4 mr-1 hover:text-gray-400 transition-all duration-300 ease-linear cursor-pointer  `} />3
-           
+          {comment.likes.length > 0 && <p className="text-gray-400 text-[10px]"> {comment.likes.length} {comment.likes.length > 1?"likes": "like"}</p>}
         </div>
       </div>
     </div>
