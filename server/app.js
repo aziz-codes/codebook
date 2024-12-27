@@ -43,4 +43,19 @@ try {
     process.exit(1); // Exit the process with failure
 }
 
- 
+app.post('/test', async (req, res) => {
+    try {
+      const name = req.body.name;  // Extracting name from the request body
+      console.log(req.body);
+  
+      // Simulate a delay using a promise and setTimeout
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+  
+      // After 3 seconds, send the response
+      res.status(200).json({ message: "Data posted", status: 200, name: name });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  });
+  
