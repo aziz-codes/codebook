@@ -225,7 +225,10 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
                       }
                     }}
                   >
-                    load more <Minimize2 className="h-3 w-3" />
+                    <span className="hover:underline">
+                      {" "}
+                      view all {comments.length} comments
+                    </span>
                   </div>
                 )}
               </div>
