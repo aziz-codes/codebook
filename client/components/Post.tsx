@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Minimize2 } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -182,7 +182,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           />
         )}
 
-        <div className="px-3 py-3 flex items-center justify-between select-none border-t">
+        <div className="px-3 py-1.5 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
               stroke={liked ? "red" : "white"}
@@ -199,16 +199,17 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             </LikesPopup>
           </div>
 
-          <div className="flex items-center space-x-1 cursor-pointer text-sm">
-            <CommentSvg
-              className="w-6 h-6 cursor-pointer"
-              onClick={() => setCommentBox(!openCommentBox)}
-            />
-            <span className="text-xs hover:underline">
+          <div
+            className="flex items-center space-x-1 cursor-pointer text-sm  hover:bg-bgHover px-2 py-1 rounded-md transition-colors duration-200"
+            onClick={() => setCommentBox(!openCommentBox)}
+          >
+            <CommentSvg className="w-6 h-6 cursor-pointer    transition-colors duration-200" />
+            <span className="text-xs     transition-all duration-200">
               {post.commentCount < 1 ? null : post.commentCount}{" "}
               {post.commentCount < 1 ? " Comment" : " Comments"}
             </span>
           </div>
+
           <div className="flex items-center space-x-2 cursor-pointer">
             <BookmarkSvg className="w-6 h-6 cursor-pointer" />
           </div>
@@ -224,13 +225,30 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           >
             <CardFooter className="p-0 flex-col items-start flex">
               <div className="px-3 w-full ">
-                <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
+                {comments && comments.length > 0 && (
+                  <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
+                )}
                 {isLoading && "Loading comments"}
-                {comments?.map((comment, index) => (
+                {comments?.slice(0, 2).map((comment, index) => (
                   <Comment comment={comment} key={index} />
                 ))}
+                {comments && comments?.length > 2 && (
+                  <div
+                    className="text-center flex items-center justify-center -mt-2 pb-3 px-2 py-1.5 rounded-md text-xs cursor-pointer"
+                    onClick={() => {
+                      if (post?.image) {
+                        setPostModelOpen(true);
+                      } else {
+                        router.push("/test");
+                      }
+                    }}
+                  >
+                    load more <Minimize2 className="h-3 w-3" />
+                  </div>
+                )}
               </div>
-              <div className="flex w-full items-center border-b rounded-md px-3">
+
+              <div className="flex w-full items-center  px-3">
                 <TextBox post_id={post._id} />
               </div>
             </CardFooter>
