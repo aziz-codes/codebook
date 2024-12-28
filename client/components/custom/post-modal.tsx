@@ -26,11 +26,7 @@ interface Props {
   setter: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostModal: React.FC<Props> = ({
-  open,
-  post,
-  setter,
-}) => {
+const PostModal: React.FC<Props> = ({ open, post, setter }) => {
   const router = useRouter();
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const {
@@ -44,8 +40,7 @@ const PostModal: React.FC<Props> = ({
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
- 
-  
+
   return (
     <AlertDialog open={open} onOpenChange={setter}>
       <AlertDialogContent className="sm:max-w-[425px] md:max-w-6xl px-0 ">
@@ -96,14 +91,20 @@ const PostModal: React.FC<Props> = ({
                     date={post.createdAt}
                     formatter={customFormatter}
                   />
-                  ago
+                  &nbsp;ago
                 </div>
               </div>
             </div>
-            <div className="h-auto max-h-24 pb-4 text-sm border-b px-4">{post.title}</div>
+            <div className="h-auto max-h-24 pb-4 text-sm border-b px-4">
+              {post.title}
+            </div>
             <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none px-4">
               {isLoading && <ModalCommentSkeleton />}
-              {comments?.length ===0 && <div className="flex items-center h-full justify-center text-xl font-bold">No comments yet  !</div>}
+              {comments?.length === 0 && (
+                <div className="flex items-center h-full justify-center text-xl font-bold">
+                  No comments yet !
+                </div>
+              )}
               {comments?.map((comment, index) => (
                 <CommentDetailed
                   comment={comment}
@@ -114,11 +115,9 @@ const PostModal: React.FC<Props> = ({
               ))}
             </div>
             <div className=" px-4">
-             <div className="flex w-full items-center border-b rounded-md  border px-4">
-             <TextBox
-                 post_id={post._id}
-              />
-             </div>
+              <div className="flex w-full items-center border-b rounded-md  border px-4">
+                <TextBox post_id={post._id} />
+              </div>
             </div>
           </div>
         </div>
