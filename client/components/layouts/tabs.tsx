@@ -1,10 +1,13 @@
 "use client";
-import React, { useState } from "react";
-import { TrendingUp, CodeXml, LayoutGrid, Gem } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { TrendingUp, CodeXml, LayoutGrid, Gem, Bookmark } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
-import { Posts,Bounties,Snippets,Discussions } from "../user/tabs";
-const UserProfileTabs = () => {
+import { Posts, Bounties, Snippets, Discussions } from "../user/tabs";
+import { useSession } from "next-auth/react";
+import { UserProfileType } from "@/types/user";
+const UserProfileTabs = ({ user }: { user: UserProfileType }) => {
+  const { data: session } = useSession();
   const [tabs, setTabs] = useState([
     {
       label: "Posts",
@@ -32,6 +35,20 @@ const UserProfileTabs = () => {
     },
   ]);
 
+  useEffect(() => {
+    if (session?.user.id === user.user._id) {
+      setTabs([
+        ...tabs,
+        {
+          label: "Bookmarks",
+          component: <div>Bookmarks</div>,
+          icon: Bookmark,
+          isActive: false,
+        },
+      ]);
+    }
+  }, [user]);
+
   const handleClickItem = (index: number) => {
     const newTabs = tabs.map((tab, i) => ({
       ...tab,
@@ -39,8 +56,8 @@ const UserProfileTabs = () => {
     }));
     setTabs(newTabs);
   };
-  
-  const activeTab = tabs.find((tab)=>tab.isActive === true);
+
+  const activeTab = tabs.find((tab) => tab.isActive === true);
 
   return (
     <div className="w-full max-w-5xl flex flex-col mt-8">
