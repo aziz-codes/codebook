@@ -1,4 +1,5 @@
-on post modal emoji picker on rendering.
+**on post modal emoji picker on rendering**
+**reply to comment on post modal**
 
 
 (completed)**Display a loader on initial load unitl the next auth session is fetched and Post component is ready.**
