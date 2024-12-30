@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import CreateSkeleton from "@/skeletons/create-skeleton";
 import { Post } from "@/types/post";
 import MainLoader from "@/utils/components/main-loader";
-import { Loader, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 const CreatePost = dynamic(() => import("@/components/create"), {
   ssr: false,
   loading: () => <CreateSkeleton />,
@@ -69,4 +69,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-// test commit
