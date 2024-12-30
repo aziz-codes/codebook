@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import TimeAgo from "react-timeago";
 import { useRouter } from "next/navigation";
@@ -12,19 +12,22 @@ const UserDateProfile = ({ date, username, image }: IAvatarProps) => {
   const router = useRouter();
   return (
     <div className="flex items-center gap-2">
-      <Avatar onClick={()=>router.push(`/user/${username}`)} className="cursor-pointer">
+      <Avatar
+        onClick={() => router.push(`/user/${username}`)}
+        className="cursor-pointer"
+      >
         <AvatarFallback>{username.slice(0, 2)}</AvatarFallback>
         <AvatarImage src={image} />
       </Avatar>
       <div className="flex flex-col -space-y-1">
-        <h4 className="text-sm font-semibold cursor-pointer" onClick={()=>router.push(`/user/${username}`)}>{username}</h4>
+        <h4
+          className="text-sm font-semibold cursor-pointer"
+          onClick={() => router.push(`/user/${username}`)}
+        >
+          {username}
+        </h4>
         <div className="text-[11px] text-muted-foreground">
-          <TimeAgo
-            date={date}
-            locale="en-US"
-            timeStyle="twitter"
-            // style={{ fontSize: "11px" }}
-          />
+          <TimeAgo date={date} locale="en-US" timeStyle="twitter" />
         </div>
       </div>
     </div>
