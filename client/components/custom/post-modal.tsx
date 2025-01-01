@@ -99,7 +99,10 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
               {post.title}
             </div>
             <div className=" flex-1 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar-none px-4">
-              {isLoading && <ModalCommentSkeleton />}
+              {isLoading &&
+                Array.from({ length: 8 }).map((_, index) => (
+                  <ModalCommentSkeleton key={index} />
+                ))}
               {comments?.length === 0 && (
                 <div className="flex items-center h-full justify-center text-xl font-bold">
                   No comments yet !
@@ -115,7 +118,7 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
               ))}
             </div>
             <div className=" px-4">
-              <div className="flex w-full items-center border-b rounded-md  border px-4">
+              <div className="flex w-full items-center border-b rounded-md  border px-2">
                 <TextBox post_id={post._id} />
               </div>
             </div>

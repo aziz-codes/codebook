@@ -81,7 +81,9 @@ const CommentDetailed: React.FC<CommentProps> = ({
     setLiked(!liked);
     likeComment(comment._id);
   };
-
+  const handleReply = (username: string) => {
+    console.log(username);
+  };
   return (
     <div className="flex space-x-2 py-2 text-white rounded-lg shadow-sm group">
       <Avatar
@@ -130,9 +132,9 @@ const CommentDetailed: React.FC<CommentProps> = ({
             />
           </div>
           <Button
-            variant="link"
+            variant="default"
             size="icon"
-            className="!p-0 !w-auto !no-underline"
+            className="p-0 bg-transparent hover:bg-transparent w-auto no-underline ring-0 border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
           >
             <Heart
               className={`h-4 w-4 ${
@@ -151,6 +153,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
             variant="link"
             size="sm"
             className="flex items-center space-x-1 text-gray-500 p-0 !no-underline hover:text-white"
+            onClick={() => handleReply(comment.userDetails.username)}
           >
             <span className="text-xs">Reply</span>
           </Button>
