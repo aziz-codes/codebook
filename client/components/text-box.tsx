@@ -9,20 +9,19 @@ import ButtonLoader from "@/utils/components/button-loader";
 import { postRequest } from "@/services";
 import { useQueryClient } from "@tanstack/react-query";
 interface CommentProps {
-   post_id:string;  
+  post_id: string;
   placeholder?: string;
- 
 }
 const TextBox: React.FC<CommentProps> = ({
   placeholder = "Add a comment",
-  post_id
+  post_id,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const[comment,setComment] = useState("");
-const {data:session} = useSession();
-const queryClient = useQueryClient();
+  const [comment, setComment] = useState("");
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const handleEmojiSelect = (item: any) => {
     setComment(comment.concat(item.native));
   };
@@ -37,33 +36,36 @@ const queryClient = useQueryClient();
     adjustHeight();
   }, [comment]);
 
-    const handleComment = async () => {
-       if (comment.trim() === "") {
-         return;
-       }
-       setLoading(true);
-       try {
-         const payload = {
-           user: session?.user.id,
-           text: comment.trim(),
-           post: post_id,
-         };
-         await postRequest(`/post/comment/${post_id}`, payload);
-         setComment("");
-   
-         setLoading(false);
-         queryClient.invalidateQueries({ queryKey: ["posts"] });
-         queryClient.invalidateQueries({ queryKey: [`comments/${post_id}`] });
-       } catch (error) {
-         console.error("Failed to comment:", error);
-         setLoading(false);
-       }
-     };
+  const handleComment = async () => {
+    if (comment.trim() === "") {
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = {
+        user: session?.user.id,
+        text: comment.trim(),
+        post: post_id,
+      };
+      await postRequest(`/post/comment/${post_id}`, payload);
+      setComment("");
 
+      setLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: [`comments/${post_id}`] });
+    } catch (error) {
+      console.error("Failed to comment:", error);
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-      <div className="flex justify-between items-center w-full relative">
+      <div className="flex justify-between items-center w-full relative gap-2">
+        <Smile
+          className="h-4 w-4 cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400"
+          onClick={() => setOpen((prev) => !prev)}
+        />
         <textarea
           placeholder={placeholder}
           ref={inputRef}
@@ -73,10 +75,6 @@ const queryClient = useQueryClient();
           style={{ height: "34px" }}
         ></textarea>
         <div className="flex items-center gap-1">
-          <Smile
-            className="h-4 w-4 cursor-pointer hover:scale-105 transition-all duration-75 ease-linear hover:text-gray-400"
-            onClick={() => setOpen((prev) => !prev)}
-          />
           {comment.length > 0 &&
             (!loading ? (
               <Button
