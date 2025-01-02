@@ -22,6 +22,7 @@ export type Post = {
   likes: Like[];
   commentCount: number;
   bookmarkUserIds: string[];
+  comments?: Comment[];
 };
 
 export type CommentType = {
