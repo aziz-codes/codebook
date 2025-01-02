@@ -230,6 +230,7 @@ export const getSinglePost = async (req, res) => {
           content: 1,
           createdAt: 1,
           updatedAt: 1,
+          image: 1,
           user: {
             username: "$userDetails.username",
             avatar: "$userDetails.avatar",
