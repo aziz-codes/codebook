@@ -221,7 +221,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
                       if (post?.image) {
                         setPostModelOpen(true);
                       } else {
-                        router.push("/test");
+                        router.push(`/p/${post._id}`);
                       }
                     }}
                   >

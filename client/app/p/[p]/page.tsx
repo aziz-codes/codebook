@@ -1,9 +1,11 @@
 "use client";
 import React from "react";
 import { useParams } from "next/navigation";
-const { id } = useParams();
+
 const SinglePost = () => {
-  return <div>SinglePost id {id}</div>;
+  const { p } = useParams();
+
+  return <div>SinglePost id {p}</div>;
 };
 
 export default SinglePost;
