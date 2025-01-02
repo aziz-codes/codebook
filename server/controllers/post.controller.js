@@ -142,7 +142,7 @@ export const getSinglePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate ID
+    // Validate the ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid post ID" });
     }
@@ -154,41 +154,41 @@ export const getSinglePost = async (req, res) => {
       // Lookup user details (username, avatar, name)
       {
         $lookup: {
-          from: "users", // User collection
-          localField: "user", // Field in Post collection
-          foreignField: "_id", // Field in User collection
-          as: "userDetails", // Alias for the joined data
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
         },
       },
 
-      // Unwind the user array to extract a single user object
+      // Unwind the user details to extract a single user object
       { $unwind: "$userDetails" },
 
       // Project only necessary user fields
       {
         $project: {
-          "userDetails.password": 0, // Exclude sensitive fields
-          "userDetails.email": 0, // Exclude unnecessary fields
+          "userDetails.password": 0,
+          "userDetails.email": 0,
         },
       },
 
       // Lookup comments for the post
       {
         $lookup: {
-          from: "comments", // Comment collection
-          localField: "_id", // Field in Post collection
-          foreignField: "post", // Field in Comment collection
-          as: "comments", // Alias for the joined data
+          from: "comments",
+          localField: "_id",
+          foreignField: "post",
+          as: "comments",
         },
       },
 
       // Lookup likes for the post
       {
         $lookup: {
-          from: "likes", // Like collection
-          localField: "_id", // Field in Post collection
-          foreignField: "post", // Field in Like collection
-          as: "likes", // Alias for the joined data
+          from: "likes",
+          localField: "_id",
+          foreignField: "post",
+          as: "likes",
         },
       },
 
@@ -196,6 +196,29 @@ export const getSinglePost = async (req, res) => {
       {
         $addFields: {
           likes: { $map: { input: "$likes", as: "like", in: "$$like.user" } },
+        },
+      },
+
+      // Lookup bookmarks for the post
+      {
+        $lookup: {
+          from: "bookmarks",
+          localField: "_id",
+          foreignField: "postId",
+          as: "bookmarks",
+        },
+      },
+
+      // Transform bookmarks to return only user IDs
+      {
+        $addFields: {
+          bookmarkUserIds: {
+            $map: {
+              input: "$bookmarks",
+              as: "bookmark",
+              in: "$$bookmark.userId",
+            },
+          },
         },
       },
 
@@ -214,6 +237,7 @@ export const getSinglePost = async (req, res) => {
           },
           comments: 1,
           likes: 1,
+          bookmarkUserIds: 1, // Include bookmark user IDs
         },
       },
     ]);
