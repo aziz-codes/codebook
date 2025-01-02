@@ -142,21 +142,88 @@ export const getSinglePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate the ID
+    // Validate ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid post ID" });
     }
 
-    // Find the post by ID
-    const post = await Post.findById(id);
+    const post = await Post.aggregate([
+      // Match the post by ID
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
 
-    // If no post found
-    if (!post) {
+      // Lookup user details (username, avatar, name)
+      {
+        $lookup: {
+          from: "users", // User collection
+          localField: "user", // Field in Post collection
+          foreignField: "_id", // Field in User collection
+          as: "userDetails", // Alias for the joined data
+        },
+      },
+
+      // Unwind the user array to extract a single user object
+      { $unwind: "$userDetails" },
+
+      // Project only necessary user fields
+      {
+        $project: {
+          "userDetails.password": 0, // Exclude sensitive fields
+          "userDetails.email": 0, // Exclude unnecessary fields
+        },
+      },
+
+      // Lookup comments for the post
+      {
+        $lookup: {
+          from: "comments", // Comment collection
+          localField: "_id", // Field in Post collection
+          foreignField: "post", // Field in Comment collection
+          as: "comments", // Alias for the joined data
+        },
+      },
+
+      // Lookup likes for the post
+      {
+        $lookup: {
+          from: "likes", // Like collection
+          localField: "_id", // Field in Post collection
+          foreignField: "post", // Field in Like collection
+          as: "likes", // Alias for the joined data
+        },
+      },
+
+      // Transform likes to return only user IDs
+      {
+        $addFields: {
+          likes: { $map: { input: "$likes", as: "like", in: "$$like.user" } },
+        },
+      },
+
+      // Project the final structure
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          content: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          user: {
+            username: "$userDetails.username",
+            avatar: "$userDetails.avatar",
+            name: "$userDetails.name",
+          },
+          comments: 1,
+          likes: 1,
+        },
+      },
+    ]);
+
+    // Check if the post exists
+    if (!post.length) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Send the post data
-    res.status(200).json({ post });
+    res.status(200).json({ post: post[0] });
   } catch (error) {
     console.error("Error fetching post:", error);
     res.status(500).json({ error: "Could not fetch post." });
