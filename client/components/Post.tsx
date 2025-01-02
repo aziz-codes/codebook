@@ -32,12 +32,17 @@ import PostModal from "./custom/post-modal";
 type PostProps = {
   post: Post;
   sessionId: string;
+  isSingleRoute?: boolean;
 };
 
-const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
+const SinglePost: FC<PostProps> = ({
+  post,
+  sessionId,
+  isSingleRoute = false,
+}) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const postLikes = post.likes.map((like) => like.user);
+  const postLikes = post.likes.map((like) => like.user || like);
   const [openPostModal, setPostModelOpen] = useState(false);
   const [liked, setLiked] = useState<null | boolean>(null);
   useEffect(() => {
@@ -45,7 +50,7 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
   }, [sessionId]);
 
   const [open, setOpen] = useState(false);
-  const [openCommentBox, setCommentBox] = useState(false);
+  const [openCommentBox, setCommentBox] = useState(isSingleRoute);
   const [likes, setLikes] = useState(post.likes.length);
 
   const [loading, setLoading] = useState(false);
@@ -179,12 +184,20 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
           </div>
 
           <div
-            className="flex items-center space-x-1 cursor-pointer text-sm  hover:bg-bgHover px-2 py-1 rounded-md transition-colors duration-200"
-            onClick={() => setCommentBox(!openCommentBox)}
+            className={`flex items-center space-x-1 cursor-pointer text-sm  ${
+              !isSingleRoute && "hover:bg-bgHover"
+            } px-2 py-1 rounded-md transition-colors duration-200`}
+            onClick={() => {
+              if (!isSingleRoute) {
+                setCommentBox(!openCommentBox);
+              }
+            }}
           >
             <CommentSvg className="w-6 h-6 cursor-pointer    transition-colors duration-200" />
             <span className="text-xs     transition-all duration-200">
-              {post.commentCount < 1 ? null : post.commentCount}{" "}
+              {post.commentCount < 1
+                ? null
+                : post.commentCount ?? post.comments?.length}
               {post.commentCount < 1 ? " Comment" : " Comments"}
             </span>
           </div>
@@ -206,15 +219,26 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
             transition={{ duration: 0.2 }}
           >
             <CardFooter className="p-0 flex-col items-start flex">
-              <div className="px-3 w-full ">
+              <div className="px-3 w-full">
+                {isSingleRoute && (
+                  <div className="flex w-full items-center mb-4 border-b px-2 my-4">
+                    <TextBox post_id={post._id} />
+                  </div>
+                )}
+
                 {comments && comments.length > 0 && (
                   <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
                 )}
+
                 {isLoading && "Loading comments"}
-                {comments?.slice(0, 2).map((comment, index) => (
-                  <Comment comment={comment} key={index} />
-                ))}
-                {comments && comments?.length > 2 && (
+                {comments &&
+                  comments
+                    ?.slice(0, isSingleRoute ? comments.length : 2)
+                    .map((comment, index) => (
+                      <Comment comment={comment} key={index} />
+                    ))}
+
+                {!isSingleRoute && comments && comments.length > 2 && (
                   <div
                     className="text-center flex items-center justify-center -mt-2 pb-3 px-2 py-1.5 rounded-md text-xs cursor-pointer"
                     onClick={() => {
@@ -226,16 +250,17 @@ const SinglePost: FC<PostProps> = ({ post, sessionId }) => {
                     }}
                   >
                     <span className="hover:underline">
-                      {" "}
                       view all {comments.length} comments
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex w-full items-center  px-3">
-                <TextBox post_id={post._id} />
-              </div>
+              {!isSingleRoute && (
+                <div className="flex w-full items-center px-3">
+                  <TextBox post_id={post._id} />
+                </div>
+              )}
             </CardFooter>
           </motion.div>
         )}
