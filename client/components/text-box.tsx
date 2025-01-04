@@ -89,7 +89,7 @@ const TextBox: React.FC<CommentProps> = ({
             ))}
         </div>
         {open && (
-          <div className="absolute right-4 top-2 z-50">
+          <div className="absolute left-5 top-2 z-50">
             <Picker
               data={data}
               navPosition="none"
