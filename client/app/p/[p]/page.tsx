@@ -8,9 +8,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
 import SinglePost from "@/components/Post";
 import { useSession } from "next-auth/react";
+import PostSkeleton from "@/skeletons/post-skeleton";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import NotFound from "@/app/not-found";
+
 interface Data {
-  post: Post;
+  post?: Post; // Marking post as optional
 }
+
 const SinglePage = () => {
   const { p } = useParams();
   const { data: session } = useSession();
@@ -21,12 +27,16 @@ const SinglePage = () => {
 
   const sessionId = session?.user.id;
 
+  if (error || !data?.post) return <NotFound />;
+
   return (
     <MainWrapper classes="w-full flex justify-center px-4 lg:px-8">
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-8 py-8">
         {/* Left Section: Single Post */}
-        <div className="col-span-2 rounded-lg shadow-md    ">
-          {data && (
+        <div className="col-span-2 rounded-lg shadow-md ">
+          {isLoading ? (
+            <PostSkeleton />
+          ) : (
             <SinglePost
               post={data.post}
               sessionId={sessionId as string}
@@ -36,7 +46,7 @@ const SinglePage = () => {
         </div>
 
         {/* Right Section: Similar Posts or Other Info */}
-        <div className="border rounded-lg shadow-md p-6  w-full">
+        <div className="border rounded-lg shadow-md p-6 w-full">
           <h2 className="text-xl font-semibold mb-4">Similar Posts</h2>
           <ul className="space-y-4">
             <li className="border-b pb-2">
