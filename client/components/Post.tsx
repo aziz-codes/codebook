@@ -28,6 +28,7 @@ import { customFormatter } from "@/utils/utils";
 import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
 import PostModal from "./custom/post-modal";
+import CommentDetailed from "./comment-detailed";
 
 type PostProps = {
   post: Post;
@@ -48,13 +49,16 @@ const SinglePost: FC<PostProps> = ({
   useEffect(() => {
     setLiked(postLikes.includes(sessionId));
   }, [sessionId]);
-
+  const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(isSingleRoute);
   const [likes, setLikes] = useState(post.likes.length);
 
   const [loading, setLoading] = useState(false);
 
+  const toggleDropdown = (commentId: string) => {
+    setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
+  };
   // handle like functionality
   const handleLike = async (postId: string) => {
     if (!sessionId) return;
@@ -235,9 +239,18 @@ const SinglePost: FC<PostProps> = ({
                 {comments &&
                   comments
                     ?.slice(0, isSingleRoute ? comments.length : 2)
-                    .map((comment, index) => (
-                      <Comment comment={comment} key={index} />
-                    ))}
+                    .map((comment, index) =>
+                      isSingleRoute ? (
+                        <CommentDetailed
+                          comment={comment}
+                          key={index}
+                          isOpen={activeDropdownId === comment._id}
+                          toggleDropdown={() => toggleDropdown(comment._id)}
+                        />
+                      ) : (
+                        <Comment comment={comment} key={index} />
+                      )
+                    )}
 
                 {!isSingleRoute && comments && comments.length > 2 && (
                   <div
