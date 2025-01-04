@@ -9,12 +9,10 @@ import { getRequest } from "@/services";
 import SinglePost from "@/components/Post";
 import { useSession } from "next-auth/react";
 import PostSkeleton from "@/skeletons/post-skeleton";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import NotFound from "@/app/not-found";
 
 interface Data {
-  post?: Post; // Marking post as optional
+  post?: Post;
 }
 
 const SinglePage = () => {
@@ -26,23 +24,27 @@ const SinglePage = () => {
   });
 
   const sessionId = session?.user.id;
-
+  if (isLoading) {
+    return (
+      <MainWrapper classes="w-full flex justify-center px-4 lg:px-8">
+        <div className="w-full max-w-5xl py-8">
+          <PostSkeleton />
+        </div>
+      </MainWrapper>
+    );
+  }
   if (error || !data?.post) return <NotFound />;
 
   return (
     <MainWrapper classes="w-full flex justify-center px-4 lg:px-8">
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-8 py-8">
         {/* Left Section: Single Post */}
-        <div className="col-span-2 rounded-lg shadow-md ">
-          {isLoading ? (
-            <PostSkeleton />
-          ) : (
-            <SinglePost
-              post={data.post}
-              sessionId={sessionId as string}
-              isSingleRoute
-            />
-          )}
+        <div className="col-span-2 rounded-lg shadow-md">
+          <SinglePost
+            post={data.post}
+            sessionId={sessionId as string}
+            isSingleRoute
+          />
         </div>
 
         {/* Right Section: Similar Posts or Other Info */}
