@@ -11,7 +11,8 @@ import { getRequest } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 import UserProfileSkeleton from "@/skeletons/user-profile-skeleton";
 import dynamic from "next/dynamic";
-import UserNotFound from "@/layouts/utils/user-not-found";
+import NotFound from "../not-found";
+import ButtonLoader from "@/utils/components/button-loader";
 const ProfileCard = dynamic(() => import("@/test/profile-card"), {
   ssr: false,
   loading: () => <UserProfileSkeleton />,
@@ -33,7 +34,7 @@ const UserProfile = () => {
     enabled: !!username,
   });
 
-  if (error) return <UserNotFound />;
+  if (error) return <NotFound />;
 
   return (
     <MainWrapper
@@ -42,6 +43,7 @@ const UserProfile = () => {
       {isLoading && <UserProfileSkeleton />}
       {data && <ProfileCard profile={data} />}
       <div className="w-full flex justify-center">
+        {isLoading && <ButtonLoader />}
         {data && <UserProfileTabs user={data} />}
       </div>
     </MainWrapper>
