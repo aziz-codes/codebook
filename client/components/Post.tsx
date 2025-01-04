@@ -57,6 +57,7 @@ const SinglePost: FC<PostProps> = ({
 
   // handle like functionality
   const handleLike = async (postId: string) => {
+    if (!sessionId) return;
     const isCurrentlyLiked = liked;
     if (loading) return;
 
