@@ -8,8 +8,6 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  
-
   const isPublicPath = path === "/login";
   const isOnboardingPage = path === "/onboarding"; // Check if the user is already on the onboarding page
 
@@ -20,19 +18,19 @@ export default async function middleware(req: NextRequest) {
 
   // If token exists but user is trying to access login page, redirect to home
   if (token && isPublicPath) {
-    console.log('Redirecting logged-in user to home page from login.');
+    console.log("Redirecting logged-in user to home page from login.");
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   // If token exists but user isn't onboarded, redirect to onboarding page
   if (token?.isOnboarded === false && !isOnboardingPage) {
-    console.log('User is not onboarded, redirecting to onboarding page.');
+    console.log("User is not onboarded, redirecting to onboarding page.");
     return NextResponse.redirect(new URL("/onboarding", req.nextUrl));
   }
 
   // If user is onboarded, allow them to proceed
   if (token?.isOnboarded === true) {
-    console.log('User is onboarded, proceeding to the dashboard.');
+    console.log("User is onboarded, proceeding to the dashboard.");
     return NextResponse.next(); // Allow request to proceed
   }
 
@@ -42,13 +40,11 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/login",
-    "/discussions",
-    "/bounties",
-    "/snippets",
-    "/peoples",
-    "/create-snippet",
-    "/onboarding"
+    /*
+     * Protect all routes, except:
+     * - Login page (`/login`)
+     * - Static files (`/_next`, `favicon.ico`, etc.)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public).*)",
   ],
 };
