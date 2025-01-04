@@ -40,11 +40,14 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Protect all routes, except:
-     * - Login page (`/login`)
-     * - Static files (`/_next`, `favicon.ico`, etc.)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public).*)",
+    "/",
+    "/login",
+    "/discussions",
+    "/bounties",
+    "/snippets",
+    "/peoples",
+    "/create-snippet",
+    "/onboarding",
+    "/p/",
   ],
 };
