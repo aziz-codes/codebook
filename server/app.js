@@ -8,7 +8,9 @@ import followerRoutes from "./routes/follower.routes.js";
 import followersInitialRoute from "./routes/utils.routes.js";
 import expertiseRoutes from "./routes/expertise.routes.js";
 import bookmakrRoutes from "./routes/bookmark.routes.js";
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import cors from "cors";
 dotenv.config();
 const app = express();
@@ -21,7 +23,7 @@ const corsOptions = {
 
 // Use the CORS options
 app.use(cors(corsOptions));
-
+app.use(cookieParser());
 app.use(express.json());
 app.use("/snippets", snippetRoutes);
 app.use("/user", userRoute);
@@ -46,16 +48,19 @@ try {
 
 app.post("/test", async (req, res) => {
   try {
-    const name = req.body.name; // Extracting name from the request body
-    console.log(req.body);
+    const sessionToken = req.cookies["next-auth.session-token"];
+    if (!sessionToken) {
+      return res.status(401).json({ message: "No session token found" });
+    }
 
-    // Simulate a delay using a promise and setTimeout
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    // Decode the token (requires the secret used by NextAuth)
+    const decodedToken = jwt.verify(sessionToken, process.env.NEXTAUTH_SECRET);
 
-    // After 3 seconds, send the response
-    res.status(200).json({ message: "Data posted", status: 200, name: name });
+    console.log("Decoded Token:", decodedToken); // This contains the user info, e.g., userId, email, etc.
+
+    res.status(200).json({ message: "Token decoded", user: decodedToken });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Something went wrong" });
+    console.error("Error decoding token:", err);
+    res.status(500).json({ message: "Failed to decode token" });
   }
 });

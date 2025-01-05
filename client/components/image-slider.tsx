@@ -22,7 +22,9 @@ const ImageSlider: React.FC<ImageProp> = ({ images, removeImage }) => {
         {images.map((image, index) => (
           <CarouselItem
             key={index}
-            className={`basis-full ${images.length > 1 ? "md:basis-1/2 lg:basis-1/3" : ""}`}
+            className={`basis-full ${
+              images.length > 1 ? "md:basis-1/2 lg:basis-1/3" : ""
+            }`}
           >
             <div className="p-1">
               <Card>
