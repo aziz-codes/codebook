@@ -35,7 +35,7 @@ interface SnippetProps {
   updatedAt: string;
 }
 interface SnippetComponentProps {
-  snippet: SnippetProps; 
+  snippet: SnippetProps;
 }
 const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
   const [copied, setCopied] = useState(false);
@@ -60,36 +60,39 @@ const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
         <div className="flex justify-between ">
           <UserDateProfile
             date={snippet.createdAt}
-            username={snippet.user.username}
-            image={snippet.user.avatar}
+            username={snippet.user?.username || "na"}
+            image={snippet.user?.avatar || "na"}
           />
           <button className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100">
             <Ellipsis />
           </button>
         </div>
         <div>
-          <Label className="line-clamp-2 leading-5 ">
-             {snippet.title}
-          </Label>
+          <Label className="line-clamp-2 leading-5 ">{snippet.title}</Label>
           <div>
-      <p
-        className={`text-sm text-muted-foreground ${
-          !isExpanded ? "line-clamp-1" : ""
-        }`}
-      >
-        {snippet.description}
-      </p>
-      <Button variant="link"
-        onClick={()=>setIsExpanded(!isExpanded)}
-        className="!p-0 !py-0 !m-0 h-5 text-xs "
-      >
-        {isExpanded ? "See less" : "See more"}
-      </Button>
-    </div>
+            <p
+              className={`text-sm text-muted-foreground ${
+                !isExpanded ? "line-clamp-1" : ""
+              }`}
+            >
+              {snippet.description}
+            </p>
+            <Button
+              variant="link"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="!p-0 !py-0 !m-0 h-5 text-xs "
+            >
+              {isExpanded ? "See less" : "See more"}
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-2 py-2">
-           {snippet.tags.slice(0,4).map((tag,index)=>(
-              <Badge className="dark:bg-codeHeader text-gray-200" key={index}>{index === 3 ? tag.concat(" + "+snippet.tags.length.toString()):tag}</Badge>
-           ))}
+            {snippet.tags.slice(0, 4).map((tag, index) => (
+              <Badge className="dark:bg-codeHeader text-gray-200" key={index}>
+                {index === 3
+                  ? tag.concat(" + " + snippet.tags.length.toString())
+                  : tag}
+              </Badge>
+            ))}
           </div>
         </div>
       </CardHeader>
@@ -108,7 +111,10 @@ const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
             {copied ? "copied!" : "copy code"}
           </div>
         </div>
-        <Monaco code={snippet.code} language={snippet.programmingLanguage.toLowerCase()} />
+        <Monaco
+          code={snippet.code}
+          language={snippet.programmingLanguage.toLowerCase()}
+        />
       </CardContent>
       <CardFooter className="mt-2 px-0 py-4 flex flex-col items-start">
         <div className="flex items-center gap-3 px-2">
@@ -135,7 +141,7 @@ const Snippet: React.FC<SnippetComponentProps> = ({ snippet }) => {
         </div>
         <div className="flex justify-start items-center gap-1 px-2 mt-6  w-full">
           <div className="flex w-full items-center border  rounded-md px-2">
-            <TextBox />
+            {/* <TextBox /> */}
           </div>
         </div>
       </CardFooter>

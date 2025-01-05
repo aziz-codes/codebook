@@ -5,66 +5,82 @@ import MainWrapper from "@/layouts/main-wrapper";
 import { childRoutesClass, topMargin } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { SnippetProps } from "@/types/api-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-  
+import ButtonLoader from "@/utils/components/button-loader";
+
 const Snippets = () => {
   const router = useRouter();
-  const [snippets,setSnippets] = useState([]);
-  const [loading,setLoading]  = useState(false);
-  useEffect(()=>{
-      const getData = async()=>{
-        try{
-          setLoading(true);
-          const response = await fetch('http://localhost:8000/snippets');
-          const data = await response.json();
-           setSnippets(data.result);
-           setLoading(false);
-           console.log('data is ',snippets)
+  const [snippets, setSnippets] = useState<any[]>([]); // Ensure `snippets` is an array
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:8000/snippets");
+        if (!response.ok) {
+          throw new Error("Failed to fetch snippets");
         }
-        catch(err){
-          console.log('something went wrong',err);
-          setLoading(false);
-        }
+        const data = await response.json();
+        setSnippets(data.result || []); // Safely handle undefined or null `data.result`
+      } catch (err: any) {
+        setError(err.message || "Something went wrong");
+      } finally {
+        setLoading(false);
       }
-      getData();
-  },[])
+    };
+    getData();
+  }, []);
+
   return (
     <MainWrapper classes={`${childRoutesClass} grid grid-cols-12 gap-3`}>
       {/* Snippets Section */}
-
       <div
         className={`w-full mx-auto md:mx-0 max-w-md sm:max-w-lg md:max-w-full col-span-12 md:col-span-9 gap-4 flex flex-col mt-${topMargin}`}
       >
-     <Tabs
-  defaultValue="for-you"
-  className="w-full p-0 !ring-0 !outline-none"
->
-  <TabsList className="w-full p-0 bg-bgCard">
-    <TabsTrigger
-      value="for-you"
-      className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none"
-    >
-      For You
-    </TabsTrigger>
-    <TabsTrigger
-      value="following"
-      className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none focus-within:!outline"
-    >
-      Following
-    </TabsTrigger>
-  </TabsList>
-  <TabsContent value="for-you" className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6">
-    {loading ? "Loading data":snippets?.map((snippet,index)=>(
-      <Snippet key={index} snippet={snippet}/>
-       
-    ))}
-  </TabsContent>
-  <TabsContent value="following" className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6">
-     <div>following snippets</div>
-  </TabsContent>
-</Tabs>
-
+        <Tabs
+          defaultValue="for-you"
+          className="w-full p-0 !ring-0 !outline-none"
+        >
+          <TabsList className="w-full p-0 bg-bgCard">
+            <TabsTrigger
+              value="for-you"
+              className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none"
+            >
+              For You
+            </TabsTrigger>
+            <TabsTrigger
+              value="following"
+              className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none focus-within:!outline"
+            >
+              Following
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent
+            value="for-you"
+            className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6"
+          >
+            {loading && <ButtonLoader />} {/* Show loader during data fetch */}
+            {!loading && error && (
+              <p className="text-red-500">{error}</p> /* Show error message */
+            )}
+            {!loading && snippets.length === 0 && !error && (
+              <p>No snippets available.</p> /* Show fallback if no snippets */
+            )}
+            {!loading &&
+              snippets.length > 0 &&
+              snippets.map((snippet, index) => (
+                <Snippet key={index} snippet={snippet} />
+              ))}
+          </TabsContent>
+          <TabsContent
+            value="following"
+            className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6"
+          >
+            <div>following snippets</div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Fixed Sidebar Section */}
@@ -95,5 +111,3 @@ const Snippets = () => {
 };
 
 export default Snippets;
-
-// test commit
