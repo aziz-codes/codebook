@@ -53,7 +53,7 @@ const HomePage = () => {
           ) : (
             !error &&
             data &&
-            data.result.map((post) => (
+            (data.result || []).map((post) => (
               <SinglePost key={post._id} post={post} sessionId={sessionId} />
             ))
           )}

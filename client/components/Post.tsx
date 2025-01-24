@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
 import { postRequest, getRequest } from "@/services/index";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -60,26 +60,82 @@ const SinglePost: FC<PostProps> = ({
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
   // handle like functionality
-  const handleLike = async (postId: string) => {
-    if (!sessionId) return;
-    const isCurrentlyLiked = liked;
-    if (loading) return;
 
-    setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
-    setLiked(!isCurrentlyLiked);
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: async () => {
+      return await postRequest(`/post/like/${post._id}`, { userId: sessionId });
+    },
+    onMutate: async () => {
+      // Cancel any outgoing refetches (so they don’t overwrite optimistic updates)
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
 
-    try {
-      setLoading(true);
-      await postRequest(`/post/like/${postId}`, { userId: sessionId });
-      setLoading(false);
+      // Snapshot of the previous state
+      const previousPosts = queryClient.getQueryData(["posts"]);
+
+      // Optimistically update to the new state
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!Array.isArray(old)) return [];
+        return old.map((p: any) => {
+          if (p._id === post._id) {
+            const isLiked = liked;
+            return {
+              ...p,
+              likes: isLiked
+                ? p.likes.filter((id: string) => id !== sessionId)
+                : [...p.likes, sessionId],
+            };
+          }
+          return p;
+        });
+      });
+
+      // Update local state
+      const isCurrentlyLiked = liked;
+      setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
+      setLiked(!isCurrentlyLiked);
+
+      return { previousPosts };
+    },
+    onError: (err, variables, context) => {
+      console.error("Failed to toggle like:", err);
+
+      // Rollback to previous state
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
+
+      // Revert local state
+      setLikes((prev) => (liked ? prev + 1 : prev - 1));
+      setLiked(!liked);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: [`likes/${postId}`] });
-    } catch (error) {
-      console.error("Failed to update likes:", error);
-      setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
-      setLiked(isCurrentlyLiked);
-      setLoading(false);
-    }
+      queryClient.invalidateQueries({ queryKey: [`likes/${post._id}`] });
+    },
+  });
+
+  const handleLike = async (postId: string) => {
+    toggleLike();
+    // mutation.mutate();
+    // if (!sessionId) return;
+    // const isCurrentlyLiked = liked;
+    // if (loading) return;
+
+    // setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
+    // setLiked(!isCurrentlyLiked);
+
+    // try {
+    //   setLoading(true);
+    //   await postRequest(`/post/like/${postId}`, { userId: sessionId });
+    //   setLoading(false);
+    //   queryClient.invalidateQueries({ queryKey: ["posts"] });
+    //   queryClient.invalidateQueries({ queryKey: [`likes/${postId}`] });
+    // } catch (error) {
+    //   console.error("Failed to update likes:", error);
+    //   setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
+    //   setLiked(isCurrentlyLiked);
+    //   setLoading(false);
+    // }
   };
 
   const isPostOwner = post.user._id === sessionId;
