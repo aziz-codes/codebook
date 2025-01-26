@@ -9,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emoji-mart/data": "^1.2.1",
-    "@emoji-mart/react": "^1.1.1",
     "@flaticon/flaticon-uicons": "^3.2.1",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",

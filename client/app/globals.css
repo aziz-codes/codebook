@@ -1,7 +1,7 @@
+@import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -75,14 +75,14 @@
   }
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
 @layer components {
   .navLink {
     @apply md:!justify-start space-x-2 md:!my-1.5 !px-3 w-full;
@@ -91,8 +91,14 @@
     @apply !cursor-pointer flex items-center gap-x-2 !px-4 !py-3.5 !m-1.5 rounded-lg font-medium;
   }
 }
-
-
-body{
+body {
   pointer-events: all !important;
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
