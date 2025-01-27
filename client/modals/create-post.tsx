@@ -115,17 +115,12 @@ const CreatePost = ({ children }: CreatePostProps) => {
 
     if (image) {
       const formData = new FormData();
-      formData.append("file", image as Blob);
-      formData.append("upload_preset", "codebook");
-      formData.append("cloud_name", "dde6fahrm");
+      formData.append("image", image as Blob);
 
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dde6fahrm/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("http://localhost:5000/upload", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         console.error("Image upload to Cloudinary failed", response.statusText);
@@ -134,7 +129,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
       }
 
       const data = await response.json();
-      imageUrl = data.secure_url;
+      imageUrl = data.path;
     }
 
     // Use mutate to create the post
