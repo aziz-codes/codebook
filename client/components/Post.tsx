@@ -35,6 +35,10 @@ type PostProps = {
   sessionId: string;
   isSingleRoute?: boolean;
 };
+type GetPostsResponse = {
+  count: number;
+  result: Post[];
+};
 
 const SinglePost: FC<PostProps> = ({
   post,
@@ -54,88 +58,80 @@ const SinglePost: FC<PostProps> = ({
   const [openCommentBox, setCommentBox] = useState(isSingleRoute);
   const [likes, setLikes] = useState(post.likes.length);
 
-  const [loading, setLoading] = useState(false);
-
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
   // handle like functionality
 
   const { mutate: toggleLike } = useMutation({
-    mutationFn: async () => {
-      return await postRequest(`/post/like/${post._id}`, { userId: sessionId });
+    mutationFn: async (postId: string) => {
+      console.log("mutation function called", postId);
+      return await postRequest(`/post/like/${postId}`, {
+        userId: sessionId,
+      });
     },
-    onMutate: async () => {
-      // Cancel any outgoing refetches (so they don’t overwrite optimistic updates)
+    onMutate: async (postId: string) => {
+      // Cancel queries for both
       await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ["post", postId] });
 
-      // Snapshot of the previous state
-      const previousPosts = queryClient.getQueryData(["posts"]);
+      // Store previous cache values for rollback
+      const previousPosts = queryClient.getQueryData<Post[]>(["posts"]);
+      const previousSinglePost = queryClient.getQueryData<Post>([
+        "post",
+        postId,
+      ]);
 
-      // Optimistically update to the new state
-      queryClient.setQueryData(["posts"], (old: any) => {
-        if (!Array.isArray(old)) return [];
-        return old.map((p: any) => {
-          if (p._id === post._id) {
-            const isLiked = liked;
-            return {
-              ...p,
-              likes: isLiked
-                ? p.likes.filter((id: string) => id !== sessionId)
-                : [...p.likes, sessionId],
-            };
-          }
-          return p;
-        });
+      // Optimistically update the cache for all posts
+      queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
+        if (!old) return { count: 0, result: [] };
+        return {
+          ...old,
+          result: old.result.map((post) => {
+            if (post._id === postId) {
+              const isLiked = post.likes.some(
+                (like) => like.user === sessionId
+              );
+              const updatedLikes = isLiked
+                ? post.likes.filter((like) => like.user !== sessionId)
+                : [...post.likes, { user: sessionId, userIds: [], count: 1 }];
+              return { ...post, likes: updatedLikes };
+            }
+            return post;
+          }),
+        };
       });
 
-      // Update local state
-      const isCurrentlyLiked = liked;
-      setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
-      setLiked(!isCurrentlyLiked);
+      // Optimistically update the cache for the single post
+      queryClient.setQueryData<Post>(["post", postId], (old) => {
+        if (!old) return { _id: postId, likes: [] }; // Handle missing data
+        const isLiked = old.likes.some((like) => like.user === sessionId);
+        const updatedLikes = isLiked
+          ? old.likes.filter((like) => like.user !== sessionId)
+          : [...old.likes, { user: sessionId, userIds: [], count: 1 }];
+        return { ...old, likes: updatedLikes };
+      });
 
-      return { previousPosts };
+      // Return context to restore on error if needed
+      return { previousPosts, previousSinglePost };
     },
-    onError: (err, variables, context) => {
-      console.error("Failed to toggle like:", err);
-
-      // Rollback to previous state
+    onError: (_err, _postId, context) => {
+      // If mutation fails, restore previous data
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
-
-      // Revert local state
-      setLikes((prev) => (liked ? prev + 1 : prev - 1));
-      setLiked(!liked);
+      if (context?.previousSinglePost) {
+        queryClient.setQueryData(["post", _postId], context.previousSinglePost);
+      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: [`likes/${post._id}`] });
+    onSettled: () => {
+      // Optionally: Remove this line to prevent re-fetching entirely
+      // queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
   const handleLike = async (postId: string) => {
-    toggleLike();
-    // mutation.mutate();
-    // if (!sessionId) return;
-    // const isCurrentlyLiked = liked;
-    // if (loading) return;
-
-    // setLikes((prev) => (isCurrentlyLiked ? prev - 1 : prev + 1));
-    // setLiked(!isCurrentlyLiked);
-
-    // try {
-    //   setLoading(true);
-    //   await postRequest(`/post/like/${postId}`, { userId: sessionId });
-    //   setLoading(false);
-    //   queryClient.invalidateQueries({ queryKey: ["posts"] });
-    //   queryClient.invalidateQueries({ queryKey: [`likes/${postId}`] });
-    // } catch (error) {
-    //   console.error("Failed to update likes:", error);
-    //   setLikes((prev) => (isCurrentlyLiked ? prev + 1 : prev - 1));
-    //   setLiked(isCurrentlyLiked);
-    //   setLoading(false);
-    // }
+    toggleLike(postId);
   };
 
   const isPostOwner = post.user._id === sessionId;
@@ -157,7 +153,7 @@ const SinglePost: FC<PostProps> = ({
   });
 
   const postIsBookmarked = post.bookmarkUserIds.includes(sessionId);
-
+  const isLiked = post.likes.some((like) => like.user === sessionId);
   return (
     <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}
@@ -230,16 +226,20 @@ const SinglePost: FC<PostProps> = ({
         <div className="px-3 py-1.5 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
-              stroke={liked ? "red" : "white"}
-              fill={liked ? "red" : "none"}
+              stroke={isLiked ? "red" : "white"}
+              fill={isLiked ? "red" : "none"}
               onClick={() => handleLike(post._id)}
               className="w-6 h-6 cursor-pointer"
             />
 
             <LikesPopup post={post._id}>
               <span className="text-xs cursor-pointer">
-                {likes > 0 ? likes : null}
-                {likes < 1 ? " " : likes === 1 ? " Like" : " Likes"}
+                {post.likes.length > 0 ? post.likes.length : null}
+                {post.likes.length < 1
+                  ? " "
+                  : post.likes.length === 1
+                  ? " Like"
+                  : " Likes"}
               </span>
             </LikesPopup>
           </div>
