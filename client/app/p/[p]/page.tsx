@@ -11,15 +11,16 @@ import { useSession } from "next-auth/react";
 import PostSkeleton from "@/skeletons/post-skeleton";
 import NotFound from "@/app/not-found";
 
-interface Data {
-  post?: Post;
-}
+type GetPostsResponse = {
+  count: number;
+  result: Post[];
+};
 
 const SinglePage = () => {
   const { p } = useParams();
   const { data: session } = useSession();
-  const { data, error, isLoading } = useQuery<Data>({
-    queryKey: ["post", p],
+  const { data, error, isLoading } = useQuery<GetPostsResponse>({
+    queryKey: ["posts", p],
     queryFn: async () => await getRequest(`/post/${p}`),
   });
 
@@ -33,18 +34,26 @@ const SinglePage = () => {
       </MainWrapper>
     );
   }
-  if (error || !data?.post) return <NotFound />;
-
+  if (error || !data?.result) return <NotFound />;
+  console.log("single post data is", data);
   return (
     <MainWrapper classes="w-full flex justify-center px-4 lg:px-8">
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-8 py-8">
         {/* Left Section: Single Post */}
         <div className="col-span-2 rounded-lg shadow-md">
-          <SinglePost
-            post={data.post}
+          {/* <SinglePost
+            post={data.result}
             sessionId={sessionId as string}
             isSingleRoute
-          />
+          /> */}
+          {(data.result || []).map((post) => (
+            <SinglePost
+              key={post._id}
+              post={post}
+              sessionId={sessionId as string}
+              isSingleRoute
+            />
+          ))}
         </div>
 
         {/* Right Section: Similar Posts or Other Info */}

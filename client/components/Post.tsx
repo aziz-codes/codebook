@@ -73,7 +73,7 @@ const SinglePost: FC<PostProps> = ({
     onMutate: async (postId: string) => {
       // Cancel queries for both
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      await queryClient.cancelQueries({ queryKey: ["post", postId] });
+      await queryClient.cancelQueries({ queryKey: ["posts", postId] });
 
       // Store previous cache values for rollback
       const previousPosts = queryClient.getQueryData<Post[]>(["posts"]);
@@ -103,13 +103,23 @@ const SinglePost: FC<PostProps> = ({
       });
 
       // Optimistically update the cache for the single post
-      queryClient.setQueryData<Post>(["post", postId], (old) => {
-        if (!old) return { _id: postId, likes: [] }; // Handle missing data
-        const isLiked = old.likes.some((like) => like.user === sessionId);
-        const updatedLikes = isLiked
-          ? old.likes.filter((like) => like.user !== sessionId)
-          : [...old.likes, { user: sessionId, userIds: [], count: 1 }];
-        return { ...old, likes: updatedLikes };
+      queryClient.setQueryData<GetPostsResponse>(["posts", postId], (old) => {
+        if (!old) return { count: 0, result: [] };
+        return {
+          ...old,
+          result: old.result.map((post) => {
+            if (post._id === postId) {
+              const isLiked = post.likes.some(
+                (like) => like.user === sessionId
+              );
+              const updatedLikes = isLiked
+                ? post.likes.filter((like) => like.user !== sessionId)
+                : [...post.likes, { user: sessionId, userIds: [], count: 1 }];
+              return { ...post, likes: updatedLikes };
+            }
+            return post;
+          }),
+        };
       });
 
       // Return context to restore on error if needed
@@ -121,7 +131,10 @@ const SinglePost: FC<PostProps> = ({
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
       if (context?.previousSinglePost) {
-        queryClient.setQueryData(["post", _postId], context.previousSinglePost);
+        queryClient.setQueryData(
+          ["posts", _postId],
+          context.previousSinglePost
+        );
       }
     },
     onSettled: () => {
