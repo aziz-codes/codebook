@@ -16,13 +16,13 @@ declare module "next-auth" {
     user: User & {
       username?: string | null;
       isNewUser: boolean;
-      isOnboarded?: boolean
+      isOnboarded?: boolean;
     };
   }
 }
 
 interface User {
   username?: string | null;
-  isNewUser?: boolean
+  isNewUser?: boolean;
   isOnboarded?: boolean;
 }

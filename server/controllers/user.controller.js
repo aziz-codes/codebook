@@ -2,9 +2,14 @@ import User from "../schemas/User.js";
 import Post from "../schemas/Post.js";
 import Snippet from "../schemas/Snippet.js";
 import Follower from "../schemas/Followers.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 export const saveUser = async (req, res) => {
   const { email, id, name, avatar, username } = req.body;
-
+  console.log("executing login route");
   try {
     let user = await User.findOne({ email });
     if (!user) {
@@ -18,6 +23,21 @@ export const saveUser = async (req, res) => {
       });
       await user.save();
     }
+
+    // ✅ Generate a JWT access token (valid for 15 minutes)
+    const accessToken = jwt.sign({ id: user.id }, process.env.NEXTAUTH_SECRET, {
+      expiresIn: "5m",
+    });
+
+    // ✅ Generate a JWT refresh token (valid for 7 days)
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.NEXTAUTH_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    const token = `${refreshToken}${process.env.separator}${accessToken}`;
+
     res.status(200).json({
       id: user.id,
       name: user.name,
@@ -25,14 +45,13 @@ export const saveUser = async (req, res) => {
       avatar: user.avatar,
       username: user.username,
       isOnboarded: user.isOnboarded,
+      session: token,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to create or fetch user",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to create or fetch user",
+      error: error.message,
+    });
   }
 };
 
@@ -41,7 +60,7 @@ export const getUser = async (req, res) => {
     const { username } = req.params;
 
     // Fetch user details from the User model
-    const user = await User.findOne({ username })
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -53,7 +72,9 @@ export const getUser = async (req, res) => {
     // Count the total number of snippets created by the user
     const snippetCount = await Snippet.countDocuments({ user: user._id });
 
-    const followers = await Follower.find({ followingId: user._id }).select('followerId');
+    const followers = await Follower.find({ followingId: user._id }).select(
+      "followerId"
+    );
 
     const following = await Follower.countDocuments({ followerId: user._id });
 
@@ -63,9 +84,8 @@ export const getUser = async (req, res) => {
       postCount,
       snippetCount,
       followers,
-      following
+      following,
     });
- 
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Could not fetch user data." });
@@ -129,13 +149,21 @@ export const updateUser = async (req, res) => {
   const { tagline, bio, username } = req.body;
 
   try {
-    if (!id) return res.status(404).json({ message: "user does not exist.",success:false });
+    if (!id)
+      return res
+        .status(404)
+        .json({ message: "user does not exist.", success: false });
 
-    if(!username) return res.status(404).json({ message: "username is required.",success:false });;
+    if (!username)
+      return res
+        .status(404)
+        .json({ message: "username is required.", success: false });
     const user = await User.findOne({ _id: id });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found",success:false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     user.tagline = tagline || user.tagline;
@@ -145,17 +173,18 @@ export const updateUser = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: "User updated successfully", success: true });
+    res
+      .status(200)
+      .json({ message: "User updated successfully", success: true });
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ error: "Could not update user." });
   }
 };
 
-
 export const getAllUsers = async (req, res) => {
   try {
-    const {token:currentUserId} = req.params; // Assuming current logged-in user's ID is available
+    const { token: currentUserId } = req.params; // Assuming current logged-in user's ID is available
 
     // Aggregation pipeline
     const users = await User.aggregate([
@@ -183,8 +212,12 @@ export const getAllUsers = async (req, res) => {
           avatar: 1,
           bio: 1,
           tagline: 1,
-          followers: { $map: { input: "$followers", as: "f", in: "$$f.followerId" } }, // Extract only followerId
-          following: { $map: { input: "$following", as: "f", in: "$$f.followingId" } }, // Extract only followingId
+          followers: {
+            $map: { input: "$followers", as: "f", in: "$$f.followerId" },
+          }, // Extract only followerId
+          following: {
+            $map: { input: "$following", as: "f", in: "$$f.followingId" },
+          }, // Extract only followingId
           isFollowing: {
             $in: [currentUserId, "$followers.followerId"], // Check if logged-in user follows them
           },

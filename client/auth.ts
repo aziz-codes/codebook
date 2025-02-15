@@ -6,6 +6,8 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
+import { postRequest } from "./services";
+import { setTokens } from "./actions/handle-token";
 
 export const config = {
   providers: [
@@ -37,35 +39,30 @@ export const config = {
     },
     async jwt({ token }) {
       const { email, name, picture: avatar } = token;
-
+      if (token.id) {
+        return token;
+      }
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/user`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email,
-              id: token.id,
-              name,
-              avatar,
-              username: "",
-            }),
-          }
-        );
+        const response = await postRequest(`/user`, {
+          email,
+          id: token.id,
+          name,
+          avatar,
+          username: "",
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch user data: ${response.statusText}`);
         }
-
         const userData = await response.json();
-
         token.id = userData.id;
         token.name = userData.name;
         token.email = userData.email;
         token.picture = userData.avatar;
         token.username = userData.username;
         token.isOnboarded = userData.isOnboarded;
+
+        await setTokens(userData.session);
       } catch (error) {
         console.error("Error in jwt callback:", error);
       }
