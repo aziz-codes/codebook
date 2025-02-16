@@ -237,11 +237,14 @@ const SinglePost: FC<PostProps> = ({
       <div className="flex justify-between items-center px-4 py-4">
         <div className="flex items-center gap-1.5 select-none">
           <Avatar
-            className="cursor-pointer"
+            className="cursor-pointer h-8 w-8"
             onClick={() => router.push(`${post.user.username}`)}
           >
             <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
-            <AvatarImage src={post.user.avatar} />
+            <AvatarImage
+              src={post.user.avatar}
+              className="h-full w-full object-cover"
+            />
           </Avatar>
           <div className="flex flex-col -space-y-0.5">
             <p

@@ -168,7 +168,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
-      <AlertDialogContent className="!ring-0 !outline-none h-auto px-0 pt-0 py-0 gap-3">
+      <AlertDialogContent className="!ring-0 !outline-none h-auto px-0 pt-0 py-0 gap-3 w-full max-w-xl rounded-md">
         <AlertDialogTitle className="flex justify-between items-center border-b px-4 py-2">
           <h4 className="flex-grow text-center">Create a post</h4>
           <AlertDialogCancel
