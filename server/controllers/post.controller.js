@@ -96,6 +96,20 @@ export const getPosts = async (req, res) => {
               0,
             ],
           },
+          isBookmarked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$bookmarks",
+                    as: "bookmark",
+                    cond: { $eq: ["$$bookmark.userId", userObjectId] },
+                  },
+                },
+              },
+              0,
+            ],
+          },
         },
       },
 
@@ -107,7 +121,7 @@ export const getPosts = async (req, res) => {
         },
       },
     ]);
-    console.log("all posts", posts);
+    console.log("all posts", posts[1]);
     res.status(200).json({ count: posts.length, result: posts });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -205,6 +219,20 @@ export const getSinglePost = async (req, res) => {
                     input: "$likes",
                     as: "like",
                     cond: { $eq: ["$$like.user", userObjectId] },
+                  },
+                },
+              },
+              0,
+            ],
+          },
+          isBookmarked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$bookmarks",
+                    as: "bookmark",
+                    cond: { $eq: ["$$bookmark.userId", userObjectId] },
                   },
                 },
               },

@@ -19,6 +19,7 @@ export type Post = {
   createdAt: string;
   updatedAt: string;
   isLiked: boolean;
+  isBookmarked: boolean;
   likeCount: number;
   __v: number;
 

@@ -5,17 +5,21 @@ import Bookmark from "../schemas/Bookmark.js";
 const router = express.Router();
 
 // Add Bookmark
-router.post("/add/:postId", async (req, res) => {
+router.post("/:postId", async (req, res) => {
   const { postId } = req.params;
-  const { userId } = req.body;
+  const userId = req.user?.id;
+  if (!userId) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
 
   try {
     // Check if the post is already bookmarked
     const existingBookmark = await Bookmark.findOne({ userId, postId });
     if (existingBookmark) {
+      await Bookmark.deleteOne({ userId, postId });
       return res
-        .status(400)
-        .json({ success: false, message: "Post already bookmarked." });
+        .status(200)
+        .json({ success: true, message: "Bookmark Removed." });
     }
 
     // Create a new bookmark

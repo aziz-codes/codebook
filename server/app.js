@@ -33,7 +33,7 @@ app.use("/post", middleware, postRoutes);
 app.use("/post/comment", commentRoutes);
 app.use("/user", followersInitialRoute);
 app.use("/user/", expertiseRoutes);
-app.use("/bookmark/", bookmakrRoutes);
+app.use("/post/bookmark/", bookmakrRoutes);
 
 // ✅ MongoDB Connection
 mongoose

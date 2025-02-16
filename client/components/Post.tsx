@@ -141,6 +141,77 @@ const SinglePost: FC<PostProps> = ({
   const handleLike = async (postId: string) => {
     toggleLike(postId);
   };
+  //bookmkar mutation
+  const { mutate: toggleBookmark } = useMutation({
+    mutationFn: async (postId: string) => {
+      return await postRequest(`/post/bookmark/${postId}`);
+    },
+    onMutate: async (postId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ["posts", postId] });
+
+      const previousPosts = queryClient.getQueryData<GetPostsResponse>([
+        "posts",
+      ]);
+      const previousSinglePost =
+        queryClient.getQueryData<GetSinglePostResponse>(["posts", postId]); // ✅ Corrected
+
+      // Optimistically update the posts list
+      queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
+        if (!old) return { count: 0, result: [] };
+        return {
+          ...old,
+          result: old.result.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  isBookmarked: !post.isBookmarked,
+                }
+              : post
+          ),
+        };
+      });
+
+      // Optimistically update the single post
+      queryClient.setQueryData<GetSinglePostResponse>(
+        ["posts", postId],
+        (old) => {
+          if (!old || !old.result) return old;
+
+          return {
+            ...old,
+            result: {
+              ...old.result,
+              isBookmarked: !old.result.isBookmarked,
+            },
+          };
+        }
+      );
+
+      return { previousSinglePost, previousPosts };
+
+      // Optimistically update the single post
+    },
+    onError: (_err, _postId, context) => {
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["posts"], context.previousPosts);
+      }
+      if (context?.previousSinglePost) {
+        queryClient.setQueryData(
+          ["posts", post._id],
+          context.previousSinglePost
+        );
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", post._id] });
+    },
+  });
+  // handle add bookmark
+  const handleAddBookmark = () => {
+    toggleBookmark(post._id);
+  };
 
   const isPostOwner = post.user._id === sessionId;
 
@@ -159,8 +230,6 @@ const SinglePost: FC<PostProps> = ({
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
-
-  const postIsBookmarked = true;
 
   return (
     <Card className="rounded-md !border-none mb-4 group ">
@@ -274,7 +343,8 @@ const SinglePost: FC<PostProps> = ({
           <div className="flex items-center space-x-2 cursor-pointer">
             <BookmarkSvg
               className="w-6 h-6 cursor-pointer"
-              fill={postIsBookmarked ? "white" : ""}
+              fill={post.isBookmarked ? "white" : ""}
+              onClick={handleAddBookmark}
             />
           </div>
         </div>
