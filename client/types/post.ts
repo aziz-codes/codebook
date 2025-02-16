@@ -18,8 +18,10 @@ export type Post = {
   image: string;
   createdAt: string;
   updatedAt: string;
+  isLiked: boolean;
+  likeCount: number;
   __v: number;
-  likes: Like[];
+
   commentCount: number;
   bookmarkUserIds: string[];
   comments?: Comment[];

@@ -34,6 +34,7 @@ const HomePage = () => {
   if (status === "loading") {
     return <MainLoader />;
   }
+
   return (
     <MainWrapper classes="w-full">
       <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>

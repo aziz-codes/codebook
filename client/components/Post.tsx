@@ -47,16 +47,13 @@ const SinglePost: FC<PostProps> = ({
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const postLikes = post.likes.map((like) => like.user || like);
+
   const [openPostModal, setPostModelOpen] = useState(false);
   const [liked, setLiked] = useState<null | boolean>(null);
-  useEffect(() => {
-    setLiked(postLikes.includes(sessionId));
-  }, [sessionId]);
+
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(isSingleRoute);
-  const [likes, setLikes] = useState(post.likes.length);
 
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
@@ -71,75 +68,59 @@ const SinglePost: FC<PostProps> = ({
       });
     },
     onMutate: async (postId: string) => {
-      // Cancel queries for both
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      await queryClient.cancelQueries({ queryKey: ["posts", postId] });
+      await queryClient.cancelQueries({ queryKey: ["post", postId] });
 
-      // Store previous cache values for rollback
-      const previousPosts = queryClient.getQueryData<Post[]>(["posts"]);
+      const previousPosts = queryClient.getQueryData<GetPostsResponse>([
+        "posts",
+      ]);
       const previousSinglePost = queryClient.getQueryData<Post>([
         "post",
         postId,
       ]);
 
-      // Optimistically update the cache for all posts
+      // Optimistically update the posts list
       queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
         if (!old) return { count: 0, result: [] };
         return {
           ...old,
-          result: old.result.map((post) => {
-            if (post._id === postId) {
-              const isLiked = post.likes.some(
-                (like) => like.user === sessionId
-              );
-              const updatedLikes = isLiked
-                ? post.likes.filter((like) => like.user !== sessionId)
-                : [...post.likes, { user: sessionId, userIds: [], count: 1 }];
-              return { ...post, likes: updatedLikes };
-            }
-            return post;
-          }),
+          result: old.result.map((post) =>
+            post._id === postId
+              ? {
+                  ...post,
+                  isLiked: !post.isLiked,
+                  likeCount: post.isLiked
+                    ? post.likeCount - 1
+                    : post.likeCount + 1,
+                }
+              : post
+          ),
         };
       });
 
-      // Optimistically update the cache for the single post
-      queryClient.setQueryData<GetPostsResponse>(["posts", postId], (old) => {
-        if (!old) return { count: 0, result: [] };
+      // Optimistically update the single post
+      queryClient.setQueryData<Post>(["post", postId], (old) => {
+        if (!old) return old;
         return {
           ...old,
-          result: old.result.map((post) => {
-            if (post._id === postId) {
-              const isLiked = post.likes.some(
-                (like) => like.user === sessionId
-              );
-              const updatedLikes = isLiked
-                ? post.likes.filter((like) => like.user !== sessionId)
-                : [...post.likes, { user: sessionId, userIds: [], count: 1 }];
-              return { ...post, likes: updatedLikes };
-            }
-            return post;
-          }),
+          isLiked: !old.isLiked,
+          likeCount: old.isLiked ? old.likeCount - 1 : old.likeCount + 1,
         };
       });
 
-      // Return context to restore on error if needed
       return { previousPosts, previousSinglePost };
     },
     onError: (_err, _postId, context) => {
-      // If mutation fails, restore previous data
       if (context?.previousPosts) {
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
       if (context?.previousSinglePost) {
-        queryClient.setQueryData(
-          ["posts", _postId],
-          context.previousSinglePost
-        );
+        queryClient.setQueryData(["post", _postId], context.previousSinglePost);
       }
     },
     onSettled: () => {
-      // Optionally: Remove this line to prevent re-fetching entirely
-      // queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post"] });
     },
   });
 
@@ -165,8 +146,8 @@ const SinglePost: FC<PostProps> = ({
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
 
-  const postIsBookmarked = post.bookmarkUserIds.includes(sessionId);
-  const isLiked = post.likes.some((like) => like.user === sessionId);
+  const postIsBookmarked = true;
+
   return (
     <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}
@@ -239,18 +220,18 @@ const SinglePost: FC<PostProps> = ({
         <div className="px-3 py-1.5 flex items-center justify-between select-none border-t">
           <div className="flex items-center space-x-1 text-sm relative mt">
             <HeartSvg
-              stroke={isLiked ? "red" : "white"}
-              fill={isLiked ? "red" : "none"}
+              stroke={post.isLiked ? "red" : "white"}
+              fill={post.isLiked ? "red" : "none"}
               onClick={() => handleLike(post._id)}
               className="w-6 h-6 cursor-pointer"
             />
 
             <LikesPopup post={post._id}>
               <span className="text-xs cursor-pointer">
-                {post.likes.length > 0 ? post.likes.length : null}
-                {post.likes.length < 1
+                {post.likeCount > 0 ? post.likeCount : null}
+                {post.likeCount < 1
                   ? " "
-                  : post.likes.length === 1
+                  : post.likeCount === 1
                   ? " Like"
                   : " Likes"}
               </span>

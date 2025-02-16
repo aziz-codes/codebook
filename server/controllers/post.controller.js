@@ -33,8 +33,13 @@ export const post = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const userObjectId = new mongoose.Types.ObjectId(userId); // Ensure it's ObjectId
+
     const posts = await Post.aggregate([
-      { $sort: { createdAt: -1 } }, // Sort by latest
+      { $sort: { createdAt: -1 } },
 
       {
         $lookup: {
@@ -76,34 +81,29 @@ export const getPosts = async (req, res) => {
       {
         $addFields: {
           commentCount: { $size: "$comments" },
-          likes: {
-            userIds: {
-              $map: {
-                input: "$likes",
-                as: "like",
-                in: "$$like.user", // Extracting user IDs
+          likeCount: { $size: "$likes" },
+          isLiked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$likes",
+                    as: "like",
+                    cond: { $eq: ["$$like.user", userObjectId] },
+                  },
+                },
               },
-            },
-          },
-          bookmarkUserIds: {
-            $map: {
-              input: "$bookmarks",
-              as: "bookmark",
-              in: "$$bookmark.userId",
-            },
+              0,
+            ],
           },
         },
       },
 
       {
         $project: {
-          "likes._id": 0,
-          "likes.post": 0,
-          "likes.__v": 0,
-          "likes.createdAt": 0,
-          "likes.updatedAt": 0,
+          likes: 0, // Remove likes array completely
           bookmarks: 0,
-          comments: 0, // Exclude full comments
+          comments: 0,
         },
       },
     ]);
@@ -148,6 +148,11 @@ export const getSinglePost = async (req, res) => {
       return res.status(400).json({ message: "Invalid post ID" });
     }
 
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+
     const post = await Post.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
 
@@ -191,32 +196,27 @@ export const getSinglePost = async (req, res) => {
       {
         $addFields: {
           commentCount: { $size: "$comments" },
-          likes: {
-            userIds: {
-              $map: {
-                input: "$likes",
-                as: "like",
-                in: "$$like.user",
+          likeCount: { $size: "$likes" },
+          isLiked: {
+            $gt: [
+              {
+                $size: {
+                  $filter: {
+                    input: "$likes",
+                    as: "like",
+                    cond: { $eq: ["$$like.user", userObjectId] },
+                  },
+                },
               },
-            },
-          },
-          bookmarkUserIds: {
-            $map: {
-              input: "$bookmarks",
-              as: "bookmark",
-              in: "$$bookmark.userId",
-            },
+              0,
+            ],
           },
         },
       },
 
       {
         $project: {
-          "likes._id": 0,
-          "likes.post": 0,
-          "likes.__v": 0,
-          "likes.createdAt": 0,
-          "likes.updatedAt": 0,
+          likes: 0, // Remove likes array completely
           bookmarks: 0,
           comments: 0,
         },
@@ -227,7 +227,7 @@ export const getSinglePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    res.status(200).json({ count: 1, result: [post[0]] });
+    res.status(200).json({ count: 1, result: post });
   } catch (error) {
     console.error("Error fetching post:", error);
     res.status(500).json({ error: "Could not fetch post." });
