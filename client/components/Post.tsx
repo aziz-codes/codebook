@@ -40,6 +40,11 @@ type GetPostsResponse = {
   result: Post[];
 };
 
+type GetSinglePostResponse = {
+  count: number;
+  result: Post;
+};
+
 const SinglePost: FC<PostProps> = ({
   post,
   sessionId,
@@ -49,7 +54,6 @@ const SinglePost: FC<PostProps> = ({
   const queryClient = useQueryClient();
 
   const [openPostModal, setPostModelOpen] = useState(false);
-  const [liked, setLiked] = useState<null | boolean>(null);
 
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -62,22 +66,19 @@ const SinglePost: FC<PostProps> = ({
 
   const { mutate: toggleLike } = useMutation({
     mutationFn: async (postId: string) => {
-      console.log("mutation function called", postId);
       return await postRequest(`/post/like/${postId}`, {
         userId: sessionId,
       });
     },
     onMutate: async (postId: string) => {
       await queryClient.cancelQueries({ queryKey: ["posts"] });
-      await queryClient.cancelQueries({ queryKey: ["post", postId] });
+      await queryClient.cancelQueries({ queryKey: ["posts", postId] });
 
       const previousPosts = queryClient.getQueryData<GetPostsResponse>([
         "posts",
       ]);
-      const previousSinglePost = queryClient.getQueryData<Post>([
-        "post",
-        postId,
-      ]);
+      const previousSinglePost =
+        queryClient.getQueryData<GetSinglePostResponse>(["posts", postId]); // ✅ Corrected
 
       // Optimistically update the posts list
       queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
@@ -99,14 +100,24 @@ const SinglePost: FC<PostProps> = ({
       });
 
       // Optimistically update the single post
-      queryClient.setQueryData<Post>(["post", postId], (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          isLiked: !old.isLiked,
-          likeCount: old.isLiked ? old.likeCount - 1 : old.likeCount + 1,
-        };
-      });
+      queryClient.setQueryData<GetSinglePostResponse>(
+        ["posts", postId],
+        (old) => {
+          if (!old || !old.result) return old;
+
+          return {
+            ...old,
+            result: {
+              ...old.result,
+              isLiked: !old.result.isLiked,
+              likeCount: Math.max(
+                0,
+                Number(old.result.likeCount) + (old.result.isLiked ? -1 : 1)
+              ),
+            },
+          };
+        }
+      );
 
       return { previousPosts, previousSinglePost };
     },
@@ -115,12 +126,15 @@ const SinglePost: FC<PostProps> = ({
         queryClient.setQueryData(["posts"], context.previousPosts);
       }
       if (context?.previousSinglePost) {
-        queryClient.setQueryData(["post", _postId], context.previousSinglePost);
+        queryClient.setQueryData(
+          ["posts", post._id],
+          context.previousSinglePost
+        ); // ✅ Fixed here
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: ["post"] });
+      // queryClient.invalidateQueries({ queryKey: ["posts", post._id] });
     },
   });
 

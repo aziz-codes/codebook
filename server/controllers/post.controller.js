@@ -107,7 +107,7 @@ export const getPosts = async (req, res) => {
         },
       },
     ]);
-
+    console.log("all posts", posts);
     res.status(200).json({ count: posts.length, result: posts });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -226,8 +226,8 @@ export const getSinglePost = async (req, res) => {
     if (!post.length) {
       return res.status(404).json({ message: "Post not found" });
     }
-
-    res.status(200).json({ count: 1, result: post });
+    console.log(post);
+    res.status(200).json({ count: 1, result: post[0] });
   } catch (error) {
     console.error("Error fetching post:", error);
     res.status(500).json({ error: "Could not fetch post." });
