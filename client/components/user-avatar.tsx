@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { logout } from "@/actions/logout";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
 import {
@@ -13,7 +14,12 @@ import { signOut, useSession } from "next-auth/react";
 const UserAvatar = () => {
   const router = useRouter();
   const { data: user } = useSession();
-
+  const handleLogout = async () => {
+    await logout();
+    signOut({
+      callbackUrl: "http://localhost:3000/login",
+    });
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -58,11 +64,7 @@ const UserAvatar = () => {
         <DropdownMenuRadioItem
           value="right"
           className="cursor-pointer px-2 hover:!bg-bgCard rounded-md "
-          onClick={() =>
-            signOut({
-              callbackUrl: "http://localhost:3000/login",
-            })
-          }
+          onClick={handleLogout}
         >
           Sign Out
         </DropdownMenuRadioItem>
