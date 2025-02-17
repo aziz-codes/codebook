@@ -26,6 +26,13 @@ import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
 import Link from "next/link";
 import { postRequest } from "@/services";
+import Picker from "@emoji-mart/react";
+import data from "@emoji-mart/data";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type CreatePostProps = {
   children: React.ReactNode;
@@ -38,6 +45,8 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
+  const [open, setOpen] = useState(false);
+
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -135,6 +144,12 @@ const CreatePost = ({ children }: CreatePostProps) => {
     // Use mutate to create the post
     mutate(imageUrl);
   };
+
+  const handleEmojiSelect = (item: any) => {
+    setContent(content.concat(item.native));
+    setOpen(false); // Close popover after selecting emoji
+  };
+
   const postUtils = [
     {
       tooltip: "Media",
@@ -149,10 +164,24 @@ const CreatePost = ({ children }: CreatePostProps) => {
     {
       tooltip: "Emoji",
       icon: (
-        <Smile
-          className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
-          stroke="#00FF66"
-        />
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Smile
+              className="h-4 w-4 cursor-pointer hover:scale-105 transition-transform duration-100 ease-linear"
+              stroke="#00FF66"
+            />
+          </PopoverTrigger>
+          <PopoverContent className="!p-0 w-full max-w-xs">
+            <Picker
+              data={data}
+              onEmojiSelect={handleEmojiSelect}
+              theme="dark"
+              previewPosition="none"
+              emojiSize={20}
+              emojiButtonSize={32}
+            />
+          </PopoverContent>
+        </Popover>
       ),
     },
     {
