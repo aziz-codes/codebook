@@ -22,12 +22,14 @@ interface CommentProps {
   comment: CommentType;
   isOpen: boolean;
   toggleDropdown: () => void;
+  detailed: boolean;
 }
 
 const CommentDetailed: React.FC<CommentProps> = ({
   comment,
   isOpen,
   toggleDropdown,
+  detailed,
 }) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -85,7 +87,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
     console.log(username);
   };
   return (
-    <div className="flex space-x-2 py-2 text-white rounded-lg shadow-sm group">
+    <div className="flex space-x-2 py-2 text-white rounded-lg shadow-sm group ">
       <Avatar
         className="w-8 h-8 cursor-pointer"
         onClick={() => router.push(`/${comment.userDetails.username}`)}
@@ -96,7 +98,9 @@ const CommentDetailed: React.FC<CommentProps> = ({
         />
         <AvatarFallback>{comment.userDetails.username[0]}</AvatarFallback>
       </Avatar>
-      <div className="flex-1">
+      <div
+        className={`flex-1 ${detailed && "bg-bgHover px-3 py-0.5 rounded-md"}`}
+      >
         <div className="flex items-center justify-between">
           <p
             className="font-semibold text-slate-300 text-sm cursor-pointer"

@@ -45,6 +45,7 @@ const SinglePage = () => {
             post={data.result}
             sessionId={sessionId as string}
             isSingleRoute
+            detailed={false}
           />
         </div>
 

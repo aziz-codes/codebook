@@ -34,6 +34,7 @@ type PostProps = {
   post: Post;
   sessionId: string;
   isSingleRoute?: boolean;
+  detailed?: boolean;
 };
 type GetPostsResponse = {
   count: number;
@@ -49,6 +50,7 @@ const SinglePost: FC<PostProps> = ({
   post,
   sessionId,
   isSingleRoute = false,
+  detailed = true,
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -271,6 +273,7 @@ const SinglePost: FC<PostProps> = ({
             isPostOwner={isPostOwner}
             post={post._id}
             setOpen={setOpen}
+            onHideChild={() => setOpen(false)}
           />
         </DropdownMenu>
       </div>
@@ -376,18 +379,15 @@ const SinglePost: FC<PostProps> = ({
                 {comments &&
                   comments
                     ?.slice(0, isSingleRoute ? comments.length : 2)
-                    .map((comment, index) =>
-                      isSingleRoute ? (
-                        <CommentDetailed
-                          comment={comment}
-                          key={index}
-                          isOpen={activeDropdownId === comment._id}
-                          toggleDropdown={() => toggleDropdown(comment._id)}
-                        />
-                      ) : (
-                        <Comment comment={comment} key={index} />
-                      )
-                    )}
+                    .map((comment, index) => (
+                      <CommentDetailed
+                        comment={comment}
+                        key={index}
+                        isOpen={activeDropdownId === comment._id}
+                        toggleDropdown={() => toggleDropdown(comment._id)}
+                        detailed={detailed}
+                      />
+                    ))}
 
                 {!isSingleRoute && comments && comments.length > 2 && (
                   <div
