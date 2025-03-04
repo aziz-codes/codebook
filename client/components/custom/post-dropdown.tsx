@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   DropdownMenuContent,
   DropdownMenuRadioItem,
 } from "../ui/dropdown-menu";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -16,39 +14,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
+import { LoaderIcon } from "lucide-react";
+import { deleteRequest } from "@/services";
 
-type User = {
-  _id: string;
-  name: string;
-  avatar: string;
-  username: string;
-};
-
-type Like = {
-  userIds: string[];
-  count: number;
-};
-
-type Post = {
-  _id: string;
-  user: User;
-  title: string;
-  image: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  likes: Like;
-  commentCount: number;
-};
-
-const PostDropdown = ({ isPostOwner, post,setOpen:childOpen}: { isPostOwner: boolean; post: string,setOpen:React.Dispatch<React.SetStateAction<boolean>> }) => {
+const PostDropdown = ({
+  isPostOwner,
+  post,
+  onHideChild,
+  setOpen: childOpen,
+}: {
+  isPostOwner: boolean;
+  post: string;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onHideChild: () => void;
+}) => {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
-const [open,setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const deletePost = async (postId: string): Promise<void> => {
-    const response = await fetch(`http://localhost:8000/post/${postId}`, {
-      method: "DELETE",
-    });
+    const response = await deleteRequest(`/post/${postId}`);
 
     if (!response.ok) {
       throw new Error("Failed to delete the post");
@@ -58,11 +42,10 @@ const [open,setOpen] = useState(false);
   const mutation = useMutation({
     mutationFn: (postId: string) => deletePost(postId),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:["posts"]});
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       setOpen(false);
       childOpen(false);
       document.body.classList.remove("pointer-events-none");
-      
     },
     onError: (error) => {
       console.error("Error deleting post:", error);
@@ -76,7 +59,7 @@ const [open,setOpen] = useState(false);
     setLoading(true);
     mutation.mutate(post);
   };
- 
+
   return (
     <DropdownMenuContent className="w-36 group">
       {isPostOwner && (
@@ -105,34 +88,48 @@ const [open,setOpen] = useState(false);
       >
         Report
       </DropdownMenuRadioItem>
-     {isPostOwner&& <div onClick={()=>setOpen(true)}
-        
-        className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md text-sm text-red-500"
-      >
-        Delete
-      </div>}
-
+      {isPostOwner && (
+        <div
+          onClick={() => setOpen(true)}
+          className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md text-sm text-red-500"
+        >
+          Delete
+        </div>
+      )}
 
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger asChild>
-          
-        </AlertDialogTrigger>
+        <AlertDialogTrigger asChild></AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are You Sure You Want to Delete This Post?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Are You Sure You Want to Delete This Post?
+            </AlertDialogTitle>
             <AlertDialogDescription className="text-gray-400">
-              Deleting this post will permanently remove it, including all likes, comments, and associated content
-              from your account.
+              Deleting this post will permanently remove it, including all
+              likes, comments, and associated content from your account.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="hover:bg-bgHover">Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="space-x-2">
             <Button
-              className="border-none outline-none rounded-md bg-[#EF4444] text-white hover:bg-red-500"
+              onClick={() => {
+                setOpen(false);
+                childOpen(false);
+              }}
+              size="sm"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="border-none outline-none rounded-md bg-[#EF4444] text-white hover:bg-red-500 !ring-0 px-3 !py-1.5 "
               onClick={handleDelete}
               disabled={loading}
+              size="sm"
             >
-              {loading ? "Deleting..." : "Continue"}
+              {loading ? (
+                <LoaderIcon className="h-4 w-4 animate-spin duration-300 ease-linear" />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
