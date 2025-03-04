@@ -20,13 +20,12 @@ import { deleteRequest } from "@/services";
 const PostDropdown = ({
   isPostOwner,
   post,
-  onHideChild,
+
   setOpen: childOpen,
 }: {
   isPostOwner: boolean;
   post: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onHideChild: (open: boolean) => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -114,7 +113,6 @@ const PostDropdown = ({
               onClick={() => {
                 setOpen(false);
                 childOpen(false);
-                onHideChild(false);
               }}
               size="sm"
             >

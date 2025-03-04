@@ -277,11 +277,7 @@ const SinglePost: FC<PostProps> = ({
           <PostDropdown
             isPostOwner={isPostOwner}
             post={post._id}
-            setOpen={setOpen}
-            onHideChild={(open) => {
-              setOpen(open);
-              setDropdownId(null);
-            }}
+            setOpen={() => setDropdownId(null)}
           />
         </DropdownMenu>
       </div>
