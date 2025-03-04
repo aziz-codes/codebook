@@ -20,11 +20,14 @@ import { deleteRequest } from "@/services";
 const PostDropdown = ({
   isPostOwner,
   post,
-
+  handleAddBookmark,
   setOpen: childOpen,
+  isBookmarked,
 }: {
   isPostOwner: boolean;
   post: string;
+  handleAddBookmark: () => void;
+  isBookmarked: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -72,8 +75,9 @@ const PostDropdown = ({
       <DropdownMenuRadioItem
         value="save"
         className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
+        onClick={handleAddBookmark}
       >
-        Save Post
+        {isBookmarked ? "Unsave Post" : "Save Post"}
       </DropdownMenuRadioItem>
       <DropdownMenuRadioItem
         value="share"

@@ -278,6 +278,8 @@ const SinglePost: FC<PostProps> = ({
             isPostOwner={isPostOwner}
             post={post._id}
             setOpen={() => setDropdownId(null)}
+            handleAddBookmark={handleAddBookmark}
+            isBookmarked={post.isBookmarked}
           />
         </DropdownMenu>
       </div>
