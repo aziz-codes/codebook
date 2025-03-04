@@ -26,7 +26,7 @@ const PostDropdown = ({
   isPostOwner: boolean;
   post: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onHideChild: () => void;
+  onHideChild: (open: boolean) => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
@@ -61,7 +61,7 @@ const PostDropdown = ({
   };
 
   return (
-    <DropdownMenuContent className="w-36 group">
+    <DropdownMenuContent className="w-36">
       {isPostOwner && (
         <DropdownMenuRadioItem
           value="report"
@@ -114,6 +114,7 @@ const PostDropdown = ({
               onClick={() => {
                 setOpen(false);
                 childOpen(false);
+                onHideChild(false);
               }}
               size="sm"
             >

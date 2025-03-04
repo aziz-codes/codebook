@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import SinglePost from "@/components/Post";
 import MainWrapper from "@/layouts/main-wrapper";
 import { topMargin } from "@/utilities";
@@ -25,6 +25,7 @@ type GetPostsResponse = {
 
 const HomePage = () => {
   const { data: session, status } = useSession();
+  const [dropDownId, setDropdownId] = useState<any>(null);
   const { data, error, isLoading } = useQuery<GetPostsResponse, Error>({
     queryKey: ["posts"],
     queryFn: async () => await getRequest("/post"),
@@ -55,7 +56,13 @@ const HomePage = () => {
             !error &&
             data &&
             (data.result || []).map((post) => (
-              <SinglePost key={post._id} post={post} sessionId={sessionId} />
+              <SinglePost
+                key={post._id}
+                post={post}
+                sessionId={sessionId}
+                dropDownId={dropDownId}
+                setDropdownId={setDropdownId}
+              />
             ))
           )}
         </div>

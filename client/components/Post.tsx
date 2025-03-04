@@ -15,14 +15,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CommentType, Post } from "@/types/post";
 import PostDropdown from "./custom/post-dropdown";
 
-import Comment from "@/components/comment";
 import { customFormatter } from "@/utils/utils";
 
 import LikesPopup from "./custom/likes-popup";
@@ -35,6 +32,8 @@ type PostProps = {
   sessionId: string;
   isSingleRoute?: boolean;
   detailed?: boolean;
+  dropDownId?: string;
+  setDropdownId: (id: string | null) => void;
 };
 type GetPostsResponse = {
   count: number;
@@ -51,7 +50,10 @@ const SinglePost: FC<PostProps> = ({
   sessionId,
   isSingleRoute = false,
   detailed = true,
+  dropDownId,
+  setDropdownId,
 }) => {
+  const isOpen = dropDownId === post._id;
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -261,10 +263,13 @@ const SinglePost: FC<PostProps> = ({
             </div>
           </div>
         </div>
-        <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenu
+          open={isOpen}
+          onOpenChange={(open) => setDropdownId(open ? post._id : null)}
+        >
           <DropdownMenuTrigger asChild>
             <Ellipsis
-              className="cursor-pointer hover:text-gray-400"
+              className="cursor-pointer hover:text-gray-400 "
               onClick={() => setOpen(true)}
             />
           </DropdownMenuTrigger>
@@ -273,7 +278,10 @@ const SinglePost: FC<PostProps> = ({
             isPostOwner={isPostOwner}
             post={post._id}
             setOpen={setOpen}
-            onHideChild={() => setOpen(false)}
+            onHideChild={(open) => {
+              setOpen(open);
+              setDropdownId(null);
+            }}
           />
         </DropdownMenu>
       </div>
