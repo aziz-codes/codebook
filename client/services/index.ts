@@ -42,7 +42,7 @@ export const patchRequest = async (
 };
 export const deleteRequest = async (
   endpoint: string,
-  data: any
+  data?: any
 ): Promise<any> => {
   return await fetch(`${baseUrl}${endpoint}`, {
     method: "DELETE",
