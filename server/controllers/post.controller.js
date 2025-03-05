@@ -311,3 +311,41 @@ export const getPostLikes = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const editPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, image } = req.body;
+    const userId = req?.user?.id;
+
+    if (!title) {
+      return res.status(400).json({ message: "Title is required" });
+    }
+
+    // Check if the post exists
+    const existingPost = await Post.findById(id);
+    if (!existingPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // Ensure the user is the owner of the post
+    if (existingPost.user.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to edit this post" });
+    }
+
+    // Update the post
+    existingPost.title = title;
+    existingPost.image = image;
+    await existingPost.save();
+
+    res
+      .status(200)
+      .json({ message: "Post updated successfully", post: existingPost });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating post", error: error.message });
+  }
+};
