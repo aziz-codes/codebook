@@ -276,7 +276,8 @@ const SinglePost: FC<PostProps> = ({
 
           <PostDropdown
             isPostOwner={isPostOwner}
-            post={post._id}
+            postId={post._id}
+            post={post}
             setOpen={() => setDropdownId(null)}
             handleAddBookmark={handleAddBookmark}
             isBookmarked={post.isBookmarked}
