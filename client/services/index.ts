@@ -40,6 +40,23 @@ export const patchRequest = async (
   });
   return res;
 };
+
+// put re
+export const putRequest = async (
+  endpoint: string,
+  data?: any
+): Promise<any> => {
+  const res = await fetch(`${baseUrl}${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+  return res;
+};
+
 export const deleteRequest = async (
   endpoint: string,
   data?: any
