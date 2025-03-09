@@ -1,9 +1,11 @@
 import React from "react";
 import { LoaderCircle } from "lucide-react";
 
-const IconLoader = () => {
+const IconLoader = ({ height = 4, width = 4 }) => {
   return (
-    <LoaderCircle className="h-4 w-4 rounded-full animate-spin duration-300 ease-linear" />
+    <LoaderCircle
+      className={`h-${height} w-${width} rounded-full animate-spin duration-500 ease-linear`}
+    />
   );
 };
 
