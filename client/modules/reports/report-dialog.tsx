@@ -73,7 +73,7 @@ export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
   const [reason, setReason] = useState<string>("");
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
   const [blockUser, setBlockUser] = useState<boolean>(false);
-  const [dontShowContent, setDontShowContent] = useState<boolean>(false);
+
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { toast } = useToast();
 
@@ -122,7 +122,6 @@ export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
     setReason("");
     setAdditionalInfo("");
     setBlockUser(false);
-    setDontShowContent(false);
   };
 
   const handleClose = () => {

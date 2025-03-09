@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import MainWrapper from "@/layouts/main-wrapper";
 
@@ -19,6 +19,7 @@ type GetPostsResponse = {
 const SinglePage = () => {
   const { p } = useParams();
   const { data: session } = useSession();
+  const [dropDownId, setDropdownId] = useState<any>(null);
   const { data, error, isLoading } = useQuery<GetPostsResponse>({
     queryKey: ["posts", p],
     queryFn: async () => await getRequest(`/post/${p}`),
@@ -46,6 +47,8 @@ const SinglePage = () => {
             sessionId={sessionId as string}
             isSingleRoute
             detailed={false}
+            dropDownId={dropDownId}
+            setDropdownId={setDropdownId}
           />
         </div>
 
