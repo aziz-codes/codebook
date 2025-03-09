@@ -97,13 +97,15 @@ const PostDropdown = ({
         >
           Share Post
         </DropdownMenuRadioItem>
-        <DropdownMenuRadioItem
-          value="report"
-          className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
-          onClick={() => setReportModal(true)}
-        >
-          Report
-        </DropdownMenuRadioItem>
+        {!isPostOwner && (
+          <DropdownMenuRadioItem
+            value="report"
+            className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
+            onClick={() => setReportModal(true)}
+          >
+            Report
+          </DropdownMenuRadioItem>
+        )}
         {isPostOwner && (
           <div
             onClick={() => setOpen(true)}
