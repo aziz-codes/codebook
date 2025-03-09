@@ -18,6 +18,7 @@ import { LoaderIcon } from "lucide-react";
 import { deleteRequest } from "@/services";
 import EditPost from "@/modals/edit-post";
 import { Post } from "@/types/post";
+import { ReportDialog } from "@/modules/reports/report-dialog";
 
 type DropdownProps = {
   isPostOwner: boolean;
@@ -38,8 +39,10 @@ const PostDropdown = ({
 }: DropdownProps) => {
   const [loading, setLoading] = useState(false);
   const [editPost, setEditPost] = useState(false);
+
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [reportModal, setReportModal] = useState(false);
   const deletePost = async (postId: string): Promise<void> => {
     const response = await deleteRequest(`/post/${postId}`);
 
@@ -97,6 +100,7 @@ const PostDropdown = ({
         <DropdownMenuRadioItem
           value="report"
           className="cursor-pointer px-2 py-1 hover:!bg-bgCard rounded-md"
+          onClick={() => setReportModal(true)}
         >
           Report
         </DropdownMenuRadioItem>
@@ -151,6 +155,12 @@ const PostDropdown = ({
       {editPost && (
         <EditPost isOpen={editPost} setIsOpen={setEditPost} post={post} />
       )}
+
+      <ReportDialog
+        isOpen={reportModal}
+        onClose={() => setReportModal(false)}
+        post={post}
+      />
     </>
   );
 };
