@@ -19,7 +19,7 @@ import { deleteRequest } from "@/services";
 import EditPost from "@/modals/edit-post";
 import { Post } from "@/types/post";
 import { ReportDialog } from "@/modules/reports/report-dialog";
-
+import { postReportReasons } from "@/utils/report-reasons";
 type DropdownProps = {
   isPostOwner: boolean;
   postId: string;
@@ -162,6 +162,7 @@ const PostDropdown = ({
         isOpen={reportModal}
         onClose={() => setReportModal(false)}
         post={post}
+        reportReasons={postReportReasons}
       />
     </>
   );

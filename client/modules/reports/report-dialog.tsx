@@ -1,17 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  UserX,
-  Ban,
-  Flag,
-  AlertCircle,
-  Bomb,
-  MessageSquareWarning,
-  Copyright,
-  HelpCircle,
-  LoaderCircle,
-} from "lucide-react";
+import { Flag } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,55 +10,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Post } from "@/types/post";
+import { CommentType, Post } from "@/types/post";
 import IconLoader from "@/utils/components/icon-loader";
+import { postReports } from "@/types/reports";
 
 interface ReportDialogProps {
   isOpen: boolean;
   onClose: () => void;
   post: Post;
+  comment?: CommentType;
+  reportReasons: postReports[];
 }
 
-const reportReasons = [
-  {
-    id: "off-topic",
-    icon: <AlertCircle className="h-5 w-5 text-red-400" />,
-    title: "Off-topic",
-    description: "Not related to coding or programming.",
-  },
-  {
-    id: "spam",
-    icon: <Bomb className="h-5 w-5 text-orange-400" />,
-    title: "Spam or misleading content",
-    description: "Unwanted advertising, repetitive, or deceptive content.",
-  },
-  {
-    id: "harassment",
-    icon: <MessageSquareWarning className="h-5 w-5 text-amber-400" />,
-    title: "Harassment or offensive behavior",
-    description: "Insulting, threatening, or inappropriate conduct.",
-  },
-  {
-    id: "copyright",
-    icon: <Copyright className="h-5 w-5 text-blue-400" />,
-    title: "Plagiarism or intellectual property violation",
-    description: "Unauthorized use of code, ideas, or other content.",
-  },
-  {
-    id: "other",
-    icon: <HelpCircle className="h-5 w-5 text-gray-400" />,
-    title: "Other",
-    description: "Any other issue not listed above.",
-  },
-];
-
-export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
+export function ReportDialog({
+  isOpen,
+  onClose,
+  post,
+  reportReasons,
+  comment,
+}: ReportDialogProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [reason, setReason] = useState<string>("");
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
@@ -234,7 +201,7 @@ export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
 
               <div className="space-y-4">
                 <h4 className="text-sm font-medium text-gray-300">
-                  Block {post.user.username}
+                  Block {comment?.userDetails.username}
                 </h4>
 
                 <div
@@ -250,15 +217,15 @@ export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0">
                       <img
-                        src={post.user.avatar}
+                        src={comment?.userDetails.avatar}
                         className="h-10 w-10 rounded-full object-cover"
-                        alt={post.user.username}
+                        alt={comment?.userDetails.username}
                       />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <h4 className="text-sm font-medium text-gray-100">
-                          {post.user.username}
+                          {comment?.userDetails.username}
                         </h4>
                         <Checkbox
                           id="block-user"
@@ -284,14 +251,14 @@ export function ReportDialog({ isOpen, onClose, post }: ReportDialogProps) {
                 variant="outline"
                 onClick={() => setStep(1)}
                 disabled={isSubmitting}
-                className="border-gray-700 bg-gray-800 hover:bg-gray-700 hover:text-gray-100 text-gray-300"
+                className="border-bgCard bg-semiDark hover:bg-bgHover hover:text-gray-100 text-gray-300"
               >
                 Back
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="bg-gray-700 hover:bg-gray-600 text-gray-100 min-w-28"
+                className="border-bgCard bg-semiDark hover:bg-bgHover hover:text-gray-100 text-gray-300 min-w-28"
               >
                 {isSubmitting ? (
                   <IconLoader height={5} width={5} />

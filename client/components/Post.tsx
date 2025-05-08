@@ -393,6 +393,7 @@ const SinglePost: FC<PostProps> = ({
                         isOpen={activeDropdownId === comment._id}
                         toggleDropdown={() => toggleDropdown(comment._id)}
                         detailed={detailed}
+                        post={post}
                       />
                     ))}
 
