@@ -8,6 +8,7 @@ import ButtonLoader from "@/utils/components/button-loader";
 import { useSession } from "next-auth/react";
 import { expertise } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
 
 const getFollowers = () => {
   const { data: session, status } = useSession();
@@ -65,7 +66,7 @@ const getFollowers = () => {
   const handleRefresh = () => {
     mutate();
   };
-
+  const accountsTofllow = data.filter((data) => data._id !== session?.user.id);
   return (
     <div className="flex flex-col h-full  scrollbar-none">
       <div className="flex flex-grow flex-col md:flex-row gap-3 h-[90%]">
@@ -89,7 +90,7 @@ const getFollowers = () => {
               {/* Chips */}
               <div className="flex flex-wrap gap-2 text-xs">
                 {category.items.map((item) => (
-                  <div
+                  <Badge
                     key={item}
                     className={`cursor-pointer px-4 py-1.5 rounded-full text-sm border hover:bg-gray-300 ${
                       selectedExpertise.includes(item)
@@ -99,7 +100,7 @@ const getFollowers = () => {
                     onClick={() => handleChipSelect(item)}
                   >
                     {item}
-                  </div>
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -107,15 +108,14 @@ const getFollowers = () => {
         </div>
 
         {/* Suggestions Section */}
-        <div className="w-full md:w-[20%] flex flex-col">
-          <h4 className="text-center">Accounts to Follow</h4>
-          <div className="flex justify-center items-center mb-4">
-            {loading ? <ButtonLoader /> : null}
-          </div>
-          <div className="flex flex-col overflow-y-auto gap-4 scrollbar-none ">
-            {data
-              .filter((data) => data._id !== session?.user.id)
-              .map((user, index) => (
+        {accountsTofllow && accountsTofllow.length > 0 && (
+          <div className="w-full md:w-[20%] flex flex-col">
+            <h4 className="text-center">Accounts to Follow</h4>
+            <div className="flex justify-center items-center mb-4">
+              {loading ? <ButtonLoader /> : null}
+            </div>
+            <div className="flex flex-col overflow-y-auto gap-4 scrollbar-none ">
+              {accountsTofllow.map((user, index) => (
                 <UserCard
                   user={user}
                   key={index}
@@ -123,8 +123,9 @@ const getFollowers = () => {
                   username={session?.user.username}
                 />
               ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Continue Button */}

@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 import { CommentType, Post } from "@/types/post";
 import IconLoader from "@/utils/components/icon-loader";
 import { postReports } from "@/types/reports";
+import { postRequest } from "@/services";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ReportDialogProps {
   isOpen: boolean;
@@ -60,16 +62,24 @@ export function ReportDialog({
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      const payload = {
+        postId: post._id,
+        reason,
+        remarks: additionalInfo,
+      };
+      const res = await postRequest("/post/report", payload);
+      if (res.ok) {
+        toast({
+          title: "Report submitted",
+          description: "Thank you for helping keep our community safe",
+          duration: 1000,
+        });
+      } else {
+        console.log("something went wrong, pelase try again");
+        const data = await res.json();
+        console.log("error data is ", data);
+      }
 
-      toast({
-        title: "Report submitted",
-        description: "Thank you for helping keep our community safe",
-        duration: 1000,
-      });
-
-      // Reset form and close dialog
       resetForm();
       onClose();
     } catch (error) {
@@ -216,11 +226,10 @@ export function ReportDialog({
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0">
-                      <img
-                        src={comment?.userDetails.avatar}
-                        className="h-10 w-10 rounded-full object-cover"
-                        alt={comment?.userDetails.username}
-                      />
+                      <Avatar className="h-10 w-10 rounded-full">
+                        <AvatarFallback>{post.user.name[0]}</AvatarFallback>
+                        <AvatarImage src={post.user.avatar} />
+                      </Avatar>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">

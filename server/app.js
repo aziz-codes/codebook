@@ -8,7 +8,9 @@ import followerRoutes from "./routes/follower.routes.js";
 import followersInitialRoute from "./routes/utils.routes.js";
 import expertiseRoutes from "./routes/expertise.routes.js";
 import bookmakrRoutes from "./routes/bookmark.routes.js";
+import reportRoutes from "./routes/reports.route.js";
 import cookieParser from "cookie-parser";
+
 import mongoose from "mongoose";
 import cors from "cors";
 import middleware from "./auth.js";
@@ -31,6 +33,7 @@ app.use("/user", userRoute);
 app.use("/user", followerRoutes);
 app.use("/post", middleware, postRoutes);
 app.use("/post/comment", commentRoutes);
+app.use("/post/report", middleware, reportRoutes);
 app.use("/user", followersInitialRoute);
 app.use("/user/", expertiseRoutes);
 app.use("/post/bookmark/", bookmakrRoutes);

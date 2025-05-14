@@ -1,6 +1,6 @@
 import Post from "../schemas/Post.js";
 import Like from "../schemas/Like.js";
-import Comment from "../schemas/Comment.js";
+
 import mongoose from "mongoose";
 
 export const post = async (req, res) => {
@@ -121,7 +121,7 @@ export const getPosts = async (req, res) => {
         },
       },
     ]);
-    console.log("all posts", posts[1]);
+
     res.status(200).json({ count: posts.length, result: posts });
   } catch (error) {
     console.error("Error fetching posts:", error);

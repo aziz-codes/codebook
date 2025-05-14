@@ -19,13 +19,22 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
     },
-    tagline:{
-      type: String
+    tagline: {
+      type: String,
     },
-    isOnboarded: { type: Boolean, default: false },
+    isOnboarded: {
+      type: Boolean,
+      default: false,
+    },
+    blockedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.models.User || mongoose.model("user", userSchema);
-export default User; 
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+export default User;

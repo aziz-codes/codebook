@@ -36,6 +36,8 @@ const HomePage = () => {
     return <MainLoader />;
   }
 
+  console.log("all posts are", data);
+
   return (
     <MainWrapper classes="w-full">
       <div className={`w-full flex justify-center gap-12 mt-${topMargin}`}>

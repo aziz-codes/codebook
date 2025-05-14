@@ -130,12 +130,14 @@ const CommentDetailed: React.FC<CommentProps> = ({
                 <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white " />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-bgHover rounded-md"
-                  onClick={() => setReportModal(true)}
-                >
-                  Report
-                </DropdownMenuItem>
+                {comment.userDetails._id !== session?.user.id && (
+                  <DropdownMenuItem
+                    className="cursor-pointer hover:bg-bgHover rounded-md"
+                    onClick={() => setReportModal(true)}
+                  >
+                    Report
+                  </DropdownMenuItem>
+                )}
                 {comment.userDetails._id === session?.user.id && (
                   <DropdownMenuItem
                     className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"

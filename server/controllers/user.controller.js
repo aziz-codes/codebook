@@ -6,10 +6,10 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+//login route goes here.
 export const saveUser = async (req, res) => {
   const { email, id, name, avatar, username } = req.body;
-  console.log("executing login route");
+
   try {
     let user = await User.findOne({ email });
     if (!user) {

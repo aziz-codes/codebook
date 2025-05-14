@@ -234,7 +234,7 @@ const SinglePost: FC<PostProps> = ({
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
-
+  console.log("all comments are", comments);
   return (
     <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}
@@ -383,6 +383,7 @@ const SinglePost: FC<PostProps> = ({
                 )}
 
                 {isLoading && "Loading comments"}
+                {error && "Error Loading comments"}
                 {comments &&
                   comments
                     ?.slice(0, isSingleRoute ? comments.length : 2)
