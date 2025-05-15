@@ -1,11 +1,11 @@
-import Comment from "../schemas/Comment.js"
+import Comment from "../schemas/Comment.js";
 import Post from "../schemas/Post.js";
 import mongoose from "mongoose";
 
 export const saveComment = async (req, res) => {
   try {
-    const { user,  text } = req.body;
-    const {postid:post} = req.params;
+    const { user, text } = req.body;
+    const { postid: post } = req.params;
 
     // Validate required fields
     if (!user || !post || !text) {
@@ -13,7 +13,10 @@ export const saveComment = async (req, res) => {
     }
 
     // Ensure valid ObjectId for user and post
-    if (!mongoose.Types.ObjectId.isValid(user) || !mongoose.Types.ObjectId.isValid(post)) {
+    if (
+      !mongoose.Types.ObjectId.isValid(user) ||
+      !mongoose.Types.ObjectId.isValid(post)
+    ) {
       return res.status(400).json({ message: "Invalid user or post ID." });
     }
 
@@ -37,22 +40,29 @@ export const saveComment = async (req, res) => {
   }
 };
 
-
-export const getComments = async(req,res)=>{
+export const getComments = async (req, res) => {
   try {
-    const { postid:postId } = req.params;
+    const { postid: postId } = req.params;
+    const blockedUsers = (req.blockedUserIds || []).map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
 
     const comments = await Comment.aggregate([
-      { $match: { post: new mongoose.Types.ObjectId(postId) } }, // Filter by post ID
       {
-        $lookup: {
-          from: "users", // Join with the "users" collection
-          localField: "user", // `user` in Comment schema
-          foreignField: "_id", // `_id` in User schema
-          as: "userDetails", // Name the result array
+        $match: {
+          post: new mongoose.Types.ObjectId(postId),
+          user: { $nin: blockedUsers },
         },
       },
-      { $unwind: "$userDetails" }, // Flatten the userDetails array
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
       {
         $project: {
           _id: 1,
@@ -65,7 +75,7 @@ export const getComments = async(req,res)=>{
           "userDetails._id": 1,
         },
       },
-      { $sort: { createdAt: -1 } }, // Sort by creation date (most recent first)
+      { $sort: { createdAt: -1 } },
     ]);
 
     res.status(200).json(comments);
@@ -73,12 +83,12 @@ export const getComments = async(req,res)=>{
     console.error("Error fetching comments:", error);
     res.status(500).json({ error: "Could not fetch comments." });
   }
-}
+};
 
 export const deleteComment = async (req, res) => {
   try {
-    const { postid:postId } = req.params;  // Post ID from the URL
-    const { commentid:commentId } = req.body;  // Comment ID from the request body
+    const { postid: postId } = req.params; // Post ID from the URL
+    const { commentid: commentId } = req.body; // Comment ID from the request body
 
     // Step 1: Check if the post exists
     const post = await Post.findById(postId);
@@ -89,7 +99,9 @@ export const deleteComment = async (req, res) => {
     // Step 2: Check if the comment exists and belongs to the post
     const comment = await Comment.findOne({ _id: commentId, post });
     if (!comment) {
-      return res.status(404).json({ message: "Comment not found or does not belong to this post" });
+      return res
+        .status(404)
+        .json({ message: "Comment not found or does not belong to this post" });
     }
 
     // Step 3: Delete the comment
@@ -97,10 +109,11 @@ export const deleteComment = async (req, res) => {
 
     // Step 4: Return success response
     res.status(200).json({ message: "Comment deleted successfully" });
-
   } catch (e) {
     console.log("Error:", e);
-    res.status(500).json({ message: "An error occurred while deleting the comment" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while deleting the comment" });
   }
 };
 export const handleCommentReact = async (req, res) => {
@@ -135,6 +148,8 @@ export const handleCommentReact = async (req, res) => {
     });
   } catch (error) {
     console.error("Error handling comment react:", error);
-    res.status(500).json({ error: "An error occurred while processing the request." });
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing the request." });
   }
 };

@@ -37,10 +37,11 @@ export const getPosts = async (req, res) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-    const userObjectId = new mongoose.Types.ObjectId(userId); // Ensure it's ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId);
     const blockedUsers = (req.blockedUserIds || []).map(
       (id) => new mongoose.Types.ObjectId(id)
     );
+
     const posts = await Post.aggregate([
       { $sort: { createdAt: -1 } },
 
@@ -61,6 +62,7 @@ export const getPosts = async (req, res) => {
       },
       { $unwind: "$user" },
 
+      // JOIN COMMENTS
       {
         $lookup: {
           from: "comments",
@@ -70,15 +72,17 @@ export const getPosts = async (req, res) => {
         },
       },
 
+      // JOIN LIKES
       {
         $lookup: {
           from: "likes",
           localField: "_id",
           foreignField: "post",
-          as: "likes",
+          as: "likesRaw",
         },
       },
 
+      // JOIN BOOKMARKS
       {
         $lookup: {
           from: "bookmarks",
@@ -88,9 +92,61 @@ export const getPosts = async (req, res) => {
         },
       },
 
+      // LOOKUP LIKERS (users who liked the post)
+      {
+        $unwind: { path: "$likesRaw", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "likesRaw.user",
+          foreignField: "_id",
+          as: "likesRaw.userDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$likesRaw.userDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          doc: { $first: "$$ROOT" },
+          likes: {
+            $push: {
+              $cond: [
+                { $not: [{ $in: ["$likesRaw.user", blockedUsers] }] },
+                {
+                  _id: "$likesRaw.userDetails._id",
+                  username: "$likesRaw.userDetails.username",
+                  avatar: "$likesRaw.userDetails.avatar",
+                },
+                "$$REMOVE", // Exclude blocked users
+              ],
+            },
+          },
+        },
+      },
       {
         $addFields: {
-          commentCount: { $size: "$comments" },
+          "doc.likes": "$likes",
+        },
+      },
+      { $replaceRoot: { newRoot: "$doc" } },
+
+      {
+        $addFields: {
+          commentCount: {
+            $size: {
+              $filter: {
+                input: "$comments",
+                as: "comment",
+                cond: { $not: [{ $in: ["$$comment.user", blockedUsers] }] },
+              },
+            },
+          },
           likeCount: { $size: "$likes" },
           isLiked: {
             $gt: [
@@ -99,7 +155,7 @@ export const getPosts = async (req, res) => {
                   $filter: {
                     input: "$likes",
                     as: "like",
-                    cond: { $eq: ["$$like.user", userObjectId] },
+                    cond: { $eq: ["$$like._id", userObjectId] },
                   },
                 },
               },
@@ -125,7 +181,6 @@ export const getPosts = async (req, res) => {
 
       {
         $project: {
-          likes: 0,
           bookmarks: 0,
           comments: 0,
         },
@@ -280,46 +335,61 @@ export const getSinglePost = async (req, res) => {
 };
 
 export const getPostLikes = async (req, res) => {
-  const { id } = req.params; // Get the post ID from the request params
+  const { id } = req.params;
 
   if (!id) {
     return res.status(400).json({ error: "Post ID is required" });
   }
 
   try {
-    // Use aggregation to find likes and populate user details
+    const blockedUsers = (req.blockedUserIds || []).map(
+      (userId) => new mongoose.Types.ObjectId(userId)
+    );
+
     const likes = await Like.aggregate([
+      // 🎯 1. Match likes for the specific post
       {
-        $match: { post: new mongoose.Types.ObjectId(id) }, // Match likes for the specific post
+        $match: { post: new mongoose.Types.ObjectId(id) },
       },
+
+      // 👥 2. Lookup user details for each like
       {
         $lookup: {
-          from: "users", // Lookup users collection
-          localField: "user", // Match the 'user' field in Like model
-          foreignField: "_id", // Match it to the '_id' field in User model
-          as: "userDetails", // Output the joined data as 'userDetails'
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
         },
       },
+
+      // 🔄 3. Flatten the userDetails array
       {
         $unwind: "$userDetails",
       },
+
+      // 🚫 4. Exclude likes from blocked users
+      {
+        $match: {
+          "userDetails._id": { $nin: blockedUsers },
+        },
+      },
+
+      // ✅ 5. Select only required fields
       {
         $project: {
-          "userDetails.avatar": 1, // Include avatar
-          "userDetails.username": 1, // Include username
+          _id: 0,
           "userDetails._id": 1,
-          _id: 0, // Exclude _id from the result
+          "userDetails.username": 1,
+          "userDetails.avatar": 1,
         },
       },
     ]);
 
-    if (likes.length === 0) {
-      return res.status(404).json({ error: "No likes found for this post" });
-    }
+    // Format final response
     const reformattedLikes = likes.map((like) => ({
-      avatar: like.userDetails.avatar,
       id: like.userDetails._id,
       username: like.userDetails.username,
+      avatar: like.userDetails.avatar,
     }));
 
     return res.status(200).json({ success: true, likes: reformattedLikes });
