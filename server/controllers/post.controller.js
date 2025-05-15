@@ -31,15 +31,25 @@ export const post = async (req, res) => {
   }
 };
 
+//get all post controller.
 export const getPosts = async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     const userObjectId = new mongoose.Types.ObjectId(userId); // Ensure it's ObjectId
-
+    const blockedUsers = (req.blockedUserIds || []).map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
     const posts = await Post.aggregate([
       { $sort: { createdAt: -1 } },
+
+      // EXCLUDE POSTS BY BLOCKED USERS
+      {
+        $match: {
+          user: { $nin: blockedUsers },
+        },
+      },
 
       {
         $lookup: {
@@ -115,7 +125,7 @@ export const getPosts = async (req, res) => {
 
       {
         $project: {
-          likes: 0, // Remove likes array completely
+          likes: 0,
           bookmarks: 0,
           comments: 0,
         },
@@ -165,10 +175,17 @@ export const getSinglePost = async (req, res) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
+    const blockedUsers = (req.blockedUserIds || []).map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
     const post = await Post.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+        user: { $nin: blockedUsers },
+      },
 
       {
         $lookup: {

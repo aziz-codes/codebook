@@ -66,6 +66,7 @@ export function ReportDialog({
         postId: post._id,
         reason,
         remarks: additionalInfo,
+        blockUser: blockUser,
       };
       const res = await postRequest("/post/report", payload);
       if (res.ok) {

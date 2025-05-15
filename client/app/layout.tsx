@@ -27,7 +27,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-
+  if (typeof window !== "undefined") {
+    window.addEventListener("error", (e) => {
+      if (e.message?.includes("Loading chunk")) {
+        window.location.reload();
+      }
+    });
+  }
   return (
     <html lang="en">
       <body

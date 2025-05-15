@@ -11,6 +11,8 @@ import bookmakrRoutes from "./routes/bookmark.routes.js";
 import reportRoutes from "./routes/reports.route.js";
 import cookieParser from "cookie-parser";
 
+// middlewares
+import { attachBlockedUsers } from "./middlewares/blockMiddleware.js";
 import mongoose from "mongoose";
 import cors from "cors";
 import middleware from "./auth.js";
@@ -31,7 +33,7 @@ app.use(cookieParser()); // ✅ Add cookie parser before routes
 app.use("/snippets", snippetRoutes);
 app.use("/user", userRoute);
 app.use("/user", followerRoutes);
-app.use("/post", middleware, postRoutes);
+app.use("/post", middleware, attachBlockedUsers, postRoutes);
 app.use("/post/comment", commentRoutes);
 app.use("/post/report", middleware, reportRoutes);
 app.use("/user", followersInitialRoute);
