@@ -4,7 +4,7 @@ import React from "react";
 import UserProfileTabs from "@/components/layouts/tabs";
 import { useParams } from "next/navigation";
 import MainWrapper from "@/layouts/main-wrapper";
-// import ProfileCard from "@/test/profile-card";
+
 import { childRoutesClass, topMargin } from "@/utilities";
 import { UserProfileType } from "@/types/user";
 import { getRequest } from "@/services";
@@ -32,6 +32,7 @@ const UserProfile = () => {
       return response;
     },
     enabled: !!username,
+    refetchOnWindowFocus: false,
   });
 
   if (error) return <NotFound />;

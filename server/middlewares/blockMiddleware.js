@@ -14,7 +14,6 @@ export async function attachBlockedUsers(req, res, next) {
 
     next();
   } catch (error) {
-    // In case of error, proceed without blocking info
     req.blockedUserIds = [];
     next();
   }

@@ -41,14 +41,16 @@ export const getPosts = async (req, res) => {
     const blockedUsers = (req.blockedUserIds || []).map(
       (id) => new mongoose.Types.ObjectId(id)
     );
+    const filteredBlockedUsers = blockedUsers.filter(
+      (id) => !id.equals(userObjectId)
+    );
 
     const posts = await Post.aggregate([
       { $sort: { createdAt: -1 } },
 
-      // EXCLUDE POSTS BY BLOCKED USERS
       {
         $match: {
-          user: { $nin: blockedUsers },
+          user: { $nin: filteredBlockedUsers },
         },
       },
 
@@ -62,7 +64,6 @@ export const getPosts = async (req, res) => {
       },
       { $unwind: "$user" },
 
-      // JOIN COMMENTS
       {
         $lookup: {
           from: "comments",
@@ -72,7 +73,6 @@ export const getPosts = async (req, res) => {
         },
       },
 
-      // JOIN LIKES
       {
         $lookup: {
           from: "likes",
@@ -82,7 +82,6 @@ export const getPosts = async (req, res) => {
         },
       },
 
-      // JOIN BOOKMARKS
       {
         $lookup: {
           from: "bookmarks",
@@ -92,7 +91,6 @@ export const getPosts = async (req, res) => {
         },
       },
 
-      // LOOKUP LIKERS (users who liked the post)
       {
         $unwind: { path: "$likesRaw", preserveNullAndEmptyArrays: true },
       },
@@ -110,6 +108,7 @@ export const getPosts = async (req, res) => {
           preserveNullAndEmptyArrays: true,
         },
       },
+
       {
         $group: {
           _id: "$_id",
@@ -117,18 +116,19 @@ export const getPosts = async (req, res) => {
           likes: {
             $push: {
               $cond: [
-                { $not: [{ $in: ["$likesRaw.user", blockedUsers] }] },
+                { $not: [{ $in: ["$likesRaw.user", filteredBlockedUsers] }] },
                 {
                   _id: "$likesRaw.userDetails._id",
                   username: "$likesRaw.userDetails.username",
                   avatar: "$likesRaw.userDetails.avatar",
                 },
-                "$$REMOVE", // Exclude blocked users
+                "$$REMOVE",
               ],
             },
           },
         },
       },
+
       {
         $addFields: {
           "doc.likes": "$likes",
@@ -143,7 +143,9 @@ export const getPosts = async (req, res) => {
               $filter: {
                 input: "$comments",
                 as: "comment",
-                cond: { $not: [{ $in: ["$$comment.user", blockedUsers] }] },
+                cond: {
+                  $not: [{ $in: ["$$comment.user", filteredBlockedUsers] }],
+                },
               },
             },
           },
@@ -178,11 +180,15 @@ export const getPosts = async (req, res) => {
           },
         },
       },
+      {
+        $sort: { createdAt: -1 },
+      },
 
       {
         $project: {
           bookmarks: 0,
           comments: 0,
+          likesRaw: 0,
         },
       },
     ]);

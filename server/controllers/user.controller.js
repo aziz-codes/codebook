@@ -58,12 +58,33 @@ export const saveUser = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { username } = req.params;
+    const loggedInUserId = req.user?.id;
 
-    // Fetch user details from the User model
+    if (!loggedInUserId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    // Find the target user by username
     const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
+
+    // Convert to ObjectId for comparisons
+    const loggedInObjectId = new mongoose.Types.ObjectId(loggedInUserId);
+    const targetObjectId = new mongoose.Types.ObjectId(user._id);
+
+    // Check for block in both directions
+    const isBlocked = await Block.exists({
+      $or: [
+        { blocker: loggedInObjectId, blocked: targetObjectId },
+        { blocker: targetObjectId, blocked: loggedInObjectId },
+      ],
+    });
+
+    if (isBlocked) {
+      return res.status(403).json({ error: "Access denied due to block." });
     }
 
     // Count the total number of posts created by the user
@@ -76,9 +97,11 @@ export const getUser = async (req, res) => {
       "followerId"
     );
 
-    const following = await Follower.countDocuments({ followerId: user._id });
+    const following = await Follower.countDocuments({
+      followerId: user._id,
+    });
 
-    // Return the user data with post and snippet counts
+    // Return the user data with counts
     res.status(200).json({
       user,
       postCount,
