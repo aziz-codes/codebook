@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Ellipsis, Minimize2 } from "lucide-react";
 import TimeAgo from "react-timeago";
@@ -26,6 +26,8 @@ import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
 import PostModal from "./custom/post-modal";
 import CommentDetailed from "./comment-detailed";
+import IconLoader from "@/utils/components/icon-loader";
+import ButtonLoader from "@/utils/components/button-loader";
 
 type PostProps = {
   post: Post;
@@ -56,6 +58,8 @@ const SinglePost: FC<PostProps> = ({
   const isOpen = dropDownId === post._id;
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const commentRef = useRef<HTMLDivElement | null>(null);
 
   const [openPostModal, setPostModelOpen] = useState(false);
 
@@ -234,7 +238,12 @@ const SinglePost: FC<PostProps> = ({
     queryKey: [`comments/${post._id}`],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
-  console.log("all comments are", comments);
+  useEffect(() => {
+    if (openCommentBox && commentRef.current) {
+      commentRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [openCommentBox]);
+  const commentLoading = true;
   return (
     <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}
@@ -382,7 +391,11 @@ const SinglePost: FC<PostProps> = ({
                   <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
                 )}
 
-                {isLoading && "Loading comments"}
+                {isLoading && (
+                  <div className="flex justify-center py-2">
+                    <ButtonLoader />
+                  </div>
+                )}
                 {error && "Error Loading comments"}
                 {comments &&
                   comments
@@ -422,6 +435,7 @@ const SinglePost: FC<PostProps> = ({
                 </div>
               )}
             </CardFooter>
+            <div ref={commentRef}></div>
           </motion.div>
         )}
       </AnimatePresence>
