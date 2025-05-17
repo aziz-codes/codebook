@@ -119,12 +119,21 @@ const CommentDetailed: React.FC<CommentProps> = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <p
-              className="font-semibold text-slate-300 text-sm cursor-pointer"
-              onClick={() => router.push(`/${comment.userDetails.username}`)}
-            >
-              {comment.userDetails.username}
-            </p>
+            <div className="flex items-center gap-2">
+              <p
+                className="font-semibold text-slate-300 text-sm cursor-pointer"
+                onClick={() => router.push(`/${comment.userDetails.username}`)}
+              >
+                {comment.userDetails.username}
+              </p>
+              <div className="text-xs text-gray-400">
+                <ReactTimeago
+                  date={comment.createdAt}
+                  formatter={customFormatter}
+                />{" "}
+                ago
+              </div>
+            </div>
             <DropdownMenu open={isOpen} onOpenChange={toggleDropdown}>
               <DropdownMenuTrigger asChild>
                 <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white " />
@@ -149,14 +158,10 @@ const CommentDetailed: React.FC<CommentProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <p className="text-xs first-letter:uppercase">{comment.text}</p>
+          <p className="text-sm first-letter:uppercase mt-0.5">
+            {comment.text}
+          </p>
           <div className="flex items-center space-x-4">
-            <div className="text-xs text-gray-400">
-              <ReactTimeago
-                date={comment.createdAt}
-                formatter={customFormatter}
-              />
-            </div>
             <Button
               variant="default"
               size="icon"
