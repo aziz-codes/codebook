@@ -1,5 +1,7 @@
 import User from "../schemas/User.js";
+import mongoose from "mongoose";
 import Post from "../schemas/Post.js";
+import Block from "../schemas/BlockSchema.js";
 import Snippet from "../schemas/Snippet.js";
 import Follower from "../schemas/Followers.js";
 import jwt from "jsonwebtoken";
@@ -84,7 +86,7 @@ export const getUser = async (req, res) => {
     });
 
     if (isBlocked) {
-      return res.status(403).json({ error: "Access denied due to block." });
+      return res.status(403).json({ error: "User not available" });
     }
 
     // Count the total number of posts created by the user

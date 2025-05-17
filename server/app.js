@@ -38,7 +38,7 @@ app.use("/post/bookmark/", bookmakrRoutes);
 app.use("/snippets", snippetRoutes);
 
 // User routes
-app.use("/user", userRoute);
+app.use("/user", middleware, attachBlockedUsers, userRoute);
 app.use("/user", followerRoutes);
 app.use("/user", followersInitialRoute);
 app.use("/user/", expertiseRoutes);
