@@ -244,8 +244,10 @@ export const getSinglePost = async (req, res) => {
 
     const post = await Post.aggregate([
       {
-        $match: { _id: new mongoose.Types.ObjectId(id) },
-        user: { $nin: blockedUsers },
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+          user: { $nin: blockedUsers },
+        },
       },
 
       {
