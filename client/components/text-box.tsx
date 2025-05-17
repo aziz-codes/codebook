@@ -46,7 +46,8 @@ const TextBox: React.FC<CommentProps> = ({
     adjustHeight();
   }, [comment]);
 
-  const handleComment = async () => {
+  const handleComment = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (comment.trim() === "") return;
 
     setLoading(true);
@@ -86,29 +87,39 @@ const TextBox: React.FC<CommentProps> = ({
         </PopoverContent>
       </Popover>
 
-      <textarea
-        ref={inputRef}
-        placeholder={placeholder}
-        className="resize-none max-h-32 scrollbar-none overflow-y-auto w-full py-2 outline-none bg-transparent text-sm"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        style={{ height: "34px" }}
-      ></textarea>
-
-      <div className="flex items-center gap-1">
-        {comment.length > 0 &&
-          (!loading ? (
-            <Button
-              variant="link"
-              className="!no-underline text-sky-600  p-0"
-              onClick={handleComment}
-            >
-              Post
-            </Button>
-          ) : (
-            <ButtonLoader />
-          ))}
-      </div>
+      <form onSubmit={handleComment} className="flex items-center   flex-1">
+        <textarea
+          ref={inputRef}
+          placeholder={placeholder}
+          className="resize-none max-h-32 scrollbar-none overflow-y-auto w-full py-2 outline-none bg-transparent text-sm"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              const form = e.currentTarget.form;
+              if (form) {
+                form.requestSubmit(); // triggers onSubmit
+              }
+            }
+          }}
+          style={{ height: "34px" }}
+        ></textarea>
+        <div className="flex items-center gap-1">
+          {comment.length > 0 &&
+            (!loading ? (
+              <Button
+                variant="link"
+                className="!no-underline text-sky-600  p-0"
+                type="submit"
+              >
+                Post
+              </Button>
+            ) : (
+              <ButtonLoader />
+            ))}
+        </div>
+      </form>
     </div>
   );
 };
