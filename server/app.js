@@ -10,7 +10,7 @@ import expertiseRoutes from "./routes/expertise.routes.js";
 import bookmakrRoutes from "./routes/bookmark.routes.js";
 import reportRoutes from "./routes/reports.route.js";
 import cookieParser from "cookie-parser";
-
+import authRoute from "./routes/auth.route.js";
 // middlewares
 import { attachBlockedUsers } from "./middlewares/blockMiddleware.js";
 import mongoose from "mongoose";
@@ -38,6 +38,8 @@ app.use("/post/bookmark/", bookmakrRoutes);
 app.use("/snippets", snippetRoutes);
 
 // User routes
+//login route
+app.use("/login", authRoute);
 app.use("/user", middleware, attachBlockedUsers, userRoute);
 app.use("/user", followerRoutes);
 app.use("/user", followersInitialRoute);

@@ -43,7 +43,7 @@ export const config = {
         return token;
       }
       try {
-        const response = await postRequest(`/user`, {
+        const response = await postRequest(`/login`, {
           email,
           id: token.id,
           name,

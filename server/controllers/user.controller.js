@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
-//login route goes here.
+//login route goes here. and only be used for login
 export const saveUser = async (req, res) => {
   const { email, id, name, avatar, username } = req.body;
 
