@@ -18,7 +18,7 @@ export const customFormatter = (
     year: "y",
   }[unit];
 
-  return `${value}${shortUnit}`;
+  return `${value}${shortUnit} ago`;
 };
 
 export const expertise = [

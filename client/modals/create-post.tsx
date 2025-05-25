@@ -33,6 +33,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import IconLoader from "@/utils/components/icon-loader";
 
 type CreatePostProps = {
   children: React.ReactNode;
@@ -272,7 +273,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
               className="text-neon hover:text-neonHover p-0 !no-underline"
               onClick={handlePost}
             >
-              {loading ? "Posting..." : "Post"}
+              {loading ? <IconLoader /> : "Post"}
             </Button>
           </div>
         </AlertDialogFooter>

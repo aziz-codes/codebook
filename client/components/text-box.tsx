@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import ButtonLoader from "@/utils/components/button-loader";
 import { postRequest } from "@/services";
 import { useQueryClient } from "@tanstack/react-query";
+import { CommentType } from "@/types/post";
 
 interface CommentProps {
   post_id: string;
@@ -50,20 +51,49 @@ const TextBox: React.FC<CommentProps> = ({
     e.preventDefault();
     if (comment.trim() === "") return;
 
+    const tempId = crypto.randomUUID(); // temporary ID
+    const newComment: CommentType = {
+      _id: tempId,
+      post: post_id,
+      text: comment.trim(),
+      likes: [],
+      createdAt: new Date().toISOString(),
+      userDetails: {
+        _id: session?.user.id as string,
+        username: session?.user.username as string,
+        avatar: session?.user.image as string,
+      },
+    };
+
+    // Optimistically update the comments
+    queryClient.setQueryData<CommentType[]>(
+      ["comments", post_id],
+      (old = []) => [newComment, ...old]
+    );
+
+    setComment(""); // Clear the input immediately
     setLoading(true);
+
     try {
       const payload = {
         user: session?.user.id,
         text: comment.trim(),
         post: post_id,
       };
-      await postRequest(`/post/comment/${post_id}`, payload);
-      setComment("");
 
+      await postRequest(`/post/comment/${post_id}`, payload);
+
+      // Optional: revalidate to get updated comment with real _id
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: [`comments/${post_id}`] });
+      queryClient.invalidateQueries({ queryKey: ["comments", post_id] });
     } catch (error) {
       console.error("Failed to comment:", error);
+
+      // Rollback optimistic update
+      queryClient.setQueryData<CommentType[]>(
+        ["comments", post_id],
+        (old = []) => old.filter((c) => c._id !== tempId)
+      );
     } finally {
       setLoading(false);
     }

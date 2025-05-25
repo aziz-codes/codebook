@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 export const saveComment = async (req, res) => {
   try {
+    const userId = req.user?.id;
     const { user, text } = req.body;
     const { postid: post } = req.params;
 
@@ -14,7 +15,7 @@ export const saveComment = async (req, res) => {
 
     // Ensure valid ObjectId for user and post
     if (
-      !mongoose.Types.ObjectId.isValid(user) ||
+      !mongoose.Types.ObjectId.isValid(userId) ||
       !mongoose.Types.ObjectId.isValid(post)
     ) {
       return res.status(400).json({ message: "Invalid user or post ID." });
@@ -22,7 +23,7 @@ export const saveComment = async (req, res) => {
 
     // Create a new comment
     const newComment = new Comment({
-      user,
+      user: userId,
       post,
       text,
     });
@@ -89,7 +90,10 @@ export const deleteComment = async (req, res) => {
   try {
     const { postid: postId } = req.params; // Post ID from the URL
     const { commentid: commentId } = req.body; // Comment ID from the request body
-
+    const userId = req?.user?.id;
+    if (!userId) {
+      return res.status(400).json({ message: "Unathorized" });
+    }
     // Step 1: Check if the post exists
     const post = await Post.findById(postId);
     if (!post) {

@@ -235,15 +235,20 @@ const SinglePost: FC<PostProps> = ({
     error,
     isLoading,
   } = useQuery<CommentType[], Error>({
-    queryKey: [`comments/${post._id}`],
+    queryKey: ["comments", post._id],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
   useEffect(() => {
     if (openCommentBox && commentRef.current) {
-      commentRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (comments && comments.length > 2) {
+        commentRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     }
   }, [openCommentBox]);
-  const commentLoading = true;
+
   return (
     <Card className="rounded-md !border-none mb-4 group ">
       {/* User Info and Action Button */}

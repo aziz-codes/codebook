@@ -70,10 +70,14 @@ export const putRequest = async (
   endpoint: string,
   data?: any
 ): Promise<any> => {
+  const accessToken = await getSessionToken();
   const res = await fetch(`${baseUrl}${endpoint}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      ...(accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      }),
     },
     credentials: "include",
     body: JSON.stringify(data),
@@ -85,10 +89,14 @@ export const deleteRequest = async (
   endpoint: string,
   data?: any
 ): Promise<any> => {
+  const accessToken = await getSessionToken();
   return await fetch(`${baseUrl}${endpoint}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      ...(accessToken && {
+        Authorization: `Bearer ${accessToken}`,
+      }),
     },
     credentials: "include",
     body: JSON.stringify(data),

@@ -54,6 +54,7 @@ export const getPosts = async (req, res) => {
         },
       },
 
+      // Attach user details
       {
         $lookup: {
           from: "users",
@@ -64,6 +65,7 @@ export const getPosts = async (req, res) => {
       },
       { $unwind: "$user" },
 
+      // Attach comments
       {
         $lookup: {
           from: "comments",
@@ -73,6 +75,7 @@ export const getPosts = async (req, res) => {
         },
       },
 
+      // Attach raw likes (with just user IDs)
       {
         $lookup: {
           from: "likes",
@@ -82,6 +85,7 @@ export const getPosts = async (req, res) => {
         },
       },
 
+      // Attach bookmarks
       {
         $lookup: {
           from: "bookmarks",
@@ -91,51 +95,35 @@ export const getPosts = async (req, res) => {
         },
       },
 
-      {
-        $unwind: { path: "$likesRaw", preserveNullAndEmptyArrays: true },
-      },
+      // Lookup full user data of liked users
       {
         $lookup: {
           from: "users",
-          localField: "likesRaw.user",
-          foreignField: "_id",
-          as: "likesRaw.userDetails",
-        },
-      },
-      {
-        $unwind: {
-          path: "$likesRaw.userDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-
-      {
-        $group: {
-          _id: "$_id",
-          doc: { $first: "$$ROOT" },
-          likes: {
-            $push: {
-              $cond: [
-                { $not: [{ $in: ["$likesRaw.user", filteredBlockedUsers] }] },
-                {
-                  _id: "$likesRaw.userDetails._id",
-                  username: "$likesRaw.userDetails.username",
-                  avatar: "$likesRaw.userDetails.avatar",
+          let: { likeUsers: "$likesRaw.user" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$_id", "$$likeUsers"] },
+                    { $not: [{ $in: ["$_id", filteredBlockedUsers] }] },
+                  ],
                 },
-                "$$REMOVE",
-              ],
+              },
             },
-          },
+            {
+              $project: {
+                _id: 1,
+                username: 1,
+                avatar: 1,
+              },
+            },
+          ],
+          as: "likes",
         },
       },
 
-      {
-        $addFields: {
-          "doc.likes": "$likes",
-        },
-      },
-      { $replaceRoot: { newRoot: "$doc" } },
-
+      // Add computed fields
       {
         $addFields: {
           commentCount: {
@@ -180,10 +168,8 @@ export const getPosts = async (req, res) => {
           },
         },
       },
-      {
-        $sort: { createdAt: -1 },
-      },
 
+      // Final cleanup
       {
         $project: {
           bookmarks: 0,

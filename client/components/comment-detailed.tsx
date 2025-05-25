@@ -46,21 +46,43 @@ const CommentDetailed: React.FC<CommentProps> = ({
     setLiked(comment.likes.includes(session?.user.id as string));
   }, [session?.user.id, comment.likes]);
 
-  const { mutate: deleteComment, isPending } = useCustomMutation({
-    // mutationFn: (commentId: string) => deleteReq(commentId),
-    mutationFn: async (commentId) =>
-      deleteRequest(`/post/comment/${comment.post}`, { commentid: commentId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [`comments/${comment.post}`],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [`posts`],
-      });
+  const { mutate: deleteComment, isPending } = useMutation({
+    mutationFn: async (commentId: string) =>
+      await deleteRequest(`/post/comment/${comment.post}`, {
+        commentid: commentId,
+      }),
+
+    onMutate: async (commentId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["comments", comment.post] });
+
+      const previousComments = queryClient.getQueryData<CommentType[]>([
+        "comments",
+        comment.post,
+      ]);
+
+      queryClient.setQueryData<CommentType[]>(
+        ["comments", comment.post],
+        (old = []) => old.filter((c) => c._id !== commentId)
+      );
+
+      return { previousComments };
     },
-    onError: (err: any) => {
+
+    onError: (err: any, _commentId: string, context: any) => {
       console.error("Failed to delete comment", err);
-      alert("errro deletign comment");
+      alert("Error deleting comment");
+
+      if (context?.previousComments) {
+        queryClient.setQueryData<CommentType[]>(
+          ["comments", comment.post],
+          context.previousComments
+        );
+      }
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comments", comment.post] });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -79,7 +101,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
     },
     onSettled: () => {
       // Always refetch the data after mutation
-      queryClient.invalidateQueries({ queryKey: [`comments/${comment.post}`] });
+      queryClient.invalidateQueries({ queryKey: ["comments", comment.post] });
     },
   });
 
@@ -130,8 +152,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
                 <ReactTimeago
                   date={comment.createdAt}
                   formatter={customFormatter}
-                />{" "}
-                ago
+                />
               </div>
             </div>
             <DropdownMenu open={isOpen} onOpenChange={toggleDropdown}>
