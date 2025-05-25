@@ -13,16 +13,8 @@ type API = {
 
 const Peoples = () => {
   const { data: session, status } = useSession();
-
-  // Show a loading state while session data is being loaded
-  if (status === "loading") return <h3>Loading...</h3>;
-
-  // Handle unauthenticated users
-  if (!session?.user) return <h3>You need to log in to view this page.</h3>;
-
-  // Fetch data using React Query
   const { isLoading, data, isError } = useQuery<API, Error>({
-    queryKey: [`${session.user.username}-follow-list`],
+    queryKey: [`${session?.user?.username}-follow-list`],
     queryFn: async () => {
       if (!session?.user?.id) {
         throw new Error("User ID is missing"); // Ensure query doesn't run without a valid ID
@@ -31,6 +23,13 @@ const Peoples = () => {
     },
     enabled: !!session?.user?.id, // Run query only if session.user.id is defined
   });
+  // Show a loading state while session data is being loaded
+  if (status === "loading") return <h3>Loading...</h3>;
+
+  // Handle unauthenticated users
+  if (!session?.user) return <h3>You need to log in to view this page.</h3>;
+
+  // Fetch data using React Query
 
   // Handle loading state for the query
   if (isLoading) return <h3>Loading users...</h3>;

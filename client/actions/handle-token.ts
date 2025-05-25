@@ -2,7 +2,6 @@
 import { cookies } from "next/headers";
 
 export const setTokens = async (token: any) => {
-  console.log("token received as", token);
   cookies().set("session", token, {
     httpOnly: true, // not accessible to client-side JS
     secure: process.env.NODE_ENV === "production", // only send over HTTPS in production

@@ -1,7 +1,7 @@
 "use client";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
- import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { patchRequest } from "@/services";
 import UsernameInput from "@/components/custom/username-input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,8 +10,8 @@ import ButtonLoader from "@/utils/components/button-loader";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 const NewUser = () => {
-  const{data:session} = useSession();
-   
+  const { data: session } = useSession();
+
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -19,12 +19,10 @@ const NewUser = () => {
     tagline: "",
     bio: "",
   });
-  const {toast} = useToast();
+  const { toast } = useToast();
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
-   
-  
- 
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -34,15 +32,17 @@ const NewUser = () => {
       [name]: value,
     }));
   };
-const handleSubmit = async()=>{
-  if(!session) return;
+  const handleSubmit = async () => {
+    if (!session) return;
     try {
-      
       setLoading(true);
-      const response = await patchRequest(`/user/${session?.user.id}`, formData);
+      const response = await patchRequest(
+        `/user/${session?.user.id}`,
+        formData
+      );
       const data = await response.json();
       if (data.success) {
-         router.push('/onboard?rollout=true')
+        router.push("/onboard?rollout=true");
         setFormData({
           username: "",
           tagline: "",
@@ -54,14 +54,14 @@ const handleSubmit = async()=>{
         setLoading(false);
         toast({
           description: data.message,
-        })
+        });
       }
-    } catch (err:any) {
+    } catch (err: any) {
       console.error("Error creating user:", err);
       setLoading(false);
       toast({
         description: err.message,
-      })
+      });
     }
   };
 
@@ -113,7 +113,7 @@ const handleSubmit = async()=>{
         disabled={!isValid}
         onClick={handleSubmit}
       >
-        {loading ? <ButtonLoader />: "Continue"}
+        {loading ? <ButtonLoader /> : "Continue"}
       </Button>
     </section>
   );
