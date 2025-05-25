@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis, Minimize2 } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -26,7 +26,7 @@ import LikesPopup from "./custom/likes-popup";
 import Image from "next/image";
 import PostModal from "./custom/post-modal";
 import CommentDetailed from "./comment-detailed";
-import IconLoader from "@/utils/components/icon-loader";
+
 import ButtonLoader from "@/utils/components/button-loader";
 
 type PostProps = {
@@ -281,9 +281,11 @@ const SinglePost: FC<PostProps> = ({
           open={isOpen}
           onOpenChange={(open) => setDropdownId(open ? post._id : null)}
         >
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="relative">
             <Ellipsis
-              className="cursor-pointer hover:text-gray-400 "
+              className={`cursor-pointer hover:text-gray-400 ${
+                isOpen && "text-gray-400"
+              }`}
               onClick={() => setOpen(true)}
             />
           </DropdownMenuTrigger>
