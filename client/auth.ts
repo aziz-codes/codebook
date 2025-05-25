@@ -38,10 +38,11 @@ export const config = {
       return session;
     },
     async jwt({ token }) {
-      const { email, name, picture: avatar } = token;
-      if (token.id) {
+      if (token.id && token.isOnboarded === true) {
         return token;
       }
+      const { email, name, picture: avatar } = token;
+
       try {
         const response = await postRequest(`/login`, {
           email,
