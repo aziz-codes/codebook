@@ -1,2 +1,1 @@
-export const baseUrl =
-  "https://codebook-backend-git-main-marcusbadviser-gmailcoms-projects.vercel.app";
+export const baseUrl = "https://codebook-ss7a.vercel.app";
