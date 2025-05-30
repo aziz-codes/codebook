@@ -76,3 +76,4 @@ app.get("/test", (req, res) => {
     .status(200)
     .json({ message: "Codebook api is working now", cookies: req.cookies });
 });
+export default app;
