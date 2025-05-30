@@ -12,8 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import QueryProvider from "@/query-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { getSessionToken } from "@/actions/getSession";
-import { redirect } from "next/navigation";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -36,10 +35,7 @@ export default async function RootLayout({
       }
     });
   }
-  const token = await getSessionToken();
-  if (!token) {
-    redirect("/login");
-  }
+
   return (
     <html lang="en">
       <body
