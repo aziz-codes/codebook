@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.route.js";
 // middlewares
 import { attachBlockedUsers } from "./middlewares/blockMiddleware.js";
-import mongoose from "mongoose";
+
 import cors from "cors";
 import middleware from "./auth.js";
 import { connectToDB } from "./utils/db.js";
@@ -23,7 +23,6 @@ const app = express();
 // ✅ Apply Middleware in Correct Order
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://codebook-frontend-five.vercel.app",
   "https://codebook-ss7a.vercel.app",
   "https://codebook-phi.vercel.app/login",
 ];
