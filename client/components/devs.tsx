@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const DeveloperCard = () => {
   const items = {
     username: "Dev123",
@@ -6,10 +8,12 @@ const DeveloperCard = () => {
   };
   return (
     <div className="bg-white p-6 rounded-lg shadow-md flex items-center space-x-6">
-      <img
+      <Image
         src={items.avatarUrl}
         alt={`${items.username}'s avatar`}
-        className="w-16 h-16 rounded-full border-2 border-gray-300"
+        height={48}
+        width={48}
+        className="rounded-full border-2 border-gray-300"
       />
       <div className="flex-grow">
         <h2 className="text-xl font-semibold text-gray-800">

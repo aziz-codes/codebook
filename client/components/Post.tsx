@@ -239,15 +239,15 @@ const SinglePost: FC<PostProps> = ({
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
   useEffect(() => {
-    if (openCommentBox && commentRef.current) {
-      if (comments && comments.length > 2) {
-        commentRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
+    if (!openCommentBox) return;
+
+    if (commentRef.current && comments && comments?.length > 2) {
+      commentRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
-  }, [openCommentBox]);
+  }, [openCommentBox, comments]);
 
   return (
     <Card className="rounded-md !border-none mb-4 group ">

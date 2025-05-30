@@ -7,7 +7,7 @@ const NotFound = () => {
     <div className="w-full flex flex-col items-center justify-center py-16">
       <h1 className="text-9xl font-extrabold text-gray-200 mb-4">404</h1>
       <p className="text-lg text-gray-600 mb-8">
-        Oops! We couldn't find what you're looking for.
+        Oops! We couldn&apos;t find what you&apos;re looking for.
       </p>
       <Button
         asChild

@@ -37,17 +37,25 @@ const UserProfileTabs = ({ user }: { user: UserProfileType }) => {
 
   useEffect(() => {
     if (session?.user.id === user.user._id) {
-      setTabs([
-        ...tabs,
-        {
-          label: "Bookmarks",
-          component: <div>Bookmarks</div>,
-          icon: Bookmark,
-          isActive: false,
-        },
-      ]);
+      setTabs((prevTabs) => {
+        // avoid adding Bookmarks again if already present
+        const alreadyHasBookmarks = prevTabs.some(
+          (tab) => tab.label === "Bookmarks"
+        );
+        if (alreadyHasBookmarks) return prevTabs;
+
+        return [
+          ...prevTabs,
+          {
+            label: "Bookmarks",
+            component: <div>Bookmarks</div>,
+            icon: Bookmark,
+            isActive: false,
+          },
+        ];
+      });
     }
-  }, [user]);
+  }, [session?.user.id, user.user._id]);
 
   const handleClickItem = (index: number) => {
     const newTabs = tabs.map((tab, i) => ({

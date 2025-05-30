@@ -24,7 +24,7 @@ interface CommentProps {
   comment: CommentType;
   isOpen: boolean;
   toggleDropdown: () => void;
-  detailed: boolean;
+  detailed?: boolean;
   post: Post;
 }
 

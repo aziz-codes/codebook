@@ -1,6 +1,7 @@
 import React from "react";
 import { DollarSign, User, Calendar, Clock } from "lucide-react";
 import SingleAvatar from "../single-avatar";
+import Image from "next/image";
 const BountyCard: React.FC = () => {
   return (
     <div className="max-w-md   bg-bgCard text-white rounded-lg shadow-lg overflow-hidden p-6">
@@ -51,15 +52,19 @@ const BountyCard: React.FC = () => {
       <div className="flex items-center mb-4">
         <span className="text-sm font-medium text-gray-400">Participants:</span>
         <div className="flex ml-2">
-          <img
+          <Image
             src="https://reqres.in/img/faces/9-image.jpg"
             alt="participant"
-            className="w-8 h-8 rounded-full border-2 border-gray-900"
+            className=" rounded-full border-2 border-gray-900"
+            height={32}
+            width={32}
           />
-          <img
+          <Image
             src="https://reqres.in/img/faces/10-image.jpg"
             alt="participant"
             className="w-8 h-8 rounded-full border-2 border-gray-900 -ml-2"
+            height={32}
+            width={32}
           />
           <div className="w-8 h-8 rounded-full border-2 border-gray-900 bg-blue-600 text-white flex items-center justify-center -ml-2">
             +3

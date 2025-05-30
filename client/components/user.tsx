@@ -9,7 +9,7 @@ interface Props {
   hoverEffect?: boolean;
   date?: string;
 }
-const user = ({ hasBorder = true, hoverEffect = true, date = "" }: Props) => {
+const User = ({ hasBorder = true, hoverEffect = true, date = "" }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -46,4 +46,4 @@ const user = ({ hasBorder = true, hoverEffect = true, date = "" }: Props) => {
   );
 };
 
-export default user;
+export default User;

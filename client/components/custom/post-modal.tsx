@@ -114,6 +114,7 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
                   key={index}
                   isOpen={activeDropdownId === comment._id}
                   toggleDropdown={() => toggleDropdown(comment._id)}
+                  post={post}
                 />
               ))}
             </div>

@@ -10,7 +10,7 @@ import { expertise } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 
-const getFollowers = () => {
+const GetFollowers = () => {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
 
@@ -146,4 +146,4 @@ const getFollowers = () => {
   );
 };
 
-export default getFollowers;
+export default GetFollowers;

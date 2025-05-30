@@ -11,11 +11,9 @@ import {
   Mail,
 } from "lucide-react";
 
- 
-
 import { cn } from "@/lib/utils";
 
-const navlinks = () => {
+const Navlinks = () => {
   const pathName = usePathname();
   const links = [
     {
@@ -74,4 +72,4 @@ const navlinks = () => {
   );
 };
 
-export default navlinks;
+export default Navlinks;
