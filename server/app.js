@@ -25,6 +25,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://codebook-frontend-five.vercel.app",
   "https://codebook-ss7a.vercel.app/",
+  "https://codebook-phi.vercel.app/login",
 ];
 // ✅ Apply Middleware in Correct Order
 
