@@ -21,25 +21,33 @@ dotenv.config();
 const app = express();
 
 // ✅ Apply Middleware in Correct Order
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://codebook-ss7a.vercel.app",
-  "https://codebook-phi.vercel.app/login",
-];
-// ✅ Apply Middleware in Correct Order
+// const allowedOrigins = [
+//   "http://localhost:3000",
+//   "https://codebook-ss7a.vercel.app",
+//   "https://codebook-phi.vercel.app/login",
+//   "https://codebook-ss7a.vercel.app",
+// ];
+// // ✅ Apply Middleware in Correct Order
 
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true, // ⚠️ Allows all origins temporarily
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser()); // ✅ Add cookie parser before routes
 
