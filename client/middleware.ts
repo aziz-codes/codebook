@@ -1,43 +1,32 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, NextRequest } from "next/server";
-import { getSessionToken } from "./actions/getSession";
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const token = await getToken({
-    req: req,
+    req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const session = await getSessionToken();
-
   const isPublicPath = path === "/login";
-  const isOnboardingPage = path === "/onboarding"; // Check if the user is already on the onboarding page
+  const isOnboardingPage = path === "/onboarding";
 
-  // If no token, redirect to login (applies to non-public paths)
-  if (!session && !isPublicPath) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
+  // No token at all = user not logged in
+  if (!token && !isPublicPath) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // If token exists but user is trying to access login page, redirect to home
-  if (session && isPublicPath) {
-    console.log("Redirecting logged-in user to home page from login.");
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+  // Logged-in user trying to access /login
+  if (token && isPublicPath) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // If token exists but user isn't onboarded, redirect to onboarding page
-  if (token?.isOnboarded === false && !isOnboardingPage) {
-    console.log("User is not onboarded, redirecting to onboarding page.");
-    return NextResponse.redirect(new URL("/onboarding", req.nextUrl));
+  // User logged in but not onboarded
+  if (token && token.isOnboarded === false && !isOnboardingPage) {
+    return NextResponse.redirect(new URL("/onboarding", req.url));
   }
 
-  // If user is onboarded, allow them to proceed
-  if (token?.isOnboarded === true) {
-    console.log("User is onboarded, proceeding to the dashboard.");
-    return NextResponse.next(); // Allow request to proceed
-  }
-
-  // If no other conditions are met, proceed with the request
+  // Allow everything else
   return NextResponse.next();
 }
 
