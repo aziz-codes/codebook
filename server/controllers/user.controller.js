@@ -38,16 +38,6 @@ export const saveUser = async (req, res) => {
       { expiresIn: "7d" }
     );
     const token = `${refreshToken}${process.env.separator}${accessToken}`;
-    res.setHeader(
-      "Set-Cookie",
-      serialize("session", token, {
-        httpOnly: true,
-        secure: true, // ❗️Always true when using SameSite: 'None'
-        sameSite: "None",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7,
-      })
-    );
 
     res.status(200).json({
       id: user.id,
