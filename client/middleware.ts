@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse, NextRequest } from "next/server";
+import { getSessionToken } from "./actions/getSession";
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -8,16 +9,18 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  const session = await getSessionToken();
+
   const isPublicPath = path === "/login";
   const isOnboardingPage = path === "/onboarding"; // Check if the user is already on the onboarding page
 
   // If no token, redirect to login (applies to non-public paths)
-  if (!token && !isPublicPath) {
+  if (!session && !isPublicPath) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
   // If token exists but user is trying to access login page, redirect to home
-  if (token && isPublicPath) {
+  if (session && isPublicPath) {
     console.log("Redirecting logged-in user to home page from login.");
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
