@@ -38,9 +38,6 @@ export const config = {
       return session;
     },
     async jwt({ token }) {
-      if (token.id && token.isOnboarded === true) {
-        return token;
-      }
       const { email, name, picture: avatar } = token;
 
       try {
