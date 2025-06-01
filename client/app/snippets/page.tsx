@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ButtonLoader from "@/utils/components/button-loader";
+import { getRequest } from "@/services";
 
 const Snippets = () => {
   const router = useRouter();
@@ -18,7 +19,7 @@ const Snippets = () => {
     const getData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8000/snippets");
+        const response = await getRequest("/snippets");
         if (!response.ok) {
           throw new Error("Failed to fetch snippets");
         }
