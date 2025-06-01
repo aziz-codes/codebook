@@ -34,7 +34,7 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
     error,
     isLoading,
   } = useQuery<CommentType[], Error>({
-    queryKey: [`comments/${post._id}`],
+    queryKey: ["comments", post._id],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
   });
   const toggleDropdown = (commentId: string) => {

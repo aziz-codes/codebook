@@ -46,6 +46,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[] | []>([]);
   const [open, setOpen] = useState(false);
 
   const { data: session } = useSession();
@@ -60,21 +61,26 @@ const CreatePost = ({ children }: CreatePostProps) => {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setImage(event.target.files[0]);
-      const fileArray = Array.from(event.target.files);
-      const newImages: string[] = [];
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const fileArray = Array.from(files);
+
+      // ✅ store the files for upload
+      setSelectedFiles((prev) => [...prev, ...fileArray]);
+
+      // ✅ generate previews
+      const newPreviews: string[] = [];
       fileArray.forEach((file) => {
-        const fileReader = new FileReader();
-        fileReader.onload = (e) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
           if (e.target?.result) {
-            newImages.push(e.target.result as string);
-            if (newImages.length === fileArray.length) {
-              setImages((prevImages) => [...prevImages, ...newImages]);
+            newPreviews.push(e.target.result as string);
+            if (newPreviews.length === fileArray.length) {
+              setImages((prev) => [...prev, ...newPreviews]);
             }
           }
         };
-        fileReader.readAsDataURL(file);
+        reader.readAsDataURL(file);
       });
     }
   };
@@ -88,11 +94,11 @@ const CreatePost = ({ children }: CreatePostProps) => {
   };
 
   // Define the function for creating a post
-  const createPost = async (imageUrl: string) => {
+  const createPost = async (imageUrls: string[]) => {
     const payload = {
       title: content,
       user: session?.user.id,
-      image: imageUrl || null,
+      images: imageUrls || [],
     };
 
     const localApiResponse = await postRequest("/post", payload);
@@ -118,14 +124,15 @@ const CreatePost = ({ children }: CreatePostProps) => {
       setLoading(false);
     },
   });
-
   const handlePost = async () => {
     setLoading(true);
-    let imageUrl = "";
+    let imageUrls: string[] = [];
 
-    if (image) {
+    if (selectedFiles.length > 0) {
       const formData = new FormData();
-      formData.append("image", image as Blob);
+      for (const file of selectedFiles) {
+        formData.append("images", file);
+      }
 
       const response = await fetch("http://localhost:5000/upload", {
         method: "POST",
@@ -133,17 +140,19 @@ const CreatePost = ({ children }: CreatePostProps) => {
       });
 
       if (!response.ok) {
-        console.error("Image upload to Cloudinary failed", response.statusText);
+        console.error("Image upload failed:", response.statusText);
         setLoading(false);
         return;
       }
 
       const data = await response.json();
-      imageUrl = data.path;
+      imageUrls = data.files.map((file: { path: string }) => file.path);
     }
 
-    // Use mutate to create the post
-    mutate(imageUrl);
+    // 🔁 Adjust your mutate function to accept multiple image URLs
+    mutate(imageUrls);
+
+    setLoading(false);
   };
 
   const handleEmojiSelect = (item: any) => {

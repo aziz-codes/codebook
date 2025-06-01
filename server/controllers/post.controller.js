@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export const post = async (req, res) => {
   try {
-    const { user, title, image } = req.body;
+    const { user, title, images } = req.body;
 
     if (!user || !title) {
       return res.status(400).json({ message: "User and title are required" });
@@ -14,7 +14,7 @@ export const post = async (req, res) => {
     const newPost = new Post({
       user: new mongoose.Types.ObjectId(user),
       title,
-      image,
+      images,
     });
 
     const savedPost = await newPost.save();
