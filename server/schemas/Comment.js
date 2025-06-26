@@ -5,10 +5,16 @@ const commentSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     post: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true },
     text: { type: String, required: true },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],  
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+    },
   },
   { timestamps: true }
 );
 
-const Comment = mongoose.models.Comment || mongoose.model("Comment", commentSchema);
+const Comment =
+  mongoose.models.Comment || mongoose.model("Comment", commentSchema);
 export default Comment;

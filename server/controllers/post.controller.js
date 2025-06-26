@@ -33,7 +33,11 @@ export const post = async (req, res) => {
 
 //get all post controller.
 export const getPosts = async (req, res) => {
+  console.log("sending posts");
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
@@ -177,9 +181,16 @@ export const getPosts = async (req, res) => {
           likesRaw: 0,
         },
       },
+      { $skip: skip },
+      { $limit: limit },
     ]);
 
-    res.status(200).json({ count: posts.length, result: posts });
+    res.status(200).json({
+      count: posts.length,
+      result: posts,
+      page,
+      hasMore: posts.length === limit,
+    });
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Could not fetch posts." });

@@ -8,17 +8,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, MoreHorizontal } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Flag,
+  Heart,
+  Loader,
+  MoreHorizontal,
+} from "lucide-react";
 import { CommentType, Post } from "@/types/post";
 import { useRouter } from "next/navigation";
 import ReactTimeago from "react-timeago";
 import { customFormatter } from "@/utils/utils";
-import { deleteRequest, postRequest } from "@/services";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteRequest, getRequest, postRequest } from "@/services";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import useCustomMutation from "@/hooks/use-custom-mutation";
 import { ReportDialog } from "@/modules/reports/report-dialog";
 import { commentReportReasons } from "@/utils/report-reasons";
+import CommentText from "./comment-text";
+import { Separator } from "@/components/ui/separator";
+import CommentReplies from "./comment/comment-replies";
 
 interface CommentProps {
   comment: CommentType;
@@ -26,7 +36,16 @@ interface CommentProps {
   toggleDropdown: () => void;
   detailed?: boolean;
   post: Post;
+  getUsername: (username: string, commentId: string) => void;
 }
+
+const getCommentReplies = async (commentId: string) => {
+  const data = await getRequest(`/post/comment/replies/${commentId}`);
+  if (!data || !data.success) {
+    throw new Error("Failed to fetch replies");
+  }
+  return data.replies;
+};
 
 const CommentDetailed: React.FC<CommentProps> = ({
   comment,
@@ -34,12 +53,14 @@ const CommentDetailed: React.FC<CommentProps> = ({
   toggleDropdown,
   detailed,
   post,
+  getUsername,
 }) => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const [liked, setLiked] = useState(false);
   const [reportModal, setReportModal] = useState(false);
-
+  const [showReplies, setShowReplies] = useState(false);
+  const [repliesFetched, setRepliesFetched] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,24 +75,20 @@ const CommentDetailed: React.FC<CommentProps> = ({
 
     onMutate: async (commentId: string) => {
       await queryClient.cancelQueries({ queryKey: ["comments", comment.post] });
-
       const previousComments = queryClient.getQueryData<CommentType[]>([
         "comments",
         comment.post,
       ]);
-
       queryClient.setQueryData<CommentType[]>(
         ["comments", comment.post],
         (old = []) => old.filter((c) => c._id !== commentId)
       );
-
       return { previousComments };
     },
 
     onError: (err: any, _commentId: string, context: any) => {
       console.error("Failed to delete comment", err);
       alert("Error deleting comment");
-
       if (context?.previousComments) {
         queryClient.setQueryData<CommentType[]>(
           ["comments", comment.post],
@@ -86,6 +103,17 @@ const CommentDetailed: React.FC<CommentProps> = ({
     },
   });
 
+  //replies cacehed
+  const {
+    data: replies = [],
+    isLoading: repliesLoading,
+    refetch: fetchReplies,
+  } = useQuery({
+    queryKey: ["replies", comment._id],
+    queryFn: () => getCommentReplies(comment._id),
+    enabled: false,
+  });
+
   const handleDeleteComment = async (commentId: string) => {
     deleteComment(commentId);
   };
@@ -95,24 +123,76 @@ const CommentDetailed: React.FC<CommentProps> = ({
       postRequest(`/post/comment/react/${commentId}`, {
         userid: session?.user.id,
       }),
+    onMutate: async (commentId: string) => {
+      // Cancel any outgoing refetches so they don't overwrite optimistic update
+      await queryClient.cancelQueries({ queryKey: ["comments", comment.post] });
 
-    onError: (err, variables, context) => {
-      console.log("something went wrong");
+      // Snapshot current cache
+      const previousComments = queryClient.getQueryData<CommentType[]>([
+        "comments",
+        comment.post,
+      ]);
+
+      // Optimistically update the cache
+      queryClient.setQueryData<CommentType[]>(
+        ["comments", comment.post],
+        (oldComments) => {
+          if (!oldComments) return [];
+
+          return oldComments.map((c) => {
+            if (c._id === comment._id) {
+              const alreadyLiked = c.likes.includes(session?.user.id || "");
+              const newLikes = alreadyLiked
+                ? c.likes.filter((id) => id !== session?.user.id)
+                : [...c.likes, session?.user.id!];
+
+              return {
+                ...c,
+                likes: newLikes, // this is now string[]
+              };
+            }
+            return c;
+          });
+        }
+      );
+
+      return { previousComments };
     },
+
+    onError: (err, _variables, context) => {
+      console.error("Something went wrong");
+      // Revert to previous state
+      if (context?.previousComments) {
+        queryClient.setQueryData(
+          ["comments", comment.post],
+          context.previousComments
+        );
+      }
+    },
+
     onSettled: () => {
-      // Always refetch the data after mutation
       queryClient.invalidateQueries({ queryKey: ["comments", comment.post] });
     },
   });
 
   const handleLikeComment = () => {
-    if (liking) return;
     setLiked(!liked);
+    if (liking) return;
     likeComment(comment._id);
   };
-  const handleReply = (username: string) => {
-    console.log(username);
+
+  const handleReply = (username: string, commentId: string) => {
+    getUsername("@" + username, commentId);
   };
+
+  const handleFetchCommentReplies = async () => {
+    if (!showReplies && !repliesFetched) {
+      await fetchReplies();
+      setRepliesFetched(true);
+    }
+    setShowReplies(!showReplies);
+  };
+
   return (
     <>
       {reportModal && (
@@ -124,93 +204,138 @@ const CommentDetailed: React.FC<CommentProps> = ({
           post={post}
         />
       )}
-      <div className="flex space-x-2 py-2 text-white rounded-lg shadow-sm group ">
-        <Avatar
-          className="w-8 h-8 cursor-pointer"
-          onClick={() => router.push(`/${comment.userDetails.username}`)}
-        >
-          <AvatarImage
-            src={comment.userDetails.avatar}
-            alt={comment.userDetails.username}
-          />
-          <AvatarFallback>{comment.userDetails.username[0]}</AvatarFallback>
-        </Avatar>
-        <div
-          className={`flex-1 ${
-            detailed && "bg-bgHover px-3 py-0.5 rounded-md"
-          }`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <p
-                className="font-semibold text-slate-300 text-sm cursor-pointer"
-                onClick={() => router.push(`/${comment.userDetails.username}`)}
-              >
-                {comment.userDetails.username}
-              </p>
-              <div className="text-xs text-gray-400">
-                <ReactTimeago
-                  date={comment.createdAt}
-                  formatter={customFormatter}
-                />
-              </div>
-            </div>
-            <DropdownMenu open={isOpen} onOpenChange={toggleDropdown}>
-              <DropdownMenuTrigger asChild>
-                <MoreHorizontal className="h-4 w-4 text-gray-500 cursor-pointer hover:text-white " />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {comment.userDetails._id !== session?.user.id && (
-                  <DropdownMenuItem
-                    className="cursor-pointer hover:bg-bgHover rounded-md"
-                    onClick={() => setReportModal(true)}
-                  >
-                    Report
-                  </DropdownMenuItem>
-                )}
-                {comment.userDetails._id === session?.user.id && (
-                  <DropdownMenuItem
-                    className="cursor-pointer hover:bg-bgHover rounded-md text-red-500"
-                    onClick={() => handleDeleteComment(comment._id)}
-                  >
-                    {isPending ? "Loading..." : "Delete"}
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <p className="text-sm first-letter:uppercase mt-0.5">
-            {comment.text}
-          </p>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="default"
-              size="icon"
-              className="p-0 bg-transparent hover:bg-transparent w-auto no-underline ring-0 border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
-            >
-              <Heart
-                className={`h-4 w-4 ${
-                  liked
-                    ? "fill-red-500 stroke-red-500"
-                    : "fill-none stroke-white"
-                }`}
-                onClick={handleLikeComment}
-              />
-              {comment.likes.length > 0 && (
-                <span className="text-xs text-gray-400 ml-1 no-underline">
-                  {comment.likes.length}
-                </span>
-              )}
-            </Button>
 
-            <Button
-              variant="link"
-              size="sm"
-              className="flex items-center space-x-1 text-gray-500 p-0 !no-underline hover:text-white"
-              onClick={() => handleReply(comment.userDetails.username)}
-            >
-              <span className="text-xs">Reply</span>
-            </Button>
+      <div className="space-y-2 py-3">
+        {/* <Separator /> */}
+
+        {/* Comment block */}
+        <div className="flex items-start space-x-3">
+          <Avatar
+            className="h-8 w-8"
+            onClick={() => router.push(`/${comment.userDetails.username}`)}
+          >
+            <AvatarImage
+              src={comment.userDetails.avatar || "/placeholder.svg"}
+              alt={comment.userDetails.username}
+            />
+            <AvatarFallback>
+              {comment.userDetails.username.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-2 mb-1 justify-between">
+              <div className="flex items-center gap-4">
+                <p
+                  className="font-semibold text-sm cursor-pointer"
+                  onClick={() =>
+                    router.push(`/${comment.userDetails.username}`)
+                  }
+                >
+                  {comment.userDetails.username}
+                </p>
+                <p className="text-xs text-gray-400">
+                  <ReactTimeago
+                    date={comment.createdAt}
+                    formatter={customFormatter}
+                  />
+                </p>
+              </div>
+              <DropdownMenu open={isOpen} onOpenChange={toggleDropdown}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-5 w-5 p-0">
+                    <MoreHorizontal className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {comment.userDetails._id !== session?.user.id && (
+                    <DropdownMenuItem onClick={() => setReportModal(true)}>
+                      Report
+                    </DropdownMenuItem>
+                  )}
+                  {comment.userDetails._id === session?.user.id && (
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteComment(comment._id)}
+                      className="text-red-500"
+                    >
+                      {isPending ? "Deleting..." : "Delete"}
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem
+                    onClick={() => navigator.clipboard.writeText(comment.text)}
+                  >
+                    Copy
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            <CommentText text={comment.text} />
+
+            <div className="flex items-center space-x-4 mt-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLikeComment}
+                className="p-0 h-auto text-xs"
+              >
+                <Heart
+                  className={`h-3 w-3 mr-1 ${
+                    liked ? "fill-red-500 text-red-500" : "text-white"
+                  }`}
+                />
+                {comment.likes.length > 0 && comment.likes.length}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-0 h-auto text-xs"
+                onClick={() =>
+                  handleReply(comment.userDetails.username, comment._id)
+                }
+              >
+                Reply
+              </Button>
+
+              {comment.replies > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleFetchCommentReplies}
+                  className="p-0 h-auto text-xs text-muted-foreground"
+                >
+                  {showReplies ? (
+                    <>
+                      <ChevronUp className="h-3 w-3 mr-1" />
+                      Hide replies
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3 w-3 mr-1" />
+                      View replies ({comment.replies})
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+            {repliesLoading && (
+              <div className="flex items-center justify-center mt-2">
+                <Loader className="h-5 w-5 animate-spin" />
+              </div>
+            )}
+            {/* Replies Section */}
+            {showReplies && (
+              <div className="ml-11 space-y-2 border-l-2 border-muted pl-4 mt-2">
+                {replies.reverse().map((reply: any) => (
+                  <CommentReplies
+                    key={reply._id}
+                    comment={reply}
+                    parentComment={comment._id}
+                    post={post}
+                    getUsername={getUsername}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -5,11 +5,11 @@ import mongoose from "mongoose";
 export const saveComment = async (req, res) => {
   try {
     const userId = req.user?.id;
-    const { user, text } = req.body;
+    const { text, parentId } = req.body;
     const { postid: post } = req.params;
 
     // Validate required fields
-    if (!user || !post || !text) {
+    if (!userId || !post || !text) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -21,14 +21,19 @@ export const saveComment = async (req, res) => {
       return res.status(400).json({ message: "Invalid user or post ID." });
     }
 
-    // Create a new comment
+    // Optional: validate parentId if provided
+    if (parentId && !mongoose.Types.ObjectId.isValid(parentId)) {
+      return res.status(400).json({ message: "Invalid parent comment ID." });
+    }
+
+    // Create a new comment (parentId will be null for top-level comments)
     const newComment = new Comment({
       user: userId,
       post,
       text,
+      parentId: parentId || null,
     });
 
-    // Save the comment to the database
     await newComment.save();
 
     return res.status(201).json({
@@ -53,6 +58,7 @@ export const getComments = async (req, res) => {
         $match: {
           post: new mongoose.Types.ObjectId(postId),
           user: { $nin: blockedUsers },
+          parentId: null, // 💡 only fetch top-level comments
         },
       },
       {
@@ -65,6 +71,34 @@ export const getComments = async (req, res) => {
       },
       { $unwind: "$userDetails" },
       {
+        $lookup: {
+          from: "comments",
+          let: { commentId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$parentId", "$$commentId"] },
+              },
+            },
+            {
+              $count: "replyCount",
+            },
+          ],
+          as: "repliesMeta",
+        },
+      },
+      {
+        $addFields: {
+          replies: {
+            $cond: [
+              { $gt: [{ $size: "$repliesMeta" }, 0] },
+              { $arrayElemAt: ["$repliesMeta.replyCount", 0] },
+              0,
+            ],
+          },
+        },
+      },
+      {
         $project: {
           _id: 1,
           post: 1,
@@ -74,6 +108,7 @@ export const getComments = async (req, res) => {
           "userDetails.username": 1,
           "userDetails.avatar": 1,
           "userDetails._id": 1,
+          replies: 1, // ✅ NEW KEY
         },
       },
       { $sort: { createdAt: -1 } },
@@ -155,5 +190,37 @@ export const handleCommentReact = async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while processing the request." });
+  }
+};
+
+// fetch comment replies
+export const getCommentReplies = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    const replies = await Comment.find({ parentId: commentId })
+      .sort({ createdAt: 1 }) // oldest first
+      .populate("user", "username avatar");
+
+    const formatted = replies.map((reply) => ({
+      _id: reply._id,
+      text: reply.text,
+      createdAt: reply.createdAt,
+      likes: reply.likes,
+      post: reply.post,
+      parentId: reply.parentId,
+      userDetails: {
+        _id: reply.user._id,
+        username: reply.user.username,
+        avatar: reply.user.avatar,
+      },
+    }));
+
+    res.status(200).json({ success: true, replies: formatted });
+  } catch (error) {
+    console.error("Error fetching replies:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch replies." });
   }
 };

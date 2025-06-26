@@ -2,55 +2,75 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar,AvatarFallback,AvatarImage } from "../ui/avatar";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
-type User={
-    username: string;
-    avatar: string;
-    id: string;
+import IconLoader from "@/utils/components/icon-loader";
+import ButtonLoader from "@/utils/components/button-loader";
+
+type User = {
+  username: string;
+  avatar: string;
+  id: string;
+};
+
+interface LikesResponse {
+  success: boolean;
+  likes: User[];
 }
-interface LikesResponse{
-    success: boolean;
-    likes: User[]
-}
-const LikesPopup = ({ children,post }: { children: React.ReactNode,post:string }) => {
-const router = useRouter();
-   const {isLoading,data,error} = useQuery<LikesResponse,Error>({
+
+const LikesPopup = ({
+  post,
+  open,
+  setOpen,
+}: {
+  post: string;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const router = useRouter();
+
+  const { isLoading, data, error } = useQuery<LikesResponse, Error>({
     queryKey: [`likes/${post}`],
     queryFn: async () => await getRequest(`/post/likes/${post}`),
-   })
-
+    enabled: open, // Only fetch when modal is open
+  });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44 h-auto max-h-56 overflow-y-auto shadow-md !border-bgHover">
-        <DropdownMenuGroup>
-         {isLoading && "Loading"}
-         {error && "Error"}
-         {!data && "No data"}
-         {data?.likes?.map((like)=>(
-            <DropdownMenuItem key={like.id} className="hover:!bg-bgHover rounded-md cursor-pointer" onClick={()=>router.push(`/${like.username}`)}>
-              <div className="flex items-center gap-2">
-                 <Avatar className="h-6 w-6">
-                    <AvatarFallback>{like.username[0]}</AvatarFallback>
-                    <AvatarImage src={like.avatar} />
- 
-                 </Avatar>
-                <span>{like.username}</span>
-              </div>
-            </DropdownMenuItem>
-         ))}          
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="max-w-sm max-h-[70vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-base">Likes</DialogTitle>
+        </DialogHeader>
+
+        {isLoading && (
+          <div className="flex justify-center my-1">
+            <ButtonLoader />
+          </div>
+        )}
+        {error && <p>Error loading likes.</p>}
+        {!data?.likes?.length && !isLoading && <p>No likes yet.</p>}
+
+        {data?.likes?.map((like) => (
+          <div
+            key={like.id}
+            className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-muted"
+            onClick={() => router.push(`/${like.username}`)}
+          >
+            <Avatar className="h-6 w-6">
+              <AvatarFallback>{like.username[0]}</AvatarFallback>
+              <AvatarImage src={like.avatar} />
+            </Avatar>
+            <span className="text-sm">{like.username}</span>
+          </div>
+        ))}
+      </DialogContent>
+    </Dialog>
   );
 };
 

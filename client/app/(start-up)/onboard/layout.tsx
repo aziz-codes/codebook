@@ -8,11 +8,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useSession } from "next-auth/react";
+import MainLoader from "@/utils/components/main-loader";
 
 const NewUserLayout = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
   if (status === "loading") {
-    return <h4>Loading session pelase wait</h4>;
+    return <MainLoader />;
   }
 
   if (status === "authenticated" && session.user.isOnboarded) {

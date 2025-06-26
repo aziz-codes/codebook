@@ -74,6 +74,9 @@ app.post("/test", middleware, (req, res) => {
 
   res.json({ user: req.user });
 });
+app.listen(8000, () => {
+  console.log("server is running on port 8000");
+});
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to Codebook API" });

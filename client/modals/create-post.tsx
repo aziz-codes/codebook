@@ -42,10 +42,10 @@ type CreatePostProps = {
 const CreatePost = ({ children }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const [loading, setLoading] = useState(false);
+
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
-  const [image, setImage] = useState<File | null>(null);
+
   const [selectedFiles, setSelectedFiles] = useState<File[] | []>([]);
   const [open, setOpen] = useState(false);
 
@@ -108,7 +108,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
     }
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
@@ -116,16 +116,15 @@ const CreatePost = ({ children }: CreatePostProps) => {
         description: "Post created successfully.",
       });
       cancelRef.current && cancelRef.current.click();
-      setLoading(false);
+
       setContent("");
+      setSelectedFiles([]);
     },
     onError: (error) => {
       console.error("An error occurred", error);
-      setLoading(false);
     },
   });
   const handlePost = async () => {
-    setLoading(true);
     let imageUrls: string[] = [];
 
     if (selectedFiles.length > 0) {
@@ -141,7 +140,6 @@ const CreatePost = ({ children }: CreatePostProps) => {
 
       if (!response.ok) {
         console.error("Image upload failed:", response.statusText);
-        setLoading(false);
         return;
       }
 
@@ -151,8 +149,6 @@ const CreatePost = ({ children }: CreatePostProps) => {
 
     // 🔁 Adjust your mutate function to accept multiple image URLs
     mutate(imageUrls);
-
-    setLoading(false);
   };
 
   const handleEmojiSelect = (item: any) => {
@@ -282,7 +278,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
               className="text-neon hover:text-neonHover p-0 !no-underline"
               onClick={handlePost}
             >
-              {loading ? <IconLoader /> : "Post"}
+              {isPending ? <IconLoader /> : "Post"}
             </Button>
           </div>
         </AlertDialogFooter>

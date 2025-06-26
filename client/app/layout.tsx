@@ -55,7 +55,7 @@ export default async function RootLayout({
             >
               <TooltipProvider>
                 <div className="flex min-h-screen flex-row bg-[#121212] w-full">
-                  <div className="2xl:max-w-6xl 2xl:mx-auto w-full flex min-h-screen gap-4">
+                  <div className="2xl:max-w-7xl  2xl:mx-auto w-full flex min-h-screen gap-4">
                     {session && (
                       <div className="relative hidden md:flex md:w-16 lg:w-64">
                         <aside className="fixed h-[100vh] md:w-16 lg:w-56 overflow-y-auto bg-bgCard">

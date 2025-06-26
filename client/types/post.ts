@@ -15,7 +15,7 @@ export type Post = {
   _id: string;
   user: User;
   title: string;
-  image: string;
+  images: string[];
   createdAt: string;
   updatedAt: string;
   isLiked: boolean;
@@ -34,6 +34,8 @@ export type CommentType = {
   text: string;
   likes: string[];
   createdAt: string;
+  parentId: null | string;
+  replies: number;
   userDetails: {
     avatar: string;
     username: string;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DialogHeader } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRequest } from "@/services";
 import CommentDetailed from "../comment-detailed";
 import ModalCommentSkeleton from "@/skeletons/modal-comments-skeleton";
+import ImageCarousel from "../post/image-carousel";
 
 interface Props {
   post: Post;
@@ -29,18 +30,33 @@ interface Props {
 const PostModal: React.FC<Props> = ({ open, post, setter }) => {
   const router = useRouter();
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
+  const [replyTo, setReplyTo] = useState("");
+  const [parentCommentId, setParentCommentId] = useState<string | null>(null);
   const {
     data: comments,
     error,
     isLoading,
+    refetch,
   } = useQuery<CommentType[], Error>({
     queryKey: ["comments", post._id],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
+    enabled: open,
   });
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
+  useEffect(() => {
+    refetch();
+  }, [open]);
 
+  const getUsername = (username: string, commentId: string) => {
+    setReplyTo(""); // reset
+    setParentCommentId(null);
+    setTimeout(() => {
+      setReplyTo(username);
+      setParentCommentId(commentId);
+    }, 0); // set again
+  };
   return (
     <AlertDialog open={open} onOpenChange={setter}>
       <AlertDialogContent className="sm:max-w-[425px] md:max-w-6xl px-0 ">
@@ -56,17 +72,21 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
         <div className="w-full flex gap-0 h-[85vh] ">
           <div className="relative w-full h-full  overflow-hidden rounded-md px-3">
             <Image
-              src={post.image}
+              src={post.images[0]}
               alt="post thumbnail"
               fill
               className="absolute w-full h-full object-cover blur-md -z-10"
             />
-            <Image
-              src={post.image}
-              alt="post thumbnail"
-              fill
-              className="w-full h-auto object-contain rounded-3xl z-10"
-            />
+            {post.images.length === 1 ? (
+              <Image
+                src={post.images[0]}
+                alt="post thumbnail"
+                fill
+                className="w-full h-auto object-contain rounded-3xl z-10"
+              />
+            ) : (
+              <ImageCarousel images={post.images} />
+            )}
           </div>
           {/* right side  */}
           <div className="w-full max-w-md  flex flex-col  gap-3">
@@ -115,12 +135,21 @@ const PostModal: React.FC<Props> = ({ open, post, setter }) => {
                   isOpen={activeDropdownId === comment._id}
                   toggleDropdown={() => toggleDropdown(comment._id)}
                   post={post}
+                  getUsername={getUsername}
                 />
               ))}
             </div>
             <div className=" px-4">
               <div className="flex w-full items-center border-b rounded-md  border px-2">
-                <TextBox post_id={post._id} />
+                <TextBox
+                  post_id={post._id}
+                  parentComment={parentCommentId}
+                  initialValue={replyTo}
+                  resetFields={() => {
+                    setParentCommentId(null);
+                    setReplyTo("");
+                  }}
+                />
               </div>
             </div>
           </div>

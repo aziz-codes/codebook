@@ -23,11 +23,14 @@ import PostDropdown from "./custom/post-dropdown";
 import { customFormatter } from "@/utils/utils";
 
 import LikesPopup from "./custom/likes-popup";
-import Image from "next/image";
+
 import PostModal from "./custom/post-modal";
 import CommentDetailed from "./comment-detailed";
 
 import ButtonLoader from "@/utils/components/button-loader";
+import ImageCarousel from "./post/image-carousel";
+import { Button } from "./ui/button";
+import AutoSizedImage from "./test/auto-sized";
 
 type PostProps = {
   post: Post;
@@ -60,13 +63,15 @@ const SinglePost: FC<PostProps> = ({
   const queryClient = useQueryClient();
 
   const commentRef = useRef<HTMLDivElement | null>(null);
+  const [replyTo, setReplyTo] = useState("");
+  const [parentCommentId, setParentCommentId] = useState<string | null>(null);
 
   const [openPostModal, setPostModelOpen] = useState(false);
 
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [openCommentBox, setCommentBox] = useState(isSingleRoute);
-
+  const [showLikes, setShowLikes] = useState(false);
   const toggleDropdown = (commentId: string) => {
     setActiveDropdownId((prevId) => (prevId === commentId ? null : commentId));
   };
@@ -89,21 +94,25 @@ const SinglePost: FC<PostProps> = ({
         queryClient.getQueryData<GetSinglePostResponse>(["posts", postId]); // ✅ Corrected
 
       // Optimistically update the posts list
-      queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
-        if (!old) return { count: 0, result: [] };
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+
         return {
           ...old,
-          result: old.result.map((post) =>
-            post._id === postId
-              ? {
-                  ...post,
-                  isLiked: !post.isLiked,
-                  likeCount: post.isLiked
-                    ? post.likeCount - 1
-                    : post.likeCount + 1,
-                }
-              : post
-          ),
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            result: page.result.map((post: any) =>
+              post._id === postId
+                ? {
+                    ...post,
+                    isLiked: !post.isLiked,
+                    likeCount: post.isLiked
+                      ? post.likeCount - 1
+                      : post.likeCount + 1,
+                  }
+                : post
+            ),
+          })),
         };
       });
 
@@ -165,18 +174,22 @@ const SinglePost: FC<PostProps> = ({
         queryClient.getQueryData<GetSinglePostResponse>(["posts", postId]); // ✅ Corrected
 
       // Optimistically update the posts list
-      queryClient.setQueryData<GetPostsResponse>(["posts"], (old) => {
-        if (!old) return { count: 0, result: [] };
+      queryClient.setQueryData(["posts"], (old: any) => {
+        if (!old) return old;
+
         return {
           ...old,
-          result: old.result.map((post) =>
-            post._id === postId
-              ? {
-                  ...post,
-                  isBookmarked: !post.isBookmarked,
-                }
-              : post
-          ),
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            result: page.result.map((post: any) =>
+              post._id === postId
+                ? {
+                    ...post,
+                    isBookmarked: !post.isBookmarked,
+                  }
+                : post
+            ),
+          })),
         };
       });
 
@@ -229,14 +242,16 @@ const SinglePost: FC<PostProps> = ({
   }, [open]);
 
   // fetching comments for each post.
-
   const {
     data: comments,
     error,
     isLoading,
+    refetch,
+    isFetching,
   } = useQuery<CommentType[], Error>({
     queryKey: ["comments", post._id],
     queryFn: async () => await getRequest(`/post/comment/${post._id}`),
+    enabled: openCommentBox,
   });
   useEffect(() => {
     if (!openCommentBox) return;
@@ -249,97 +264,136 @@ const SinglePost: FC<PostProps> = ({
     }
   }, [openCommentBox, comments]);
 
-  return (
-    <Card className="rounded-md !border-none mb-4 group ">
-      {/* User Info and Action Button */}
-      <div className="flex justify-between items-center px-4 py-4">
-        <div className="flex items-center gap-1.5 select-none">
-          <Avatar
-            className="cursor-pointer h-8 w-8"
-            onClick={() => router.push(`${post.user.username}`)}
-          >
-            <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
-            <AvatarImage
-              src={post.user.avatar}
-              className="h-full w-full object-cover"
-            />
-          </Avatar>
-          <div className="flex flex-col -space-y-0.5">
-            <p
-              className="text-sm font-semibold cursor-pointer text-white"
-              onClick={() => router.push(`/${post.user.username}`)}
-            >
-              {post.user.username}
-            </p>
+  const handleToggleComments = async () => {
+    setCommentBox((prev) => !prev);
 
-            <div className="text-[10px] text-gray-400">
-              <TimeAgo date={post.createdAt} formatter={customFormatter} />
+    // If opening for the first time and comments not loaded yet
+    if (!openCommentBox && !comments) {
+      await refetch();
+    }
+  };
+
+  const getUsername = (username: string, commentId: string) => {
+    setReplyTo(""); // reset
+    setParentCommentId(null);
+    setTimeout(() => {
+      setReplyTo(username);
+      setParentCommentId(commentId);
+    }, 0); // set again
+  };
+  return (
+    <>
+      {showLikes && (
+        <LikesPopup open={showLikes} setOpen={setShowLikes} post={post._id} />
+      )}
+      <Card className="rounded-md !border-none mb-4 group ">
+        {/* User Info and Action Button */}
+        <div className="flex justify-between items-center px-4 py-4">
+          <div className="flex items-center gap-1.5 select-none">
+            <Avatar
+              className="cursor-pointer h-8 w-8"
+              onClick={() => router.push(`${post.user.username}`)}
+            >
+              <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
+              <AvatarImage
+                src={post.user.avatar}
+                className="h-full w-full object-cover"
+              />
+            </Avatar>
+            <div className="flex flex-col -space-y-0.5">
+              <p
+                className="text-sm font-semibold cursor-pointer text-white"
+                onClick={() => router.push(`/${post.user.username}`)}
+              >
+                {post.user.username}
+              </p>
+
+              <div className="text-[10px] text-gray-400">
+                <TimeAgo date={post.createdAt} formatter={customFormatter} />
+              </div>
             </div>
           </div>
-        </div>
-        <DropdownMenu
-          open={isOpen}
-          onOpenChange={(open) => setDropdownId(open ? post._id : null)}
-        >
-          <DropdownMenuTrigger asChild className="relative">
-            <Ellipsis
-              className={`cursor-pointer hover:text-gray-400 ${
-                isOpen && "text-gray-400"
-              }`}
-              onClick={() => setOpen(true)}
-            />
-          </DropdownMenuTrigger>
+          <DropdownMenu
+            open={isOpen}
+            onOpenChange={(open) => setDropdownId(open ? post._id : null)}
+          >
+            <DropdownMenuTrigger asChild className="relative">
+              <Ellipsis
+                className={`cursor-pointer hover:text-gray-400 ${
+                  isOpen && "text-gray-400"
+                }`}
+                onClick={() => setOpen(true)}
+              />
+            </DropdownMenuTrigger>
 
-          <PostDropdown
-            isPostOwner={isPostOwner}
-            postId={post._id}
-            post={post}
-            setOpen={() => setDropdownId(null)}
-            handleAddBookmark={handleAddBookmark}
-            isBookmarked={post.isBookmarked}
-          />
-        </DropdownMenu>
-      </div>
-      <CardContent className="p-0">
-        {/* Post Content */}
-        <div className="mb-4 px-4">
-          <p
-            className="text-gray-300 first-letter:capitalize"
-            dangerouslySetInnerHTML={{ __html: post.title }}
-          />
-        </div>
-
-        {/* Post Image */}
-        {post.image && (
-          <div className="w-full h-auto max-h-[500px] aspect-square overflow-hidden relative ">
-            <Image
-              src={post.image}
-              alt="Post"
-              fill
-              className="object-cover rounded-sm"
-              onClick={() => setPostModelOpen(true)}
+            <PostDropdown
+              isPostOwner={isPostOwner}
+              postId={post._id}
+              post={post}
+              setOpen={() => setDropdownId(null)}
+              handleAddBookmark={handleAddBookmark}
+              isBookmarked={post.isBookmarked}
             />
+          </DropdownMenu>
+        </div>
+        <CardContent className="p-0">
+          {/* Post Content */}
+          <div className="mb-4 px-4">
+            <p
+              className="text-gray-300 leading-relaxed"
+              // dangerouslySetInnerHTML={{ __html: allowedHTML }}
+            >
+              {post.title}
+            </p>
           </div>
-        )}
-        {openPostModal && (
-          <PostModal
-            open={openPostModal}
-            post={post}
-            setter={setPostModelOpen}
-          />
-        )}
 
-        <div className="px-3 py-1.5 flex items-center justify-between select-none border-t">
-          <div className="flex items-center space-x-1 text-sm relative mt">
-            <HeartSvg
-              stroke={post.isLiked ? "red" : "white"}
-              fill={post.isLiked ? "red" : "none"}
-              onClick={() => handleLike(post._id)}
-              className="w-6 h-6 cursor-pointer"
+          {/* Post Image */}
+          {post.images && post.images.length > 0 && (
+            <div className="relative w-full aspect-square bg-muted">
+              {post.images.length === 1 ? (
+                // <Image
+                //   src={post.images[0]}
+                //   alt="Post"
+                //   fill
+                //   className="aspect-square w-full rounded-sm h-auto object-cover"
+                //   onClick={() => setPostModelOpen(true)}
+                //   sizes="(max-width: 768px) 100vw, 400px"
+                // />
+                <AutoSizedImage
+                  alt="dp"
+                  src={post.images[0]}
+                  onClick={() => setPostModelOpen(true)}
+                />
+              ) : (
+                <ImageCarousel
+                  images={post.images}
+                  onClick={() => setPostModelOpen(true)}
+                />
+              )}
+            </div>
+          )}
+
+          {openPostModal && (
+            <PostModal
+              open={openPostModal}
+              post={post}
+              setter={setPostModelOpen}
             />
+          )}
 
-            <LikesPopup post={post._id}>
-              <span className="text-xs cursor-pointer">
+          <div className="px-3 py-1.5 flex items-center justify-between select-none border-t">
+            <div className="flex items-center space-x-1 text-sm relative mt">
+              <HeartSvg
+                stroke={post.isLiked ? "red" : "white"}
+                fill={post.isLiked ? "red" : "none"}
+                onClick={() => handleLike(post._id)}
+                className="w-6 h-6 cursor-pointer transition-all duration-200 transform hover:scale-110 hover:stroke-red-500 hover:fill-red-500"
+              />
+
+              <span
+                className="text-xs cursor-pointer"
+                onClick={() => setShowLikes(true)}
+              >
                 {post.likeCount > 0 ? post.likeCount : null}
                 {post.likeCount < 1
                   ? " "
@@ -347,106 +401,124 @@ const SinglePost: FC<PostProps> = ({
                   ? " Like"
                   : " Likes"}
               </span>
-            </LikesPopup>
+            </div>
+
+            <div
+              className={`flex items-center space-x-1 cursor-pointer text-sm  ${
+                !isSingleRoute && "hover:bg-bgHover"
+              } px-2 py-1 rounded-md transition-colors duration-200`}
+              onClick={() => {
+                if (!isSingleRoute) {
+                  handleToggleComments();
+                }
+              }}
+            >
+              <CommentSvg className="w-6 h-6 cursor-pointer    transition-colors duration-200" />
+              <span className="text-xs     transition-all duration-200">
+                {post.commentCount < 1
+                  ? null
+                  : post.commentCount ?? post.comments?.length}
+                {post.commentCount < 1 ? " Comment" : " Comments"}
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-2 cursor-pointer">
+              <BookmarkSvg
+                className="w-6 h-6 cursor-pointer transition-all duration-200 transform hover:scale-110 hover:fill-white active:scale-95"
+                fill={post.isBookmarked ? "white" : "none"}
+                onClick={handleAddBookmark}
+              />
+            </div>
           </div>
-
-          <div
-            className={`flex items-center space-x-1 cursor-pointer text-sm  ${
-              !isSingleRoute && "hover:bg-bgHover"
-            } px-2 py-1 rounded-md transition-colors duration-200`}
-            onClick={() => {
-              if (!isSingleRoute) {
-                setCommentBox(!openCommentBox);
-              }
-            }}
-          >
-            <CommentSvg className="w-6 h-6 cursor-pointer    transition-colors duration-200" />
-            <span className="text-xs     transition-all duration-200">
-              {post.commentCount < 1
-                ? null
-                : post.commentCount ?? post.comments?.length}
-              {post.commentCount < 1 ? " Comment" : " Comments"}
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-2 cursor-pointer">
-            <BookmarkSvg
-              className="w-6 h-6 cursor-pointer"
-              fill={post.isBookmarked ? "white" : ""}
-              onClick={handleAddBookmark}
-            />
-          </div>
-        </div>
-      </CardContent>
-      <AnimatePresence>
-        {openCommentBox && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            <CardFooter className="p-0 flex-col items-start flex">
-              <div className="px-3 w-full">
-                {isSingleRoute && (
-                  <div className="flex w-full items-center mb-4 border-b px-2 my-4">
-                    <TextBox post_id={post._id} />
-                  </div>
-                )}
-
-                {comments && comments.length > 0 && (
-                  <h4 className="text-xs mt-1 mb-2 text-gray-400">comments</h4>
-                )}
-
-                {isLoading && (
-                  <div className="flex justify-center py-2">
-                    <ButtonLoader />
-                  </div>
-                )}
-                {error && "Error Loading comments"}
-                {comments &&
-                  comments
-                    ?.slice(0, isSingleRoute ? comments.length : 2)
-                    .map((comment, index) => (
-                      <CommentDetailed
-                        comment={comment}
-                        key={index}
-                        isOpen={activeDropdownId === comment._id}
-                        toggleDropdown={() => toggleDropdown(comment._id)}
-                        detailed={detailed}
-                        post={post}
+        </CardContent>
+        <AnimatePresence>
+          {openCommentBox && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <CardFooter className="p-0 flex-col items-start flex">
+                <div className="px-3 w-full">
+                  {isSingleRoute && (
+                    <div className="flex w-full items-center mb-4 border-b px-2 my-4">
+                      <TextBox
+                        post_id={post._id}
+                        initialValue={replyTo}
+                        parentComment={parentCommentId}
+                        resetFields={() => {
+                          setParentCommentId(null);
+                          setReplyTo("");
+                        }}
                       />
-                    ))}
+                    </div>
+                  )}
 
-                {!isSingleRoute && comments && comments.length > 2 && (
-                  <div
-                    className="text-center flex items-center justify-center -mt-2 pb-3 px-2 py-1.5 rounded-md text-xs cursor-pointer"
-                    onClick={() => {
-                      if (post?.image) {
-                        setPostModelOpen(true);
-                      } else {
-                        router.push(`/p/${post._id}`);
-                      }
-                    }}
-                  >
-                    <span className="hover:underline">
+                  {comments && comments.length > 0 && (
+                    <h4 className="text-xs mt-1 mb-2 text-gray-400">
+                      comments
+                    </h4>
+                  )}
+
+                  {isLoading && (
+                    <div className="flex justify-center py-2">
+                      <ButtonLoader />
+                    </div>
+                  )}
+                  {error && "Error Loading comments"}
+                  {comments &&
+                    comments
+                      ?.slice(0, isSingleRoute ? comments.length : 2)
+                      .map((comment, index) => (
+                        <CommentDetailed
+                          comment={comment}
+                          key={index}
+                          isOpen={activeDropdownId === comment._id}
+                          toggleDropdown={() => toggleDropdown(comment._id)}
+                          detailed={detailed}
+                          post={post}
+                          getUsername={getUsername}
+                        />
+                      ))}
+
+                  {!isSingleRoute && comments && comments.length > 2 && (
+                    <Button
+                      variant="link"
+                      className="text-center  flex mx-auto  -mt-2 pb-3 px-2 py-1.5 rounded-md text-xs cursor-pointer"
+                      onClick={() => {
+                        if (post?.images[0]) {
+                          setPostModelOpen(true);
+                        } else {
+                          router.push(`/p/${post._id}`);
+                        }
+                      }}
+                    >
                       view all {comments.length} comments
-                    </span>
+                    </Button>
+                  )}
+                </div>
+
+                {!isSingleRoute && (
+                  <div className="flex w-full items-center px-3">
+                    <TextBox
+                      post_id={post._id}
+                      initialValue={replyTo}
+                      parentComment={parentCommentId}
+                      resetFields={() => {
+                        setParentCommentId(null);
+                        setReplyTo("");
+                      }}
+                    />
                   </div>
                 )}
-              </div>
-
-              {!isSingleRoute && (
-                <div className="flex w-full items-center px-3">
-                  <TextBox post_id={post._id} />
-                </div>
-              )}
-            </CardFooter>
-            <div ref={commentRef}></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Card>
+              </CardFooter>
+              <div ref={commentRef}></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Card>
+    </>
   );
 };
 
