@@ -31,6 +31,7 @@ import ButtonLoader from "@/utils/components/button-loader";
 import ImageCarousel from "./post/image-carousel";
 import { Button } from "./ui/button";
 import AutoSizedImage from "./test/auto-sized";
+import Link from "next/link";
 
 type PostProps = {
   post: Post;
@@ -289,10 +290,13 @@ const SinglePost: FC<PostProps> = ({
       <Card className="rounded-md !border-none mb-4 group ">
         {/* User Info and Action Button */}
         <div className="flex justify-between items-center px-4 py-4">
-          <div className="flex items-center gap-1.5 select-none">
+          <Link
+            className="flex items-center gap-1.5 select-none"
+            href={post.user.username}
+          >
             <Avatar
               className="cursor-pointer h-8 w-8"
-              onClick={() => router.push(`${post.user.username}`)}
+              // onClick={() => router.push(`${post.user.username}`)}
             >
               <AvatarFallback>{post.user.name.slice(0, 2)}</AvatarFallback>
               <AvatarImage
@@ -312,7 +316,7 @@ const SinglePost: FC<PostProps> = ({
                 <TimeAgo date={post.createdAt} formatter={customFormatter} />
               </div>
             </div>
-          </div>
+          </Link>
           <DropdownMenu
             open={isOpen}
             onOpenChange={(open) => setDropdownId(open ? post._id : null)}
@@ -387,7 +391,11 @@ const SinglePost: FC<PostProps> = ({
                 stroke={post.isLiked ? "red" : "white"}
                 fill={post.isLiked ? "red" : "none"}
                 onClick={() => handleLike(post._id)}
-                className="w-6 h-6 cursor-pointer transition-all duration-200 transform hover:scale-110 hover:stroke-red-500 hover:fill-red-500"
+                className={`w-6 h-6 cursor-pointer transition-all duration-200 transform ${
+                  post.isLiked
+                    ? "hover:scale-110 hover:stroke-red-500 hover:fill-red-500"
+                    : "hover:scale-105 hover:stroke-gray-400"
+                }`}
               />
 
               <span

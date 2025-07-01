@@ -21,7 +21,7 @@ const CreatePost = dynamic(() => import("@/components/create"), {
   ssr: false,
   loading: () => <CreateSkeleton />,
 });
-
+// const refetch = useSelector((state)=>state.)
 // Backend response shape
 type GetPostsResponse = {
   count: number;
@@ -95,7 +95,7 @@ const HomePage = () => {
         }`}
       >
         <div className="flex flex-col gap-4 lg:max-w-xl w-full">
-          <CreatePost />
+          <CreatePost refetchPosts={refetch} />
 
           {error && (
             <h4 className="text-center my-20 text-red-600">

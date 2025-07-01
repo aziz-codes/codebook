@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Avatar } from "./ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import CreatePost from "@/modals/create-post";
-const Create = () => {
+const Create = ({ refetchPosts }: { refetchPosts: () => void }) => {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -16,12 +16,15 @@ const Create = () => {
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-full bg-gray-500">
           {/* User's avatar */}
-          <Avatar onClick={()=>router.push(`/${session?.user.username}`)} className="cursor-pointer">
+          <Avatar
+            onClick={() => router.push(`/${session?.user.username}`)}
+            className="cursor-pointer"
+          >
             <AvatarFallback>{session?.user.name?.slice(0, 2)}</AvatarFallback>
             <AvatarImage src={session?.user.image as string} alt="user" />
           </Avatar>
         </div>
-        <CreatePost>
+        <CreatePost refetchPosts={refetchPosts}>
           <div className="w-full bg-bgCard hover:bg-bgHover cursor-pointer text-gray-300 rounded-full px-4 py-2 focus:outline-none">
             {`What's on your mind, ${session?.user.username ?? "..."}?`}
           </div>

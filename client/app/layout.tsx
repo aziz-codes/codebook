@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import QueryProvider from "@/query-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const fontSans = FontSans({
@@ -45,6 +45,7 @@ export default async function RootLayout({
         )}
       >
         <Toaster />
+        {/* <ReduxProvider store={store}> */}
         <QueryProvider>
           <Provider>
             <ThemeProvider
@@ -80,6 +81,7 @@ export default async function RootLayout({
           </Provider>
           <ReactQueryDevtools initialIsOpen={false} position="bottom" />
         </QueryProvider>
+        {/* </ReduxProvider> */}
       </body>
     </html>
   );

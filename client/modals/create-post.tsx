@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import EditableContainer from "@/components/test/input-div";
 import Link from "next/link";
 import { postRequest } from "@/services";
+import { toast } from "sonner";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import {
@@ -37,12 +38,12 @@ import IconLoader from "@/utils/components/icon-loader";
 
 type CreatePostProps = {
   children: React.ReactNode;
+  refetchPosts: any;
 };
-
-const CreatePost = ({ children }: CreatePostProps) => {
+const CreatePost = ({ children, refetchPosts }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
-
+  const [postId, setPostId] = useState<string | null>(null);
   const [content, setContent] = useState<string>("");
   const [images, setImages] = useState<string[]>([]);
 
@@ -52,7 +53,7 @@ const CreatePost = ({ children }: CreatePostProps) => {
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const handleBtnClick = () => {
     if (fileRef.current) {
@@ -106,15 +107,25 @@ const CreatePost = ({ children }: CreatePostProps) => {
     if (!localApiResponse.ok) {
       throw new Error("Failed to create post on local API");
     }
+
+    // ✅ Return the response JSON
+    return localApiResponse.json();
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: createPost,
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      toast({
-        description: "Post created successfully.",
+
+      toast("Post has been created", {
+        position: "top-center",
+
+        action: {
+          label: "View",
+          onClick: () => router.push(`/p/${data?.post}`),
+        },
       });
+      refetchPosts();
       cancelRef.current && cancelRef.current.click();
 
       setContent("");

@@ -1,18 +1,25 @@
-import { getSessionToken } from "@/actions/getSession";
-import React from "react";
+"use client";
 
-const Test = async () => {
-  const accessToken = await getSessionToken();
+import { toast } from "sonner";
 
-  const token = accessToken?.split("codebook2025");
+import { Button } from "@/components/ui/button";
 
-  console.log("token is ", token![1]);
-
+export default function Test() {
   return (
-    <div className="flex flex-wrap w-full overflow-auto text-xs whitespace-pre-wrap">
-      {JSON.stringify(token![1])}
-    </div>
-  );
-};
+    <Button
+      variant="outline"
+      onClick={() =>
+        toast("Post has been created", {
+          position: "top-center",
 
-export default Test;
+          action: {
+            label: "View",
+            onClick: () => console.log("View"),
+          },
+        })
+      }
+    >
+      Show Toast
+    </Button>
+  );
+}

@@ -21,7 +21,7 @@ export const post = async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "Post created successfully", post: savedPost });
+      .json({ message: "Post created successfully", post: savedPost._id });
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).json({
@@ -33,7 +33,6 @@ export const post = async (req, res) => {
 
 //get all post controller.
 export const getPosts = async (req, res) => {
-  console.log("sending posts");
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -54,7 +53,9 @@ export const getPosts = async (req, res) => {
 
       {
         $match: {
-          user: { $nin: filteredBlockedUsers },
+          user: {
+            $nin: [...filteredBlockedUsers, userObjectId], // Exclude both blocked users and the current user
+          },
         },
       },
 

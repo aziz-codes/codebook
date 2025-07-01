@@ -21,8 +21,7 @@ export type Post = {
   isLiked: boolean;
   isBookmarked: boolean;
   likeCount: number;
-  __v: number;
-
+  __v?: number;
   commentCount: number;
   bookmarkUserIds: string[];
   comments?: Comment[];
