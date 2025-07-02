@@ -56,6 +56,7 @@ const CommentDetailed: React.FC<CommentProps> = ({
   getUsername,
 }) => {
   const { data: session } = useSession();
+  console.log("comment is ", comment);
   const queryClient = useQueryClient();
   const [liked, setLiked] = useState(false);
   const [reportModal, setReportModal] = useState(false);

@@ -35,6 +35,7 @@ export type CommentType = {
   createdAt: string;
   parentId: null | string;
   replies: number;
+
   userDetails: {
     avatar: string;
     username: string;

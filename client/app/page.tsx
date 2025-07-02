@@ -95,7 +95,7 @@ const HomePage = () => {
         }`}
       >
         <div className="flex flex-col gap-4 lg:max-w-xl w-full">
-          <CreatePost refetchPosts={refetch} />
+          <CreatePost />
 
           {error && (
             <h4 className="text-center my-20 text-red-600">

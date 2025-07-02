@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, LoaderCircle } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,7 +11,11 @@ import { useRouter } from "next/navigation";
 import BookmarkSvg from "@/helpers/bookmark-svg";
 import TextBox from "./text-box";
 import { postRequest, getRequest } from "@/services/index";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import {
   DropdownMenu,
@@ -51,6 +55,11 @@ type GetSinglePostResponse = {
   result: Post;
 };
 
+type getCommentResponse = {
+  comments: CommentType[];
+  page: number;
+  hasMore: boolean;
+};
 const SinglePost: FC<PostProps> = ({
   post,
   sessionId,
@@ -62,15 +71,16 @@ const SinglePost: FC<PostProps> = ({
   const isOpen = dropDownId === post._id;
   const router = useRouter();
   const queryClient = useQueryClient();
-
+  const loadMoreCommentRef = useRef<HTMLDivElement | null>(null);
   const commentRef = useRef<HTMLDivElement | null>(null);
   const [replyTo, setReplyTo] = useState("");
   const [parentCommentId, setParentCommentId] = useState<string | null>(null);
 
   const [openPostModal, setPostModelOpen] = useState(false);
-
+  const limit = isSingleRoute ? 5 : 2;
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [comments, setComments] = useState<any[] | []>();
   const [openCommentBox, setCommentBox] = useState(isSingleRoute);
   const [showLikes, setShowLikes] = useState(false);
   const toggleDropdown = (commentId: string) => {
@@ -244,20 +254,55 @@ const SinglePost: FC<PostProps> = ({
 
   // fetching comments for each post.
   const {
-    data: comments,
+    data: commentsData,
     error,
     isLoading,
     refetch,
-    isFetching,
-  } = useQuery<CommentType[], Error>({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<getCommentResponse, Error>({
     queryKey: ["comments", post._id],
-    queryFn: async () => await getRequest(`/post/comment/${post._id}`),
+    initialPageParam: 1,
     enabled: openCommentBox,
+    queryFn: async ({ pageParam = 1 }) =>
+      await getRequest(
+        `/post/comment/${post._id}?page=${pageParam}&limit=${limit}`
+      ),
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore ? lastPage.page + 1 : undefined,
   });
+  useEffect(() => {
+    const comments = commentsData?.pages.flatMap((p) => p.comments) || [];
+
+    setComments(comments);
+  }, [commentsData]);
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage || !isSingleRoute) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: "400px" }
+    );
+
+    if (loadMoreCommentRef.current) {
+      observer.observe(loadMoreCommentRef.current);
+    }
+
+    return () => {
+      if (loadMoreCommentRef.current) {
+        observer.unobserve(loadMoreCommentRef.current);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
   useEffect(() => {
     if (!openCommentBox) return;
 
-    if (commentRef.current && comments && comments?.length > 2) {
+    if (commentRef.current && comments && !isSingleRoute) {
       commentRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
@@ -273,7 +318,7 @@ const SinglePost: FC<PostProps> = ({
       await refetch();
     }
   };
-
+  console.log("COmments new format from api si ", commentsData);
   const getUsername = (username: string, commentId: string) => {
     setReplyTo(""); // reset
     setParentCommentId(null);
@@ -476,21 +521,27 @@ const SinglePost: FC<PostProps> = ({
                   )}
                   {error && "Error Loading comments"}
                   {comments &&
-                    comments
-                      ?.slice(0, isSingleRoute ? comments.length : 2)
-                      .map((comment, index) => (
-                        <CommentDetailed
-                          comment={comment}
-                          key={index}
-                          isOpen={activeDropdownId === comment._id}
-                          toggleDropdown={() => toggleDropdown(comment._id)}
-                          detailed={detailed}
-                          post={post}
-                          getUsername={getUsername}
-                        />
-                      ))}
+                    comments.map((comment, index) => (
+                      <CommentDetailed
+                        comment={comment}
+                        key={index}
+                        isOpen={activeDropdownId === comment._id}
+                        toggleDropdown={() => toggleDropdown(comment._id)}
+                        detailed={detailed}
+                        post={post}
+                        getUsername={getUsername}
+                      />
+                    ))}
 
-                  {!isSingleRoute && comments && comments.length > 2 && (
+                  <div ref={loadMoreCommentRef} />
+
+                  {isFetchingNextPage && (
+                    <div className="text-center py-4 flex justify-center text-sm text-gray-500">
+                      <LoaderCircle className="animate-spin transition-all duration-500 h-5 w-5" />
+                    </div>
+                  )}
+
+                  {!isSingleRoute && comments && post.commentCount > 2 && (
                     <Button
                       variant="link"
                       className="text-center  flex mx-auto  -mt-2 pb-3 px-2 py-1.5 rounded-md text-xs cursor-pointer"
@@ -502,7 +553,7 @@ const SinglePost: FC<PostProps> = ({
                         }
                       }}
                     >
-                      view all {comments.length} comments
+                      View all {post.commentCount} comments
                     </Button>
                   )}
                 </div>

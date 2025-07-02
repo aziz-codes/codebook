@@ -12,7 +12,7 @@ import Picker from "@emoji-mart/react";
 import { useSession } from "next-auth/react";
 import ButtonLoader from "@/utils/components/button-loader";
 import { postRequest } from "@/services";
-import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { CommentType, Post } from "@/types/post";
 
 interface CommentProps {
@@ -374,14 +374,39 @@ const TextBox: React.FC<CommentProps> = ({
 
     // Optimistically update the comments
     if (parentComment) {
+      // Updating replies — assume replies don't use infinite query
       queryClient.setQueryData<CommentType[]>(
         ["replies", parentComment],
         (old = []) => [newComment, ...old]
       );
     } else {
-      queryClient.setQueryData<CommentType[]>(
+      // Updating paginated root comments
+      queryClient.setQueryData(
         ["comments", post_id],
-        (old = []) => [newComment, ...old]
+        (
+          oldData:
+            | InfiniteData<{
+                comments: CommentType[];
+                page: number;
+                hasMore: boolean;
+              }>
+            | undefined
+        ) => {
+          if (!oldData) return oldData;
+
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page, index) => {
+              if (index === 0) {
+                return {
+                  ...page,
+                  comments: [newComment, ...page.comments],
+                };
+              }
+              return page;
+            }),
+          };
+        }
       );
     }
 

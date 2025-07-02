@@ -49,6 +49,8 @@ export const saveComment = async (req, res) => {
 export const getComments = async (req, res) => {
   try {
     const { postid: postId } = req.params;
+    const { limit = 2, page = 1 } = req.query;
+
     const blockedUsers = (req.blockedUserIds || []).map(
       (id) => new mongoose.Types.ObjectId(id)
     );
@@ -58,9 +60,12 @@ export const getComments = async (req, res) => {
         $match: {
           post: new mongoose.Types.ObjectId(postId),
           user: { $nin: blockedUsers },
-          parentId: null, // 💡 only fetch top-level comments
+          parentId: null,
         },
       },
+      { $sort: { createdAt: -1 } }, // Sorting before skip+limit
+      { $skip: (parseInt(page) - 1) * parseInt(limit) },
+      { $limit: parseInt(limit) },
       {
         $lookup: {
           from: "users",
@@ -108,13 +113,16 @@ export const getComments = async (req, res) => {
           "userDetails.username": 1,
           "userDetails.avatar": 1,
           "userDetails._id": 1,
-          replies: 1, // ✅ NEW KEY
+          replies: 1,
         },
       },
-      { $sort: { createdAt: -1 } },
     ]);
 
-    res.status(200).json(comments);
+    res.status(200).json({
+      comments,
+      page: parseInt(page),
+      hasMore: comments.length === parseInt(limit),
+    });
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({ error: "Could not fetch comments." });

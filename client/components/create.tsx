@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Avatar } from "./ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import CreatePost from "@/modals/create-post";
-const Create = ({ refetchPosts }: { refetchPosts: () => void }) => {
+const Create = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -24,7 +24,7 @@ const Create = ({ refetchPosts }: { refetchPosts: () => void }) => {
             <AvatarImage src={session?.user.image as string} alt="user" />
           </Avatar>
         </div>
-        <CreatePost refetchPosts={refetchPosts}>
+        <CreatePost>
           <div className="w-full bg-bgCard hover:bg-bgHover cursor-pointer text-gray-300 rounded-full px-4 py-2 focus:outline-none">
             {`What's on your mind, ${session?.user.username ?? "..."}?`}
           </div>

@@ -38,9 +38,8 @@ import IconLoader from "@/utils/components/icon-loader";
 
 type CreatePostProps = {
   children: React.ReactNode;
-  refetchPosts: any;
 };
-const CreatePost = ({ children, refetchPosts }: CreatePostProps) => {
+const CreatePost = ({ children }: CreatePostProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [postId, setPostId] = useState<string | null>(null);
@@ -125,7 +124,7 @@ const CreatePost = ({ children, refetchPosts }: CreatePostProps) => {
           onClick: () => router.push(`/p/${data?.post}`),
         },
       });
-      refetchPosts();
+
       cancelRef.current && cancelRef.current.click();
 
       setContent("");
