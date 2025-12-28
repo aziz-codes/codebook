@@ -239,7 +239,7 @@ This project and its source code are proprietary and confidential. Unauthorized 
 **Aziz**
 
 - GitHub: [@aziz-codes](https://github.com/aziz-codes)
-- Email: [Your Email]
+- Email: [aziz.codes44@gmail.com]
 
 ## 🙏 Acknowledgments
 
