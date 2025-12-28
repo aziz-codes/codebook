@@ -1,39 +1,33 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { getRequest } from "@/services";
 import Snippet from "@/components/snippet";
+import { SnippetType } from "@/types/snippets";
 import MainWrapper from "@/layouts/main-wrapper";
 import { childRoutesClass, topMargin } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ButtonLoader from "@/utils/components/button-loader";
-import { getRequest } from "@/services";
+import { useQuery } from "@tanstack/react-query";
 
 const Snippets = () => {
   const router = useRouter();
-  const [snippets, setSnippets] = useState<any[]>([]); // Ensure `snippets` is an array
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        setLoading(true);
-        const response = await getRequest("/snippets");
-        if (!response.ok) {
-          throw new Error("Failed to fetch snippets");
-        }
-        const data = await response.json();
-        setSnippets(data.result || []); // Safely handle undefined or null `data.result`
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
-      } finally {
-        setLoading(false);
-      }
-    };
-    getData();
-  }, []);
+  const {
+    data: snippets,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useQuery<SnippetType[]>({
+    queryKey: ["snippets"],
+    queryFn: async () => {
+      const res = await getRequest("/snippets");
 
+      return res;
+    },
+  });
+  console.log("SNippets are");
   return (
     <MainWrapper classes={`${childRoutesClass} grid grid-cols-12 gap-3`}>
       {/* Snippets Section */}
@@ -41,45 +35,54 @@ const Snippets = () => {
         className={`w-full mx-auto md:mx-0 max-w-md sm:max-w-lg md:max-w-full col-span-12 md:col-span-9 gap-4 flex flex-col mt-${topMargin}`}
       >
         <Tabs
-          defaultValue="for-you"
+          defaultValue="following"
           className="w-full p-0 !ring-0 !outline-none"
         >
           <TabsList className="w-full p-0 bg-bgCard">
-            <TabsTrigger
-              value="for-you"
-              className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none"
-            >
-              For You
-            </TabsTrigger>
             <TabsTrigger
               value="following"
               className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none focus-within:!outline"
             >
               Following
             </TabsTrigger>
+            <TabsTrigger
+              value="for-you"
+              className="flex-1 h-full m-0 rounded-md data-[state=active]:bg-bgHover !ring-0 !outline-none"
+            >
+              For You
+            </TabsTrigger>
           </TabsList>
+
           <TabsContent
             value="for-you"
-            className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6"
+            className="flex-1 flex flex-col gap-6 !py-0 m-0 relative top-6"
           >
-            {loading && <ButtonLoader />} {/* Show loader during data fetch */}
-            {!loading && error && (
-              <p className="text-red-500">{error}</p> /* Show error message */
-            )}
-            {!loading && snippets.length === 0 && !error && (
-              <p>No snippets available.</p> /* Show fallback if no snippets */
-            )}
-            {!loading &&
-              snippets.length > 0 &&
-              snippets.map((snippet, index) => (
-                <Snippet key={index} snippet={snippet} />
-              ))}
+            For You
           </TabsContent>
+
           <TabsContent
             value="following"
-            className="flex-1 flex flex-col gap-6  !py-0 m-0 relative top-6"
+            className="flex-1 flex flex-col gap-6 !py-0 m-0 relative top-6"
           >
-            <div>following snippets</div>
+            {isLoading && <h3>Loading...</h3>}
+
+            {isError && (
+              <h4 className="text-red-500 text-center">
+                Failed to load snippets. {JSON.stringify(snippets)}
+              </h4>
+            )}
+
+            {isSuccess && snippets?.length === 0 && (
+              <p className="text-muted-foreground text-center">
+                No snippets found.
+              </p>
+            )}
+
+            {isSuccess &&
+              snippets?.length > 0 &&
+              snippets.map((snippet) => (
+                <Snippet key={snippet._id} snippet={snippet} />
+              ))}
           </TabsContent>
         </Tabs>
       </div>
@@ -87,7 +90,7 @@ const Snippets = () => {
       {/* Fixed Sidebar Section */}
       <div className="hidden md:flex md:col-span-3 flex-col">
         <div
-          className="sticky top-14 px-2 py-3 flex flex-col gap-3  items-center mt-1"
+          className="sticky top-14 px-2 py-3 flex flex-col gap-3 items-center mt-1"
           style={{ height: "calc(100vh - 3.5rem)" }}
         >
           <Button

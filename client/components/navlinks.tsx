@@ -22,6 +22,11 @@ const Navlinks = () => {
       path: "/",
     },
     {
+      label: "Developers",
+      icon: Users,
+      path: "/devs",
+    },
+    {
       label: "Snippets",
       icon: CodeXml,
       path: "/snippets",
@@ -41,11 +46,6 @@ const Navlinks = () => {
       label: "Bounties",
       icon: BadgeCent,
       path: "/bounties",
-    },
-    {
-      label: "Peoples",
-      icon: Users,
-      path: "/devs",
     },
   ];
   return (

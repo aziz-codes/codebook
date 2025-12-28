@@ -1,60 +1,186 @@
 "use client";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { Button } from "./ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Code2, MessageSquare, Share2, Sparkles, Github } from "lucide-react";
 
 const LoginForm = () => {
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const handleSignin = async () => {
     setLoading(true);
-   await signIn("github", {
+    await signIn("github", {
       callbackUrl: "http://localhost:3000",
-    })
-    setLoading(false)
+    });
+    setLoading(false);
   };
+
+  const features = [
+    { icon: Code2, text: "Share Code Snippets" },
+    { icon: MessageSquare, text: "Engage in Discussions" },
+    { icon: Share2, text: "Connect with Developers" },
+  ];
+
   return (
-    <Card className="w-full max-w-sm h-full max-h-96">
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Continue with Github</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button
-          className="bg-gray-800 w-full hover:bg-gray-700 text-white py-2 px-4 rounded flex items-center"
-          onClick={handleSignin}
+    <div className="w-full max-w-6xl mx-auto px-4">
+      <div className="grid lg:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Platform Info */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-8"
         >
-          {loading ? "Loading...": <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0c-6.627 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.579 0-.285-.011-1.04-.017-2.041-3.338.726-4.042-1.612-4.042-1.612-.546-1.385-1.333-1.754-1.333-1.754-1.089-.745.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.833 2.809 1.304 3.494.997.108-.774.419-1.305.762-1.606-2.665-.305-5.466-1.332-5.466-5.931 0-1.31.469-2.381 1.237-3.22-.123-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.403 1.02.004 2.046.137 3.004.403 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.243 2.874.119 3.176.77.839 1.236 1.91 1.236 3.22 0 4.61-2.803 5.624-5.475 5.922.43.371.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.289 0 .32.192.694.799.576 4.764-1.589 8.194-6.087 8.194-11.387 0-6.627-5.373-12-12-12z" />
-          </svg>}
-          
-          Github
-        </Button>
-        <div className="text-center text-gray-500 mt-2 mb-2">
-          OR CONTINUE WITH
-        </div>
-        <div className="flex flex-col space-y-1 mt-3">
-          <Label htmlFor="name">Email</Label>
-          <Input id="email" placeholder="john@example.com" />
-        </div>
-        <div className="flex flex-col space-y-1 mt-2">
-          <Label htmlFor="name">Password</Label>
-          <Input id="password" type="password" placeholder="******" />
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full">Continue</Button>
-      </CardFooter>
-    </Card>
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="flex items-center gap-3"
+            >
+              <div className="relative">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 border-2 border-primary/20 rounded-full"
+                />
+                <Code2 className="h-8 w-8 text-primary relative z-10" />
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                CodeBook
+              </h1>
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-2xl lg:text-3xl font-semibold text-foreground"
+            >
+              Where Developers Connect
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-lg text-muted-foreground leading-relaxed"
+            >
+              A vibrant community platform built exclusively for developers. Share your code snippets, 
+              engage in technical discussions, and connect with fellow developers from around the world.
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="space-y-4"
+          >
+            <h3 className="text-xl font-semibold flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              What you can do
+            </h3>
+            <div className="space-y-3">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                >
+                  <feature.icon className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">{feature.text}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* Right Side - Login Card */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-center lg:justify-end"
+        >
+          <motion.div
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="w-full max-w-md"
+          >
+            <div className="relative p-8 rounded-2xl border bg-card shadow-2xl backdrop-blur-sm">
+              {/* Decorative gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 rounded-2xl -z-10" />
+              
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="text-center space-y-2"
+                >
+                  <h2 className="text-3xl font-bold">Welcome Back</h2>
+                  <p className="text-muted-foreground">
+                    Sign in to continue your coding journey
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                >
+                  <Button
+                    onClick={handleSignin}
+                    disabled={loading}
+                    size="lg"
+                    className="w-full h-12 text-base font-semibold bg-[#24292e] hover:bg-[#2d3339] text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {loading ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="flex items-center gap-2"
+                      >
+                        <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full" />
+                        <span>Connecting...</span>
+                      </motion.div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <Github className="h-5 w-5" />
+                        <span>Continue with GitHub</span>
+                      </div>
+                    )}
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                  className="text-center text-sm text-muted-foreground space-y-1"
+                >
+                  <p>By continuing, you agree to our</p>
+                  <p>
+                    <a href="#" className="text-primary hover:underline">
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a href="#" className="text-primary hover:underline">
+                      Privacy Policy
+                    </a>
+                  </p>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 

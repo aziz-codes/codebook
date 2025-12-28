@@ -57,7 +57,7 @@ app.use("/post/comment", middleware, attachBlockedUsers, commentRoutes);
 app.use("/post/report", middleware, reportRoutes);
 app.use("/post/bookmark/", bookmakrRoutes);
 
-app.use("/snippets", snippetRoutes);
+app.use("/snippets", middleware, attachBlockedUsers, snippetRoutes);
 
 // User routes
 //login route

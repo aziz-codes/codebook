@@ -27,7 +27,7 @@ const UserDateProfile = ({ date, username, image }: IAvatarProps) => {
           {username}
         </h4>
         <div className="text-[11px] text-muted-foreground">
-          <TimeAgo date={date} locale="en-US" timeStyle="twitter" />
+          <TimeAgo date={date} locale="en-US" timestyle="twitter" />
         </div>
       </div>
     </div>

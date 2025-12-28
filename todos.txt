@@ -1,1 +1,2 @@
 **check jwt token on load
+** add func to link multiple code editor editor window.

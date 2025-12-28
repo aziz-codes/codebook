@@ -52,7 +52,7 @@ const HomePage = () => {
       return res as GetPostsResponse;
     },
     getNextPageParam: (lastPage) =>
-      lastPage.hasMore ? lastPage.page + 1 : undefined,
+      lastPage?.hasMore ? lastPage.page + 1 : undefined,
   });
 
   // Ref to observe bottom of post list
@@ -110,8 +110,15 @@ const HomePage = () => {
           ) : (
             <>
               {data?.pages
-                ?.flatMap((page) => page.result)
-                ?.map((post) => (
+                ?.flatMap((page) => page?.result || [])
+                ?.filter(
+                  (post): post is Post =>
+                    post !== null &&
+                    post !== undefined &&
+                    typeof post === "object" &&
+                    "_id" in post
+                )
+                .map((post) => (
                   <SinglePost
                     key={post._id}
                     post={post}

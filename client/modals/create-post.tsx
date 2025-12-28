@@ -55,9 +55,14 @@ const CreatePost = ({ children }: CreatePostProps) => {
   // const { toast } = useToast();
 
   const handleBtnClick = () => {
-    if (fileRef.current) {
-      fileRef.current.click();
-    }
+    toast("Image upload feature is not available right now", {
+      position: "top-center",
+      description: "We're working on adding this feature. Stay tuned!",
+      duration: 3000,
+    });
+    // if (fileRef.current) {
+    //   fileRef.current.click();
+    // }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
